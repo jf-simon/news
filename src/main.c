@@ -424,8 +424,8 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 					evas_object_size_hint_align_set(lbl, 0.5, 0.5);
 					elm_box_pack_end(boxh, lbl);
 					evas_object_show(lbl);
-					
-					evas_object_smart_callback_add(lbl, "anchor,clicked", _it_clicked, list_data->link);
+					evas_object_smart_callback_add(ic, "clicked", _it_clicked, list_data->link);
+// 					evas_object_smart_callback_add(lbl, "anchor,clicked", _it_clicked, list_data->link);
 								
 			elm_box_pack_end(box, boxh);
 			evas_object_show(boxh);
