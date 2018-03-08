@@ -59,13 +59,36 @@ collections {
 					}
 				}
          part { 
+            name: "item_new";
+            type : RECT;
+            scale: 1;
+          description {
+               state: "default" 0.0;
+               visible: 1;
+               rel1.relative: 0.045 0.0;
+//                rel1.relative : 0.0 0.0;
+               rel2.relative: 0.955 0.045;
+//                rel2.relative : 10 10;
+               color: 100 255 0 0s;
+					}
+          description {
+               state: "new" 0.0;
+               visible: 1;
+               rel1.relative: 0.045 0.0;
+//                rel1.relative : 0.0 0.0;
+               rel2.relative: 0.955 0.045;
+//                rel2.relative : 10 10;
+               color: 100 255 0 255;
+					}
+				}
+         part { 
             name: "reload";
             type : RECT;
             scale: 1;
             description {
                state: "default" 0.0;
                visible: 0;
-               rel1.relative: 0.045 0.95;
+               rel1.relative: 0.045 0.955;
 //                rel1.relative : 0.0 0.0;
                rel2.relative: 0.955 1.0;
 //                rel2.relative : 10 10;
@@ -74,7 +97,7 @@ collections {
           description {
                state: "visible" 0.0;
                visible: 1;
-               rel1.relative: 0.045 0.95;
+               rel1.relative: 0.045 0.955;
 //                rel1.relative : 0.0 0.0;
                rel2.relative: 0.955 1.0;
 //                rel2.relative : 10 10;
@@ -83,7 +106,7 @@ collections {
           description {
                state: "failed" 0.0;
                visible: 1;
-               rel1.relative: 0.045 0.95;
+               rel1.relative: 0.045 0.955;
 //                rel1.relative : 0.0 0.0;
                rel2.relative: 0.955 1.0;
 //                rel2.relative : 10 10;
@@ -126,7 +149,7 @@ collections {
             signal: "reload";
             source: "default";
             action: STATE_SET "default" 0.0;
-            transition : LINEAR 2;
+            transition : LINEAR 1;
             target: "reload";
          }
          program {
@@ -134,8 +157,16 @@ collections {
             signal: "reload";
             source: "failed";
             action: STATE_SET "failed" 0.0;
-            transition : LINEAR 2;
+            transition : LINEAR 1;
             target: "reload";
+         }
+         program {
+            name: "item_new";
+            signal: "item";
+            source: "new";
+            action: STATE_SET "new" 0.0;
+            transition : LINEAR 1;
+            target: "item_new";
          }
 
       }
