@@ -9,6 +9,7 @@ static    Evas_Object *popup = NULL;
 // static E_Gadget_Site_Orient gorient;
 // static E_Gadget_Site_Anchor ganchor;
 
+	Eina_Strbuf *feeddata = NULL;
 
 typedef struct {
         Eina_List   *configlist_eet;
@@ -18,12 +19,16 @@ typedef struct {
 typedef struct {
         int         id;
         const char *url;
+		  Eina_Bool   icons;
+		  Eina_Bool   bigicons;
 		  int         r;
 	     int         g;
         int         b;
         int         a;
 } My_Conf_Type;
-   
+
+
+
 typedef struct {
    const char *title;
    const char *link;
@@ -60,9 +65,8 @@ _my_conf_descriptor_init(void)
 
     MY_CONF_SUB_ADD_BASIC(id, EET_T_INT);
     MY_CONF_SUB_ADD_BASIC(url, EET_T_STRING);
-//     MY_CONF_SUB_ADD_BASIC(unit, EET_T_STRING);
-// 	 MY_CONF_SUB_ADD_BASIC(value, EET_T_DOUBLE);
-// 	 MY_CONF_SUB_ADD_BASIC(factor, EET_T_DOUBLE);
+    MY_CONF_SUB_ADD_BASIC(icons, EET_T_UCHAR);
+    MY_CONF_SUB_ADD_BASIC(bigicons, EET_T_UCHAR);
 	 MY_CONF_SUB_ADD_BASIC(r, EET_T_INT);
     MY_CONF_SUB_ADD_BASIC(g, EET_T_INT);
     MY_CONF_SUB_ADD_BASIC(b, EET_T_INT);
@@ -302,97 +306,11 @@ _reload_start(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EIN
      {
         evas_object_del(popup);
         popup = NULL;
-        return;
      }
    _get_data();
 
 }
 
-
-/*
-//BOX
-static void
-show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
-{
-   Evas_Object *win = data;
-	Evas_Object *box, *lbl, *li, *scr, *bt;
-	
-   if(popup)
-     {
-        evas_object_del(popup);
-        popup = NULL;
-        return;
-     }
-
-	
-   popup = elm_win_add(win, "Popup",  ELM_WIN_POPUP_MENU);
-   elm_win_alpha_set(popup, 1);
-// 	elm_popup_scrollable_set(popup, 1);
-   box = elm_box_add(popup);
-   elm_box_horizontal_set(box, EINA_FALSE);
-//    evas_object_size_hint_weight_set(box, 500, 500);
-	
-
-	li = elm_list_add(box);
-	elm_list_mode_set(li, ELM_LIST_COMPRESS);
-//    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-// 	evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_scroller_bounce_set(li, EINA_TRUE, EINA_TRUE);
-   elm_scroller_policy_set(li, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_AUTO);
-	evas_object_size_hint_weight_set(li, 0.4, 0.3);
-// 	evas_object_show(li);
-   elm_box_pack_end(box, li);
-	
-   char buf[PATH_MAX];
-
-
-	printf("LIST COUNT: %i\n", eina_list_count(feed_data_list));
-	
-	Feed_Data *list_data;
-	Eina_List *l;
-	
-   EINA_LIST_FOREACH(feed_data_list, l, list_data)
-   {   
-		Elm_Object_Item *list_it_sep;
-		Evas_Object *ic;
-		ic = elm_icon_add(li);
-		elm_icon_standard_set(ic, "/home/simon/CODING/news/data/themes/images/news.png");
-// 		elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
-		evas_object_resize(ic, 20, 20);
-		
-		elm_list_item_append(li, list_data->title, ic, NULL, _it_clicked, list_data->link);
-		elm_list_item_append(li, list_data->description, NULL, NULL, _it_clicked, list_data->link);
-		
-		list_it_sep = elm_list_item_append(li, NULL, NULL, NULL, NULL, NULL);
-		elm_list_item_separator_set(list_it_sep, EINA_TRUE);
-		
-// 		printf("TITLE LISTE: '%s'\n", list_data->title);
-// 		printf("LINK LISTE: '%s'\n", list_data->link);
-// 		printf("DESCRIPTION LISTE: '%s'\n", list_data->description);
-// 		printf("CONTENT LISTE: '%s'\n", list_data->content);
-	}
-	
-   elm_list_go(li);
-	
-	
-	
-   bt = elm_button_add(box);
-   elm_object_text_set(bt, "refresh");
-   evas_object_smart_callback_add(bt, "pressed", _get_data, NULL);
-   elm_box_pack_end(box, bt);
-   evas_object_show(bt);
-
-	
-	
-//    evas_object_size_hint_align_set(box, 0.5, 0.5);
-	
-   elm_win_resize_object_add(popup, box);
-   evas_object_show(box);
-	evas_object_resize(popup, 400, 500);
-   evas_object_show(popup);
-	
-
-}*/
 
 static Evas_Object *
 _tt_icon(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *tt)
@@ -408,12 +326,12 @@ _tt_icon(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *tt)
 }
 
 
-//LIST
+
 static void
 show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Evas_Object *win = data;
-	Evas_Object *box, *lbl, *li, *scr, *bt;
+	Evas_Object *box, *lbl, *li, *scr, *bt, *scroller;
 	
 	if(eina_list_count(feed_data_list) == 0)
 		return;
@@ -431,100 +349,119 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	
    popup = elm_win_add(win, "Popup",  ELM_WIN_POPUP_MENU);
    elm_win_alpha_set(popup, 1);
-// 	elm_popup_scrollable_set(popup, 1);
-// 	evas_object_size_hint_weight_set(popup, 0.4, 0.3);
+	
+
+	
    box = elm_box_add(popup);
    elm_box_horizontal_set(box, EINA_FALSE);
-//    evas_object_size_hint_weight_set(box, 500, 500);
-   elm_win_resize_object_add(popup, box);
+//    elm_win_resize_object_add(popup, box);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, 0);
    evas_object_show(box);
+		
+	Evas_Object *o, *boxh, *ic;
+	char buf1[PATH_MAX];
+	char buf[PATH_MAX];
 	
-
-	li = elm_list_add(box);
-	elm_list_mode_set(li, ELM_LIST_COMPRESS);
-   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_scroller_bounce_set(li, EINA_TRUE, EINA_TRUE);
-   elm_scroller_policy_set(li, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_AUTO);
-// 	elm_label_line_wrap_set(li, ELM_WRAP_WORD);
-// 	elm_label_wrap_width_set(li, ELM_SCALE_SIZE(400));
-	evas_object_show(li);
+	
+		printf("LIST COUNT: %i\n", eina_list_count(feed_data_list));
 	Feed_Data *list_data;
-	
-   char buf[PATH_MAX];
-   char buf1[PATH_MAX];
-// 	Evas_Object *ic = elm_icon_add(popup);
-// //    snprintf(buf, sizeof(buf), "/home/simon/CODING/news/data/themes/images/news.png", elm_app_data_dir_get());
-
-
-//    elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
-	printf("LIST COUNT: %i\n", eina_list_count(feed_data_list));
+	int i = 0;
 	Eina_List *l;
 	EINA_LIST_FOREACH(feed_data_list, l, list_data)
    {
-		Evas_Object *ic = elm_icon_add(li);		
 		
-// 		elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
-// 		evas_object_resize(ic, 200, 100);
-//    evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-//    evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
-		
-			snprintf(buf1, sizeof(buf1), "%s<br>%s", list_data->title, list_data->description);
-		
-		if(list_data->imagelink)
-		{
-			snprintf(buf, sizeof(buf), "%s.jpg", list_data->imagelink);
-			elm_image_file_set(ic, buf, NULL);
-// 			evas_object_resize(ic, 200, 100);
-// 			elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
-			evas_object_size_hint_min_set(ic, 150, 56);
-			elm_list_item_append(li, buf1, ic, NULL, _it_clicked, list_data->link);
-		}
-		else
-			elm_list_item_append(li, buf1, NULL, NULL, _it_clicked, list_data->link);
+			if(i == 0)
+			{
+					lbl = elm_label_add(box);
+					snprintf(buf1, sizeof(buf1), "<a href=%s><bigger>%s</bigger><br>%s</a></a>", list_data->link, list_data->title, list_data->description);
+					elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
+					elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(400));
+					elm_object_text_set(lbl, buf1);
+					evas_object_size_hint_align_set(lbl, 0.5, 0.5);
+					elm_box_pack_end(box, lbl);
+					evas_object_show(lbl);
+					
+					evas_object_smart_callback_add(lbl, "anchor,clicked", _it_clicked, list_data->link);
+					
+					o = elm_separator_add(box);
+					elm_separator_horizontal_set(o, EINA_TRUE);
+					elm_box_pack_end(box, o);
+					evas_object_show(o);
+			}
+			else
+			{
+		   boxh = elm_box_add(box);
+			elm_box_horizontal_set(boxh, EINA_TRUE);
+			elm_box_padding_set(boxh, 10, 0);
+			evas_object_show(boxh);
 			
-// 		elm_list_item_append(li, list_data->description, NULL, NULL, _it_clicked, list_data->link);
-		
-//    Elm_Object_Item *list_it_sep = elm_list_item_append(li, NULL, NULL, NULL, NULL, NULL);
-	
-	
-		elm_object_tooltip_content_cb_set(ic, _tt_icon, list_data->imagelink, NULL);
-// 		elm_object_tooltip_style_set(ic, "transparent");
-   
-		
-//    elm_list_item_separator_set(list_it_sep, EINA_TRUE);
-		
-// 		printf("TITLE LISTE: '%s'\n", list_data->title);
-// 		printf("LINK LISTE: '%s'\n", list_data->link);
-// 		printf("DESCRIPTION LISTE: '%s'\n", list_data->description);
-// 		printf("IAMGE LINK LISTE: '%s'\n", list_data->imagelink);
-// 		printf("CONTENT LISTE: '%s'\n", list_data->content);
+					if(!ci_icons)
+					{
+					ic = elm_icon_add(boxh);
+					if(list_data->imagelink == NULL)
+						snprintf(buf, sizeof(buf), "/home/simon/CODING/news/data/themes/images/news.png");
+					else
+						snprintf(buf, sizeof(buf), "%s.jpg", list_data->imagelink);
+					
+					elm_image_file_set(ic, buf, NULL);
+					evas_object_size_hint_min_set(ic, 150, 56);
+					evas_object_size_hint_weight_set(ic, 0, EVAS_HINT_EXPAND);
+					evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
+					elm_box_pack_end(boxh, ic);
+					evas_object_show(ic);
+					
+						if(!ci_bigicons)
+						{
+							elm_object_tooltip_content_cb_set(ic, _tt_icon, list_data->imagelink, NULL);
+						}
+					}
+					
+				   lbl = elm_label_add(boxh);
+					snprintf(buf1, sizeof(buf1), "<a href=%s><b>%s</b><br><br><custom align=left>%s</custom></a></a>", list_data->link, list_data->title, list_data->description);
+					elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
+					elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(300));
+					elm_object_text_set(lbl, buf1);
+					evas_object_size_hint_align_set(lbl, 0.5, 0.5);
+					elm_box_pack_end(boxh, lbl);
+					evas_object_show(lbl);
+					
+					evas_object_smart_callback_add(lbl, "anchor,clicked", _it_clicked, list_data->link);
+								
+			elm_box_pack_end(box, boxh);
+			evas_object_show(boxh);
+			
+			o = elm_separator_add(box);
+			elm_separator_horizontal_set(o, EINA_TRUE);
+			elm_box_pack_end(box, o);
+			evas_object_show(o);
 
+			}
+		
+			i++;
 	}
 	
-   elm_list_go(li);
-	
-   elm_box_pack_end(box, li);
-	
-	
-	////
-	
-	
+	///////////////////
+
+
 	
 //    bt = elm_button_add(box);
 //    elm_object_text_set(bt, "refresh");
-//    evas_object_smart_callback_add(bt, "pressed",
-//                                   _get_data, NULL);
+//    evas_object_smart_callback_add(bt, "pressed", _get_data, NULL);
 //    elm_box_pack_end(box, bt);
 //    evas_object_show(bt);
 
+	scroller = elm_scroller_add(popup);
+   evas_object_size_hint_weight_set(scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(popup, scroller);
+   evas_object_show(scroller);
+   elm_object_content_set(scroller, box);
+   elm_scroller_bounce_set(scroller, EINA_TRUE, EINA_FALSE);
+   elm_scroller_policy_set(scroller, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_ON);
+   elm_scroller_propagate_events_set(scroller, EINA_TRUE);
+   elm_scroller_page_relative_set(scroller, 0, 1);
 	
-	
-//    evas_object_size_hint_align_set(box, 0.5, 0.5);
-	evas_object_resize(popup, 400, 500);
+	evas_object_resize(popup, 480, 600);
    evas_object_show(popup);
-	
-
 }
 
 
@@ -769,7 +706,7 @@ static void
 parse_atom(void *data)
 {	
 	Eina_Strbuf *mybuffer = data;
-	const char *string = eina_strbuf_string_get(mybuffer);
+// 	const char *string = eina_strbuf_string_get(mybuffer);
 
 	char **arr;
 	int i=0;
@@ -808,7 +745,7 @@ static void
 parse_rdf(void *data)
 {	
 	Eina_Strbuf *mybuffer = data;
-	const char *string = eina_strbuf_string_get(mybuffer);
+// 	const char *string = eina_strbuf_string_get(mybuffer);
 
 	char **arr;
 	int i=0;
@@ -944,13 +881,15 @@ _url_data_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 {
    Ecore_Con_Event_Url_Data *url_data = event_info;
 
-	Eina_Strbuf *feeddata = NULL;
-	
 	feeddata = eina_strbuf_new();
+	
+// 	Eina_Strbuf *feeddata1 = NULL;
+// 	feeddata1 = eina_strbuf_new();
 	
 
 	eina_strbuf_append_length(feeddata, ((const char*) &url_data->data[0]), url_data->size);
 	
+// 	feeddata1 = feeddata;
 
 	parse_rss(feeddata);
 
@@ -976,6 +915,8 @@ _url_data_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 //    for (i = 0; i < url_data->size; i++)
 //      printf("%c", url_data->data[i]);
 	
+// 	eina_strbuf_reset(feeddata);
+	
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -997,6 +938,7 @@ _data_complete(void *data EINA_UNUSED, int type, void *event_info)
 		edje_object_signal_emit(edje_obj, "reload", "default");
 	else
 		edje_object_signal_emit(edje_obj, "reload", "failed");
+	
 	
 // 	printf("%s : %ld COMPLETE\n", eina_strbuf_string_get(feeddata), eina_strbuf_length_get(feeddata));
 	
@@ -1037,7 +979,7 @@ _get_data()
 	
 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
 	edje_object_signal_emit(edje_obj, "reload", "visible");
-   
+
 	if(ec_url)
 		ecore_con_url_free(ec_url);
 	
@@ -1057,8 +999,12 @@ _get_data()
 	else
 	{
 		printf("free: \n");
-		eina_list_free(feed_data_list);
-		feed_data_list = NULL;
+		
+		   Feed_Data *o;
+			EINA_LIST_FREE(feed_data_list, o);
+			free(o);
+			
+			feed_data_list = NULL;
 	}
 	
 	

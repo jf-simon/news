@@ -38,9 +38,8 @@ Evas_Object *ly;
 
 int         ci_id;
 const char *ci_url;
-// const char *ci_unit;
-// double      ci_value;
-// double      ci_factor;
+Eina_Bool   ci_icons;
+Eina_Bool   ci_bigicons;
 int         ci_r;
 int         ci_g;
 int         ci_b;
@@ -52,9 +51,8 @@ Eina_List *configlist;
 typedef struct {
         int         id;
         const char *url;
-//         const char *unit;
-// 		  double      value;
-// 		  double      factor;
+		  Eina_Bool   icons;
+		  Eina_Bool   bigicons;
 		  int         r;
 	     int         g;
         int         b;

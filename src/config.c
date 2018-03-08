@@ -14,6 +14,8 @@ _config_load(void *data)
 	   if(list_data->id == id_num)
 		{
 			ci_url = eina_stringshare_add(list_data->url);
+			ci_icons = list_data->icons;
+			ci_icons = list_data->bigicons;
 // 			ci_unit = eina_stringshare_add(list_data->unit);
 // 			ci_value = list_data->value;
 // 			ci_factor = list_data->factor;
@@ -28,6 +30,8 @@ _config_load(void *data)
    if(found == 0)
 	{
 		ci_url = eina_stringshare_add("http://www.tagesschau.de/xml/rss2");
+		ci_icons = 0;
+		ci_bigicons = 0;
 // 		ci_unit = eina_stringshare_add("UNIT");
 // 		ci_value = 0;
 // 		ci_factor= 1;
@@ -59,10 +63,13 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 	if(data != NULL)
 	{
    Evas_Object *en_url = evas_object_data_get(mainbox, "en_url");
-//    Evas_Object *en_unit = evas_object_data_get(mainbox, "en_unit");
+   Evas_Object *check_icons = evas_object_data_get(mainbox, "check_icons");
+   Evas_Object *check_bigicons = evas_object_data_get(mainbox, "check_bigicons");
 //    Evas_Object *en_value = evas_object_data_get(mainbox, "en_value");
 //    Evas_Object *en_factor = evas_object_data_get(mainbox, "en_factor");
 	ci_url = elm_object_text_get(en_url);
+   ci_icons = elm_check_state_get(check_icons);
+   ci_bigicons = elm_check_state_get(check_bigicons);
 // 	ci_unit = elm_object_text_get(en_unit);
 // 	ci_value = atof(elm_object_text_get(en_value));
 // 	ci_factor = atof(elm_object_text_get(en_factor));
@@ -73,7 +80,8 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 	   if(list_data->id == id_num)
 		{
 			list_data->url = ci_url;
-// 			list_data->unit = ci_unit;
+			list_data->icons = ci_icons;
+			list_data->icons = ci_bigicons;
 // // 			list_data->value = atof(elm_object_text_get(en_value));
 // 			list_data->value = ci_value;
 // 			list_data->factor = ci_factor;
@@ -89,6 +97,8 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 	{
 		list_data1->id = id_num;
 		list_data1->url = ci_url;
+		list_data1->icons = ci_icons;
+		list_data1->bigicons = ci_bigicons;
 // 		list_data1->unit = ci_unit;
 // 		list_data1->value = ci_value;
 // 		list_data1->factor = ci_factor;
@@ -168,7 +178,7 @@ void
 _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {	
 	Evas_Object *en_url, *en_unit, *en_value, *en_factor, *popup, *fr, *cs;
-   Evas_Object *o, *mainbox, *box_settings, *box_url, *box_value, *box_unit, *box_factor, *lbl;
+   Evas_Object *o, *mainbox, *box_settings, *box_url, *box_value, *box_unit, *box_factor, *lbl, *check_icons, *check_bigicons;
 	
 	Evas_Object *ly = obj;
 	Evas_Object *win = data;
@@ -227,6 +237,30 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 
 
    o = elm_separator_add(box_settings);
+   elm_separator_horizontal_set(o, EINA_TRUE);
+   elm_box_pack_end(box_settings, o);
+   evas_object_show(o);
+	
+	check_icons = elm_check_add(box_settings);
+	elm_object_text_set(check_icons, "Don't show images");
+   elm_check_state_set(check_icons, ci_icons);
+   E_ALIGN(check_icons, 0.0, 0.0);
+ 	E_WEIGHT(check_icons, EVAS_HINT_EXPAND, 0);
+	elm_box_pack_end(box_settings, check_icons);
+	evas_object_show(check_icons);
+   evas_object_data_set(mainbox, "check_icons", check_icons);
+	
+	check_bigicons = elm_check_add(box_settings);
+	elm_object_text_set(check_bigicons, "Don't show big images on mouse over");
+   elm_check_state_set(check_bigicons, ci_bigicons);
+   E_ALIGN(check_bigicons, 0.0, 0.0);
+ 	E_WEIGHT(check_bigicons, EVAS_HINT_EXPAND, 0);
+	elm_box_pack_end(box_settings, check_bigicons);
+	evas_object_show(check_bigicons);
+   evas_object_data_set(mainbox, "check_bigicons", check_bigicons);	
+
+	
+	o = elm_separator_add(box_settings);
    elm_separator_horizontal_set(o, EINA_TRUE);
    elm_box_pack_end(box_settings, o);
    evas_object_show(o);
