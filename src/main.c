@@ -355,6 +355,8 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
    box = elm_box_add(popup);
    elm_box_horizontal_set(box, EINA_FALSE);
 //    elm_win_resize_object_add(popup, box);
+	
+			elm_box_padding_set(box, 10, 0);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, 0);
    evas_object_show(box);
 		
@@ -373,16 +375,14 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 			if(i == 0)
 			{
 					lbl = elm_label_add(box);
-					snprintf(buf1, sizeof(buf1), "<a href=%s><bigger>%s</bigger><br>%s</a></a>", list_data->link, list_data->title, list_data->description);
+					snprintf(buf1, sizeof(buf1), "<bigger>%s</bigger><br><br><big>%s</big>", list_data->title, list_data->description);
 					elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
 					elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(400));
 					elm_object_text_set(lbl, buf1);
 					evas_object_size_hint_align_set(lbl, 0.5, 0.5);
 					elm_box_pack_end(box, lbl);
 					evas_object_show(lbl);
-					
-					evas_object_smart_callback_add(lbl, "anchor,clicked", _it_clicked, list_data->link);
-					
+										
 					o = elm_separator_add(box);
 					elm_separator_horizontal_set(o, EINA_TRUE);
 					elm_box_pack_end(box, o);
@@ -417,7 +417,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 					}
 					
 				   lbl = elm_label_add(boxh);
-					snprintf(buf1, sizeof(buf1), "<a href=%s><b>%s</b><br><br><custom align=left>%s</custom></a></a>", list_data->link, list_data->title, list_data->description);
+					snprintf(buf1, sizeof(buf1), "<a href=%s><b>%s</b><br>%s</a><br><br><custom align=right><small>%s</small></custom>", list_data->link, list_data->title, list_data->description, list_data->pubdate);
 					elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
 					elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(300));
 					elm_object_text_set(lbl, buf1);
@@ -425,6 +425,8 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 					elm_box_pack_end(boxh, lbl);
 					evas_object_show(lbl);
 					evas_object_smart_callback_add(ic, "clicked", _it_clicked, list_data->link);
+					
+					
 // 					evas_object_smart_callback_add(lbl, "anchor,clicked", _it_clicked, list_data->link);
 								
 			elm_box_pack_end(box, boxh);
@@ -688,6 +690,8 @@ parse_rss(void *data)
 				data_add->description = eina_stringshare_add(find_data(arr[i], "<description>", "</description>"));
 				
 				data_add->imagelink = eina_stringshare_add(find_data(arr[i], "<img src=\"", ".jpg\""));
+				
+				data_add->pubdate = eina_stringshare_add(find_data(arr[i], "<pubDate>", "</pubDate>"));
 				
 // 		printf("TITLE: %s\n", find_data(arr[i], "<title>", "</title>"));
 // 		printf("LINK: %s\n", find_data(arr[i], "<link>", "</link>"));
