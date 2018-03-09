@@ -336,8 +336,8 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	if(eina_list_count(feed_data_list) == 0)
 		return;
 	
-	if(!strcmp(edje_object_part_state_get(obj, "reload", NULL), "visible"))
-		return;
+// 	if(!strcmp(edje_object_part_state_get(obj, "reload", NULL), "visible"))
+// 		return;
 	
    if(popup)
      {
