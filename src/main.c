@@ -349,7 +349,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 
 	
    popup = elm_win_add(win, "Popup",  ELM_WIN_POPUP_MENU);
-//    elm_win_alpha_set(popup, 1);
+   elm_win_alpha_set(popup, 1);
 	
 
 	
