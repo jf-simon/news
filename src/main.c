@@ -10,6 +10,7 @@ static    Evas_Object *popup = NULL;
 // static E_Gadget_Site_Anchor ganchor;
 
 	Eina_Strbuf *feeddata = NULL;
+	const char* lastcheck;
 
 typedef struct {
         Eina_List   *configlist_eet;
@@ -348,7 +349,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 
 	
    popup = elm_win_add(win, "Popup",  ELM_WIN_POPUP_MENU);
-   elm_win_alpha_set(popup, 1);
+//    elm_win_alpha_set(popup, 1);
 	
 
 	
@@ -375,7 +376,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 			if(i == 0)
 			{
 					lbl = elm_label_add(box);
-					snprintf(buf1, sizeof(buf1), "<bigger>%s</bigger><br><br><big>%s</big>", list_data->title, list_data->description);
+					snprintf(buf1, sizeof(buf1), "<bigger>%s</bigger><br><br><big>%s</big><br><br><small>Last check: %s</small>", list_data->title, list_data->description, lastcheck);
 					elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
 					elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(400));
 					elm_object_text_set(lbl, buf1);
@@ -631,12 +632,62 @@ parse_rdf(void *data)
 }
 */
 
-
 char*
 find_data(char *string, char *start1, char *end1)
 {
-// 	char *string1 = malloc(strlen(string) * sizeof(char));
 	char *string1 = calloc(strlen(string)+1, sizeof(char));
+		
+
+	if((strstr(string, start1) == NULL) || (strstr(string, end1) == NULL))
+	{
+		return;
+	}
+	else
+	{
+		int start_len = strlen(start1);
+		
+		strncpy(string1, strstr(string, start1)+start_len, strstr(string, end1)-strstr(string, start1)-strlen(start1));
+	
+		string1[strlen(string1)] = '\0';
+
+		printf("STING1: %s\n", string1);
+		
+		int i;
+		char **arr;
+		
+		if(!strcmp(end1, ".jpg\" "))
+		{
+			printf("TEST: %s\n\n", string1);
+			return string1;
+		}
+		else
+		{
+			arr = eina_str_split(string1, ">", 2);
+		
+			printf("TEST: %s\n\n", arr[1]);
+			
+			return arr[1];
+			free(arr[0]);
+			free(arr);
+		}
+
+
+				
+	}
+	
+	
+	
+	
+	free(string1);
+}
+
+
+/* //TUT
+char*
+find_data(char *string, char *start1, char *end1)
+{
+	char *string1 = calloc(strlen(string)+1, sizeof(char));
+	char *string2= calloc(strlen(string)+1, sizeof(char));
 		
 	int start_len = strlen(start1);
 
@@ -656,8 +707,8 @@ find_data(char *string, char *start1, char *end1)
 	
 // 	strstr(string1, ">");
 // 	string2 = strtok(string1, ">");
-// 	strncpy(string2, strstr(string1, "<")+1, end-start-start_len);
-// 	printf("NEU: %s\n", string1);
+// 	strncpy(string2, strstr(string1, "<")+1, strstr(string, end1)-strstr(string, start1)-strlen(start1));
+// 	printf("NEU: %s\n", string2);
 	
 // 		printf("RETURN: %s\n", string1);
 	return string1;
@@ -665,7 +716,7 @@ find_data(char *string, char *start1, char *end1)
 	
 	free(string1);
 // 	free(string2);
-}
+}*/
 
 
 static void
@@ -683,20 +734,20 @@ parse_rss(void *data)
 		
 		Feed_Data *data_add = calloc(1, sizeof(Feed_Data));
 		
-				data_add->title = eina_stringshare_add(find_data(arr[i], "<title>", "</title>"));
+				data_add->title = eina_stringshare_add(find_data(arr[i], "<title", "</title>"));
 				
-				data_add->link = eina_stringshare_add(find_data(arr[i], "<link>", "</link>"));
+				data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "</link>"));
 				
-				data_add->description = eina_stringshare_add(find_data(arr[i], "<description>", "</description>"));
+				data_add->description = eina_stringshare_add(find_data(arr[i], "<description", "</description>"));
 				
-				data_add->imagelink = eina_stringshare_add(find_data(arr[i], "<img src=\"", ".jpg\""));
+				data_add->imagelink = eina_stringshare_add(find_data(arr[i], "<img src=\"", ".jpg\" "));
 				
-				data_add->pubdate = eina_stringshare_add(find_data(arr[i], "<pubDate>", "</pubDate>"));
-				
-// 		printf("TITLE: %s\n", find_data(arr[i], "<title>", "</title>"));
+				data_add->pubdate = eina_stringshare_add(find_data(arr[i], "<pubDate", "</pubDate>"));
+// 				
+// 		printf("TITLE: %s\n", data_add->title);
 // 		printf("LINK: %s\n", find_data(arr[i], "<link>", "</link>"));
 // 		printf("DESC: %s\n\n", find_data(arr[i], "<description>", "</description>"));
-// 		printf("IMAGE LINK: %s.jpg\n\n", find_data(arr[i], "<img src=\"", ".jpg\""));
+// 		printf("IMAGE LINK: %s\n\n", data_add->imagelink);
 		
 			feed_data_list = eina_list_append(feed_data_list, data_add);
 	}
@@ -728,14 +779,17 @@ parse_atom(void *data)
 				
 				data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "/>"));
 				
-				data_add->description = eina_stringshare_add(find_data(arr[i], "<summary>", "</summary>"));
+				data_add->description = eina_stringshare_add(find_data(arr[i], "<summary", "</summary>"));
 				
-				data_add->pubdate = eina_stringshare_add(find_data(arr[i], "<updated>", "</updated>"));
+				data_add->pubdate = eina_stringshare_add(find_data(arr[i], "<updated", "</updated>"));
 				
-				printf("TITLE: %s\n", find_data(arr[i], "<title", "</title>"));
-				printf("LINK: %s\n", find_data(arr[i], "<link>", "/>"));
-				printf("DESC: %s\n", find_data(arr[i], "<summary>", "</summary>"));
-				printf("PUBDATE: %s\n\n", find_data(arr[i], "<updated>", "</updated>"));
+// 				data_add->subtitle = eina_stringshare_add(find_data(arr[i], "<subtitle", "</subtitle>"));
+				
+				
+// 				printf("TITLE: %s\n", find_data(arr[i], "<title", "</title>"));
+// 				printf("LINK: %s\n", find_data(arr[i], "<link>", "/>"));
+// 				printf("DESC: %s\n", find_data(arr[i], "<summary>", "</summary>"));
+// 				printf("PUBDATE: %s\n\n", find_data(arr[i], "<updated>", "</updated>"));
 		
 			feed_data_list = eina_list_append(feed_data_list, data_add);
 	}
@@ -789,97 +843,6 @@ parse_rdf(void *data)
 }
 
 
-
-/*
-static void
-parse_rss(Eina_Strbuf *data)
-{
-	Eina_Strbuf *mybuffer = data;
-	
-// 	printf("%s : %ld TEST\n", eina_strbuf_string_get(mybuffer), eina_strbuf_length_get(mybuffer));
-	
-	char **arr, **arr1;
-	int i, i1, found = 0;
-	int x = 0;
-	const char *str;
-	str = malloc(sizeof(char) * 1024);
-
-   arr = eina_str_split(eina_strbuf_string_get(mybuffer), "<item>", 0);
-	
-   for (i = 0; arr[i]; i++)
-	{
-// 		printf("ARRAY\n");
-		Feed_Data *data_add = calloc(1, sizeof(Feed_Data));
-		arr1 = eina_str_split(arr[i], "\n", 0);
-		
-	   for (i1 = 0; arr1[i1]; i1++)
-		{
-// 		 printf("ARRAY 1 %s\n", arr1[i1]);
-			if(eina_str_has_prefix(arr1[i1], "<title>"))
-			{
-				
-				stringReplace("<title>", "", arr1[i1]);
-				stringReplace("</title>", "", arr1[i1]);
-				printf("TITLE: %s\n", arr1[i1]);
-				
-				data_add->title = eina_stringshare_add(arr1[i1]);
-				found = 1;
-			}
-			if(eina_str_has_prefix(arr1[i1], "<link>"))
-			{				
-				stringReplace("<link>", "", arr1[i1]);
-				stringReplace("</link>", "", arr1[i1]);
-// 				printf("Link: %s\n\n", arr1[i1]);
-				data_add->link = eina_stringshare_add(arr1[i1]);
-			}
-			if(eina_str_has_prefix(arr1[i1], "<description>"))
-			{				
-				stringReplace("<description>", "", arr1[i1]);
-				stringReplace("</description>", "", arr1[i1]);
-// 				printf("Link: %s\n\n", arr1[i1]);
-				data_add->description = eina_stringshare_add(arr1[i1]);
-			}
-			if(eina_str_has_prefix(arr1[i1], "<pubDate>"))
-			{				
-				stringReplace("<pubDate>", "", arr1[i1]);
-				stringReplace("</pubDate>", "", arr1[i1]);
-// 				printf("Link: %s\n\n", arr1[i1]);
-				data_add->pubdate = eina_stringshare_add(arr1[i1]);
-			}
-// 			if(eina_str_has_prefix(arr1[i1], "<img src=""))
-// 			{				
-// 				stringReplace("<img src="", "", arr1[i1]);
-// 				stringReplace("</pubDate>", "", arr1[i1]);
-// // 				printf("Link: %s\n\n", arr1[i1]);
-// 				data_add->image = eina_stringshare_add(arr1[i1]);
-// 			}
-			
-		}
-		
-		
-		if(found == 1)
-		{
-			feed_data_list = eina_list_append(feed_data_list, data_add);
-			found = 0;
-		}
-		
-		free(arr1[0]);
-		free(arr1);
-	}
-	
-   free(arr[0]);
-   free(arr);
-	
-// 	   if(popup)
-//      {
-//         evas_object_del(popup);
-//         popup = NULL;
-// //         return;
-//      }
-// 		eina_strbuf_free(feeddata);
-}
-*/
-
 static Eina_Bool
 _url_data_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 {
@@ -912,8 +875,8 @@ _url_data_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
 	{
 		printf("ATOM FEED\n");
 		parse_atom(feeddata);
-	}
-	*/
+	}*/
+
 // 	printf("%s : %ld\n", eina_strbuf_string_get(feeddata), eina_strbuf_length_get(feeddata));
 //    int i;
 //    for (i = 0; i < url_data->size; i++)
@@ -943,7 +906,17 @@ _data_complete(void *data EINA_UNUSED, int type, void *event_info)
 	else
 		edje_object_signal_emit(edje_obj, "reload", "failed");
 	
+	struct tm *newtime;
+	time_t long_time;
+
+	time( &long_time );
+	newtime = localtime( &long_time );
 	
+	char buf[PATH_MAX];
+
+	snprintf(buf, sizeof(buf), "%d.%d.%d | %d:%d:%d",newtime->tm_mday, newtime->tm_mon+1, newtime->tm_year+1900, newtime->tm_hour, newtime->tm_min, newtime->tm_sec);
+	lastcheck = eina_stringshare_add(buf);
+// 
 // 	printf("%s : %ld COMPLETE\n", eina_strbuf_string_get(feeddata), eina_strbuf_length_get(feeddata));
 	
 	
