@@ -1,16 +1,17 @@
 #include "news.h"
 
 Evas_Object *win = NULL;
-// static    Evas_Object *popup = NULL;
 Evas_Object *ly = NULL;
 static    Evas_Object *popup = NULL;
 
 	Ecore_Con_Url *ec_url = NULL;
-// static E_Gadget_Site_Orient gorient;
-// static E_Gadget_Site_Anchor ganchor;
 
 	Eina_Strbuf *feeddata = NULL;
 	const char* lastcheck;
+	
+	const char* feeddata1;
+	
+	Eina_List *feed_data_list = NULL;
 
 typedef struct {
         Eina_List   *configlist_eet;
@@ -39,7 +40,6 @@ typedef struct {
    const char *imagelink;
 } Feed_Data;
 
-Eina_List *feed_data_list = NULL;
 
 static const char MY_CONF_FILE_ENTRY[] = "config";
 
@@ -188,51 +188,22 @@ _delete_id(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    printf("DEL ID\n");
     _save_eet();
 }*/
-
-static
-Eina_Bool _gadget_exit(void *data, int type, void *event_data) 
+static Eina_Bool 
+_gadget_exit(void *data, int type, void *event_data) 
 {
-	
-	Eina_List *l;
-	Config_Item *list_data;
+   char buf[4096];
 	Ecore_Event_Signal_User *user = event_data;
 	
 	if ( user->number == 2) 
 	{
-
-   EINA_LIST_FOREACH(configlist, l, list_data)
-   {
-	   if(list_data->id == id_num)
-		{
-         configlist = eina_list_remove(configlist, list_data);
-		}
-   }
-   printf("DEL ID\n");
-	
-	_save_eet();
-		
+		const char *profile;
+		profile = elm_config_profile_get();
+		  
+		snprintf(buf, sizeof(buf), "%s/news/news_gadget_%d_%s.cfg", efreet_config_home_get(), id_num, profile);
+		ecore_file_unlink(buf);	
 	} 
 	return EINA_TRUE;
 }
-
-/*
-static void
-orient_change(void *data, Evas_Object *obj, void *event_info)
-{
-// 	Evas_Object *ly = data;
-   gorient = (uintptr_t)event_info;
-//    update_anchor_orient(data, gorient, ganchor, obj);
-}
-
-static void
-anchor_change(void *data, Evas_Object *obj, void *event_info)
-{
-// 	Evas_Object *ly = data;
-   ganchor = (uintptr_t)event_info;
-//    update_anchor_orient(data, gorient, ganchor, obj);
-}
-*/
-
 
 
 void
@@ -262,54 +233,30 @@ delete_popup_edje(void *data, Evas_Object *obj EINA_UNUSED, const char *emission
      }
 }*/
 
-/*
-static void
-_it_clicked(void *data EINA_UNUSED, Evas_Object *li,
-                 void *event_info EINA_UNUSED)
-{
-   Elm_Object_Item *lit = elm_list_selected_item_get(li);
-   printf("Item clicked. %s is selected\n", elm_object_item_text_get(lit));
-}*/
-
 
 static void
 _it_clicked(void *data, Evas_Object *obj,
                  void *event_info EINA_UNUSED)
 {
    printf("item was clicked: %s\n", (char *)data);
-//    if (!data) return;
-   Evas_Object *li = obj;
-//    Evas_Object *lb;
-//    char str[128];
-// 
-//    Elm_Object_Item *lit = elm_list_selected_item_get(li);
-//    if (!lit) return;
-//    sprintf(str, "%s is selected", elm_object_item_text_get(lit));
-// 
-//    lb = evas_object_data_get(li, "label");
-//    elm_object_text_set(lb, str);
-// 	
-	
-
+   if (!data) return;
+//    Evas_Object *li = obj;
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "%s", (char *)data);
    evas_object_smart_callback_call(win, "gadget_open_uri", (char *)data);
 }
 
 
-
 static void
-_reload_start(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+_reload_start(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
-   Evas_Object *win = data;
-	
    if(popup)
      {
         evas_object_del(popup);
         popup = NULL;
      }
-   _get_data();
 
+   _get_data();
 }
 
 
@@ -332,7 +279,7 @@ static void
 show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    Evas_Object *win = data;
-	Evas_Object *box, *lbl, *li, *scr, *bt, *scroller;
+	Evas_Object *box, *lbl, *bt, *scroller;
 	
 	if(eina_list_count(feed_data_list) == 0)
 		return;
@@ -355,9 +302,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	
    box = elm_box_add(popup);
    elm_box_horizontal_set(box, EINA_FALSE);
-//    elm_win_resize_object_add(popup, box);
-	
-			elm_box_padding_set(box, 10, 0);
+	elm_box_padding_set(box, 10, 0);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, 0);
    evas_object_show(box);
 		
@@ -365,8 +310,6 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	char buf1[PATH_MAX];
 	char buf[PATH_MAX];
 	
-	
-		printf("LIST COUNT: %i\n", eina_list_count(feed_data_list));
 	Feed_Data *list_data;
 	int i = 0;
 	Eina_List *l;
@@ -383,7 +326,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 					evas_object_size_hint_align_set(lbl, 0.5, 0.5);
 					elm_box_pack_end(box, lbl);
 					evas_object_show(lbl);
-										
+
 					o = elm_separator_add(box);
 					elm_separator_horizontal_set(o, EINA_TRUE);
 					elm_box_pack_end(box, o);
@@ -398,18 +341,19 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 			
 					if(!ci_icons)
 					{
-					ic = elm_icon_add(boxh);
-					if(list_data->imagelink == NULL)
-						snprintf(buf, sizeof(buf), "/home/simon/CODING/news/data/themes/images/news.png");
-					else
-						snprintf(buf, sizeof(buf), "%s.jpg", list_data->imagelink);
-					
-					elm_image_file_set(ic, buf, NULL);
-					evas_object_size_hint_min_set(ic, 150, 56);
-					evas_object_size_hint_weight_set(ic, 0, EVAS_HINT_EXPAND);
-					evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
-					elm_box_pack_end(boxh, ic);
-					evas_object_show(ic);
+						ic = elm_icon_add(boxh);
+						
+						if(list_data->imagelink == NULL)
+							snprintf(buf, sizeof(buf), "/home/simon/CODING/news/data/themes/images/news.png");
+						else
+							snprintf(buf, sizeof(buf), "%s.jpg", list_data->imagelink);
+						
+						elm_image_file_set(ic, buf, NULL);
+						evas_object_size_hint_min_set(ic, 150, 56);
+						evas_object_size_hint_weight_set(ic, 0, EVAS_HINT_EXPAND);
+						evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
+						elm_box_pack_end(boxh, ic);
+						evas_object_show(ic);
 					
 						if(!ci_bigicons)
 						{
@@ -427,7 +371,6 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 					evas_object_show(lbl);
 					evas_object_smart_callback_add(ic, "clicked", _it_clicked, list_data->link);
 					
-					
 // 					evas_object_smart_callback_add(lbl, "anchor,clicked", _it_clicked, list_data->link);
 								
 			elm_box_pack_end(box, boxh);
@@ -442,10 +385,6 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 		
 			i++;
 	}
-	
-	///////////////////
-
-
 	
 //    bt = elm_button_add(box);
 //    elm_object_text_set(bt, "refresh");
@@ -511,6 +450,7 @@ void stringReplace(char *search, char *replace, char *string)
 	return;
 }
 
+
 void remove_space(char *src)
 {
    char *dst;
@@ -527,120 +467,15 @@ void remove_space(char *src)
    return;
 }
 
-/*
-static void
-parse_rdf(void *data)
-{
-	Eina_Strbuf *mybuffer = data;
-	
-// 	printf("%s : %ld TEST\n", eina_strbuf_string_get(mybuffer), eina_strbuf_length_get(mybuffer));
-	
-	char **arr, **arr1;
-	int i, i1, found = 0;
-	int x = 0;
-	const char *str;
-	str = malloc(sizeof(char) * 1024);
-
-								
-   arr = eina_str_split(eina_strbuf_string_get(mybuffer), "<item>", 0);
-	
-   for (i = 0; arr[i]; i++)
-	{
-		
-		Feed_Data *data_add = calloc(1, sizeof(Feed_Data));
-		arr1 = eina_str_split(arr[i], "\n", 0);
-		
-	   for (i1 = 0; arr1[i1]; i1++)
-		{
-			
-			
-			printf("Link: %s\n", arr1[i1]);
-// 		if(strstr((char *)eina_strbuf_string_get(mybuffer), "<rss version=\"2.0\"") != 0)
-			if(strstr(arr1[i1], "<title>"))
-			{				
-// 			remove_space(arr1[i1]);
-				stringReplace("<title>", "", arr1[i1]);
-				stringReplace("</title>", "", arr1[i1]);
-				printf("TITLE: %s\n", arr1[i1]);
-				
-				data_add->title = eina_stringshare_add(arr1[i1]);
-				found = 1;
-			}
-			else if(strstr(arr1[i1], "<link>"))
-			{				
-				stringReplace("<link>", "", arr1[i1]);
-				stringReplace("</link>", "", arr1[i1]);
-// 				printf("Link: %s\n\n", arr1[i1]);
-				data_add->link = eina_stringshare_add(arr1[i1]);
-			}
-			else if(strstr(arr1[i1], "<description>"))
-			{				
-				stringReplace("<description>", "", arr1[i1]);
-				stringReplace("</description>", "", arr1[i1]);
-// 				printf("Link: %s\n\n", arr1[i1]);
-				data_add->description = eina_stringshare_add(arr1[i1]);
-			}
-// 			else if(strstr(arr1[i1], "<pubDate>"))
-// 			{				
-// 				stringReplace("<pubDate>", "", arr1[i1]);
-// 				stringReplace("</pubDate>", "", arr1[i1]);
-// // 				printf("Link: %s\n\n", arr1[i1]);
-// 				data_add->pubdate = eina_stringshare_add(arr1[i1]);
-// 			}
-// 			else if(eina_str_has_prefix(arr1[i1], "<content:encoded>"))
-// 			{
-// // 				char buffer[PATH_MAX];
-// 				int x = i1;
-// 				for(x; arr1[x]; x++)
-// 				{
-// 					if(eina_str_has_prefix(arr1[x], "]]>"))
-// 						break;
-// 					
-// 					printf("STRING CAT: %s\n", arr1[x]);
-// // 					strcat(buffer, arr1[x]);
-// 				
-// 				}
-// 				
-// 				printf("\n\n");
-// 			}
-
-				
-			
-		}
-		
-		
-		if(found == 1)
-		{
-			feed_data_list = eina_list_append(feed_data_list, data_add);
-			found = 0;
-		}
-		
-		free(arr1[0]);
-		free(arr1);
-	}
-	
-   free(arr[0]);
-   free(arr);
-	
-	   if(popup)
-     {
-        evas_object_del(popup);
-        popup = NULL;
-//         return;
-     }
-	
-}
-*/
 
 char*
 find_data(char *string, char *start1, char *end1)
 {
 	char *string1 = calloc(strlen(string)+1, sizeof(char));
 		
-
 	if((strstr(string, start1) == NULL) || (strstr(string, end1) == NULL))
 	{
-		return;
+		return 0;
 	}
 	else
 	{
@@ -650,21 +485,20 @@ find_data(char *string, char *start1, char *end1)
 	
 		string1[strlen(string1)] = '\0';
 
-		printf("STING1: %s\n", string1);
-		
-		int i;
+// 		printf("STING1: %s\n", string1);
+
 		char **arr;
 		
 		if(!strcmp(end1, ".jpg\" "))
 		{
-			printf("TEST: %s\n\n", string1);
+// 			printf("TEST: %s\n\n", string1);
 			return string1;
 		}
 		else
 		{
 			arr = eina_str_split(string1, ">", 2);
 		
-			printf("TEST: %s\n\n", arr[1]);
+// 			printf("TEST: %s\n\n", arr[1]);
 			
 			return arr[1];
 			free(arr[0]);
@@ -674,10 +508,6 @@ find_data(char *string, char *start1, char *end1)
 
 				
 	}
-	
-	
-	
-	
 	free(string1);
 }
 
@@ -720,49 +550,48 @@ find_data(char *string, char *start1, char *end1)
 
 
 static void
-parse_rss(void *data)
+parse_rss(Eina_Strbuf *mybuffer)
 {	
-	Eina_Strbuf *mybuffer = data;
-
 	char **arr;
 	int i;
-
-   arr = eina_str_split(eina_strbuf_string_get(mybuffer), "<item>", 0);
-		
+	
+	arr = eina_str_split(eina_strbuf_string_get(mybuffer), "<item>", 0);
+	
+	if(arr == NULL)
+		return;
+	
    for (i = 0; arr[i]; i++)
 	{
-		
+// 		if(i == 0)
+// 		{
+// 			data_add->title = eina_stringshare_add(find_data(arr[i], "<lastBuildDate", "</lastBuildDate>"));
+// 		}
 		Feed_Data *data_add = calloc(1, sizeof(Feed_Data));
 		
-				data_add->title = eina_stringshare_add(find_data(arr[i], "<title", "</title>"));
-				
-				data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "</link>"));
-				
-				data_add->description = eina_stringshare_add(find_data(arr[i], "<description", "</description>"));
-				
-				data_add->imagelink = eina_stringshare_add(find_data(arr[i], "<img src=\"", ".jpg\" "));
-				
-				data_add->pubdate = eina_stringshare_add(find_data(arr[i], "<pubDate", "</pubDate>"));
-// 				
-// 		printf("TITLE: %s\n", data_add->title);
-// 		printf("LINK: %s\n", find_data(arr[i], "<link>", "</link>"));
-// 		printf("DESC: %s\n\n", find_data(arr[i], "<description>", "</description>"));
-// 		printf("IMAGE LINK: %s\n\n", data_add->imagelink);
-		
-			feed_data_list = eina_list_append(feed_data_list, data_add);
+		data_add->title = eina_stringshare_add(find_data(arr[i], "<title", "</title>"));
+
+		data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "</link>"));
+
+		data_add->description = eina_stringshare_add(find_data(arr[i], "<description", "</description>"));
+
+		data_add->imagelink = eina_stringshare_add(find_data(arr[i], "<img src=\"", ".jpg\" "));
+
+		data_add->pubdate = eina_stringshare_add(find_data(arr[i], "<pubDate", "</pubDate>"));
+
+		feed_data_list = eina_list_append(feed_data_list, data_add);
 	}
 	
 	free(arr[0]);
    free(arr);
+	
+// 	if(feed_data_list 1 != feed_data_list 1)
+// 		feed_data_list = feed_data_list_tmp;
 }
 
 
 static void
-parse_atom(void *data)
-{	
-	Eina_Strbuf *mybuffer = data;
-// 	const char *string = eina_strbuf_string_get(mybuffer);
-
+parse_atom(Eina_Strbuf *mybuffer)
+{
 	char **arr;
 	int i=0;
 
@@ -775,23 +604,18 @@ parse_atom(void *data)
 		
 		Feed_Data *data_add = calloc(1, sizeof(Feed_Data));
 		
-				data_add->title = eina_stringshare_add(find_data(arr[i], "<title", "</title>"));
+		data_add->title = eina_stringshare_add(find_data(arr[i], "<title", "</title>"));
 				
-				data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "/>"));
+		data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "/>"));
 				
-				data_add->description = eina_stringshare_add(find_data(arr[i], "<summary", "</summary>"));
+		data_add->description = eina_stringshare_add(find_data(arr[i], "<summary", "</summary>"));
 				
-				data_add->pubdate = eina_stringshare_add(find_data(arr[i], "<updated", "</updated>"));
+		data_add->pubdate = eina_stringshare_add(find_data(arr[i], "<updated", "</updated>"));
 				
 // 				data_add->subtitle = eina_stringshare_add(find_data(arr[i], "<subtitle", "</subtitle>"));
 				
-				
-// 				printf("TITLE: %s\n", find_data(arr[i], "<title", "</title>"));
-// 				printf("LINK: %s\n", find_data(arr[i], "<link>", "/>"));
-// 				printf("DESC: %s\n", find_data(arr[i], "<summary>", "</summary>"));
-// 				printf("PUBDATE: %s\n\n", find_data(arr[i], "<updated>", "</updated>"));
 		
-			feed_data_list = eina_list_append(feed_data_list, data_add);
+		feed_data_list = eina_list_append(feed_data_list, data_add);
 	}
 	
 	free(arr[0]);
@@ -800,11 +624,8 @@ parse_atom(void *data)
 
 
 static void
-parse_rdf(void *data)
-{	
-	Eina_Strbuf *mybuffer = data;
-// 	const char *string = eina_strbuf_string_get(mybuffer);
-
+parse_rdf(Eina_Strbuf *mybuffer)
+{
 	char **arr;
 	int i=0;
 
@@ -816,26 +637,14 @@ parse_rdf(void *data)
 	{
 		
 		Feed_Data *data_add = calloc(1, sizeof(Feed_Data));
-// 		strcat(item, arr[i]);
-// 		int len = strlen(arr[i]);
-// 		char item[len+6];
-// 		= "<item>";
-// 		item = "<item>";
 		
-// 		strncat(item, arr[i], len);
-// 		printf("TITLE%i: %s\n",i , item);
+		data_add->title = eina_stringshare_add(find_data(arr[i], "<title>", "</title>"));
+				
+		data_add->link = eina_stringshare_add(find_data(arr[i], "<link>", "</link>"));
+				
+		data_add->description = eina_stringshare_add(find_data(arr[i], "<description>", "</description>"));
 		
-				data_add->title = eina_stringshare_add(find_data(arr[i], "<title>", "</title>"));
-				
-				data_add->link = eina_stringshare_add(find_data(arr[i], "<link>", "</link>"));
-				
-				data_add->description = eina_stringshare_add(find_data(arr[i], "<description>", "</description>"));
-				
-		printf("TITLE: %s\n", find_data(arr[i], "<title>", "</title>"));
-		printf("LINK: %s\n", find_data(arr[i], "<link>", "</link>"));
-		printf("DESC: %s\n\n", find_data(arr[i], "<description>", "</description>"));
-		
-			feed_data_list = eina_list_append(feed_data_list, data_add);
+		feed_data_list = eina_list_append(feed_data_list, data_add);
 	}
 	
 	free(arr[0]);
@@ -844,56 +653,26 @@ parse_rdf(void *data)
 
 
 static Eina_Bool
-_url_data_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
+_url_data_cb(void *data, int type EINA_UNUSED, void *event_info)
 {
    Ecore_Con_Event_Url_Data *url_data = event_info;
-
-	feeddata = eina_strbuf_new();
 	
-// 	Eina_Strbuf *feeddata1 = NULL;
-// 	feeddata1 = eina_strbuf_new();
+// 	eina_strbuf_append_length(feeddata, ((const char*) &url_data->data[0]), url_data->size);
+	eina_strbuf_append_length(data, (const char*)url_data->data, url_data->size);
 	
-
-	eina_strbuf_append_length(feeddata, ((const char*) &url_data->data[0]), url_data->size);
-	
-// 	feeddata1 = feeddata;
-
-	parse_rss(feeddata);
-
-/*
-	if(strstr((char *)eina_strbuf_string_get(feeddata), "<rss") != 0)
-	{
-		printf("RSS FEED\n");
-		parse_rss(feeddata);
-	}
-	else if(strstr((char *)eina_strbuf_string_get(feeddata), "<rdf:RDF") != 0)
-	{
-		printf("RDF FEED\n");
-		parse_rdf(feeddata);
-	}
-	else if(strstr((char *)eina_strbuf_string_get(feeddata), "<feed xmlns=\"http://www.w3.org/2005/Atom\">") != 0)
-	{
-		printf("ATOM FEED\n");
-		parse_atom(feeddata);
-	}*/
-
-// 	printf("%s : %ld\n", eina_strbuf_string_get(feeddata), eina_strbuf_length_get(feeddata));
-//    int i;
-//    for (i = 0; i < url_data->size; i++)
-//      printf("%c", url_data->data[i]);
-	
-// 	eina_strbuf_reset(feeddata);
+	//BINBUF FÜR BILDER ZUM CACHEN
+// 	eina_binbuf_append_length(data, url_data->data, url_data->size);
 	
    return ECORE_CALLBACK_PASS_ON;
 }
 
 
 static Eina_Bool
-_data_complete(void *data EINA_UNUSED, int type, void *event_info)
+_data_complete(void *data, int type, void *event_info)
 {
 	
+	
 	Ecore_Con_Event_Url_Complete *url_complete = event_info;
-
 
 	printf("COMPLETE\n");
 	
@@ -902,9 +681,29 @@ _data_complete(void *data EINA_UNUSED, int type, void *event_info)
 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
 	
 	if(url_complete->status >= 200 && url_complete->status <= 226)
+	{
 		edje_object_signal_emit(edje_obj, "reload", "default");
+		
+			if(strstr((char *)eina_strbuf_string_get(data), "<rss") != 0)
+			{
+				printf("RSS FEED\n");
+				parse_rss(data);
+			}
+			else if(strstr((char *)eina_strbuf_string_get(data), "<rdf:RDF") != 0)
+			{
+				printf("RDF FEED\n");
+				parse_rdf(data);
+			}
+			else if(strstr((char *)eina_strbuf_string_get(data), "<feed xmlns=\"http://www.w3.org/2005/Atom\">") != 0)
+			{
+				printf("ATOM FEED\n");
+				parse_atom(data);
+			}
+		
+	}
 	else
 		edje_object_signal_emit(edje_obj, "reload", "failed");
+
 	
 	struct tm *newtime;
 	time_t long_time;
@@ -916,31 +715,7 @@ _data_complete(void *data EINA_UNUSED, int type, void *event_info)
 
 	snprintf(buf, sizeof(buf), "%d.%d.%d | %d:%d:%d",newtime->tm_mday, newtime->tm_mon+1, newtime->tm_year+1900, newtime->tm_hour, newtime->tm_min, newtime->tm_sec);
 	lastcheck = eina_stringshare_add(buf);
-// 
-// 	printf("%s : %ld COMPLETE\n", eina_strbuf_string_get(feeddata), eina_strbuf_length_get(feeddata));
-	
-	
-// 			parse_rss(feeddata);
-/*
-	if(strstr((char *)eina_strbuf_string_get(feeddata), "<rss") != 0)
-	{
-// 		printf("RSS FEED:%s\n", eina_strbuf_string_get(feeddata));
-		parse_rss(feeddata);
-// 		eina_list_free(feed_data_list);
-	}
-	else	if(strstr((char *)eina_strbuf_string_get(feeddata), "<rdf:RDF") != 0)
-	{
-// 		printf("RDF FEED:%s\n", eina_strbuf_string_get(feeddata));
-		parse_rdf(feeddata);
-	}
-	else if(strstr((char *)eina_strbuf_string_get(feeddata), "<feed xmlns=\"http://www.w3.org/2005/Atom\">") != 0)
-	{
-// 		printf("ATOM FEED\n");
-		parse_atom(feeddata);
-	}*/
 
-//    ecore_con_url_free(d->url);
-//    eina_strbuf_free(feeddata);
    return ECORE_CALLBACK_DONE;
 }
 
@@ -948,11 +723,13 @@ _data_complete(void *data EINA_UNUSED, int type, void *event_info)
 void
 _get_data()
 {
-	Eina_Bool r;
-					
-   ecore_con_init();
-   ecore_con_url_init();
+	Eina_Strbuf *test;
+	test = eina_strbuf_new();
 	
+	Eina_Bool r;
+	
+	
+	printf("GET DATA\n");
 	
 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
 	edje_object_signal_emit(edje_obj, "reload", "visible");
@@ -962,8 +739,8 @@ _get_data()
 	
 	ec_url = ecore_con_url_custom_new(ci_url, "GET");
 	
-	ecore_event_handler_add(ECORE_CON_EVENT_URL_DATA, _url_data_cb, NULL);
-   ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _data_complete, NULL);
+	ecore_event_handler_add(ECORE_CON_EVENT_URL_DATA, _url_data_cb, test);
+   ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _data_complete, test);
 	ecore_con_url_additional_header_add(ec_url, "User-Agent", "Enlightenment News Gadget");
 
 	r = ecore_con_url_get(ec_url);
@@ -976,12 +753,15 @@ _get_data()
 	else
 	{
 		printf("free: \n");
+		printf("LIST COUNT BEFOR: %i\n", eina_list_count(feed_data_list));
 		
-		   Feed_Data *o;
-			EINA_LIST_FREE(feed_data_list, o);
-			free(o);
-			
-			feed_data_list = NULL;
+		Feed_Data *p;
+		EINA_LIST_FREE(feed_data_list, p)
+		{ 
+			free(p); 
+		}
+
+		printf("LIST COUNT AFTER: %i\n", eina_list_count(feed_data_list));
 	}
 	
 	
@@ -993,6 +773,9 @@ _get_data()
 
 int elm_main(int argc, char *argv[])
 {
+	ecore_con_init();
+   ecore_con_url_init();
+	
    char buf[PATH_MAX];
 //    char buf2[PATH_MAX];
 //    int gadget = 0;
@@ -1000,8 +783,7 @@ int elm_main(int argc, char *argv[])
 	
 	Config_Item *config;
 	config = calloc(1, sizeof(Config_Item));
-		
-		
+
 	elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
  
    if (getenv("E_GADGET_ID"))
@@ -1041,16 +823,12 @@ int elm_main(int argc, char *argv[])
 	
 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
 	
-// 	evas_object_smart_callback_add(win, "gadget_site_orient", orient_change, ly);
-//    evas_object_smart_callback_add(win, "gadget_site_anchor", anchor_change, ly);
    evas_object_smart_callback_add(win, "gadget_configure", _settings_1, edje_obj);
 	
    edje_object_signal_callback_add(ly, "show_popup", "show_popup", show_popup, win);
    edje_object_signal_callback_add(ly, "reload", "reload", _reload_start, win);
-//    edje_object_signal_callback_add(ly, "show_popup", "show_popup", _get_data, NULL);
 	
 //    edje_object_signal_callback_add(ly, "delete_popup", "delete_popup", delete_popup_edje, win);
-//    evas_object_smart_callback_add(win, "gadget_removed", _delete_id, NULL);
 	ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER, _gadget_exit, NULL);
 	
 	
@@ -1060,7 +838,6 @@ int elm_main(int argc, char *argv[])
 	
 // 	_set_content(edje_obj, NULL, NULL, NULL);
 	_get_data();
-
 	_save_eet();
   //run app RUN!
   elm_run();
@@ -1068,7 +845,6 @@ int elm_main(int argc, char *argv[])
 	ecore_con_url_free(ec_url);
    ecore_con_url_shutdown();
    ecore_con_shutdown();
-	eina_list_free(feed_data_list);
   //shutdown!
 //         _my_conf_descriptor_shutdown();
   return 0;
