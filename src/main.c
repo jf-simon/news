@@ -8,9 +8,6 @@ static    Evas_Object *popup = NULL;
 
 	Eina_Strbuf *feeddata = NULL;
 	const char* lastcheck;
-	
-	const char* feeddata1;
-	
 	Eina_List *feed_data_list = NULL;
 
 typedef struct {
@@ -171,23 +168,7 @@ _my_conf_descriptor_shutdown(void)
     eet_data_descriptor_free(_my_conf_descriptor);
 }*/
 
-/*
-static void
-_delete_id(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-	Eina_List *l;
-	Config_Item *list_data;
 
-   EINA_LIST_FOREACH(configlist, l, list_data)
-   {
-	   if(list_data->id == id_num)
-		{
-         configlist = eina_list_remove(configlist, list_data);
-		}
-   }
-   printf("DEL ID\n");
-    _save_eet();
-}*/
 static Eina_Bool 
 _gadget_exit(void *data, int type, void *event_data) 
 {
@@ -205,21 +186,6 @@ _gadget_exit(void *data, int type, void *event_data)
 	return EINA_TRUE;
 }
 
-
-void
-_set_content(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
-{
-// 	Evas_Object *ly = data;
-//    char buf[64];
-	
-//    edje_object_part_text_set(ly, "name", ci_name); 
-//    edje_object_part_text_set(ly, "unit", ci_unit);
-	
-	//TODO move calculation in seperat function
-// 	edje_object_part_text_set(ly, "value", buf);
-		
-	printf("set content\n");
-}
 
 /*
 static void
@@ -255,7 +221,6 @@ _reload_start(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *
         evas_object_del(popup);
         popup = NULL;
      }
-
    _get_data();
 }
 
@@ -265,12 +230,14 @@ _tt_icon(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *tt)
 {
    Evas_Object *ic = elm_icon_add(tt);
    char buf[PATH_MAX];
+	
    snprintf(buf, sizeof(buf), "%s.png", (const char*)data);
    elm_image_file_set(ic, buf, NULL);
    elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
    evas_object_resize(ic, 300, 169);
-			evas_object_size_hint_min_set(ic, 300, 169);
-   return ic;
+	evas_object_size_hint_min_set(ic, 300, 169);
+   
+	return ic;
 }
 
 
@@ -284,9 +251,6 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	if(eina_list_count(feed_data_list) == 0)
 		return;
 	
-// 	if(!strcmp(edje_object_part_state_get(obj, "reload", NULL), "visible"))
-// 		return;
-	
    if(popup)
      {
         evas_object_del(popup);
@@ -297,8 +261,6 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	
    popup = elm_win_add(win, "Popup",  ELM_WIN_POPUP_MENU);
    elm_win_alpha_set(popup, 1);
-	
-
 	
    box = elm_box_add(popup);
    elm_box_horizontal_set(box, EINA_FALSE);
@@ -504,49 +466,9 @@ find_data(char *string, char *start1, char *end1)
 			free(arr[0]);
 			free(arr);
 		}
-
-
-				
 	}
 	free(string1);
 }
-
-
-/* //TUT
-char*
-find_data(char *string, char *start1, char *end1)
-{
-	char *string1 = calloc(strlen(string)+1, sizeof(char));
-	char *string2= calloc(strlen(string)+1, sizeof(char));
-		
-	int start_len = strlen(start1);
-
-	if((strstr(string, start1) == NULL) || (strstr(string, end1) == NULL))
-	{
-		return;
-	}
-	else
-	{
-// 	printf("TEST: %i\n" ,strstr(string, end1)-strstr(string, start1)-start_len);
-	strncpy(string1, strstr(string, start1)+start_len, strstr(string, end1)-strstr(string, start1)-strlen(start1));
-	
-// 	printf("STRING 1 LENG: %i\n", (int)strlen(string1));
-	
-	string1[strlen(string1)] = '\0';
-// 	str[strLen - 1] = '\0';
-	
-// 	strstr(string1, ">");
-// 	string2 = strtok(string1, ">");
-// 	strncpy(string2, strstr(string1, "<")+1, strstr(string, end1)-strstr(string, start1)-strlen(start1));
-// 	printf("NEU: %s\n", string2);
-	
-// 		printf("RETURN: %s\n", string1);
-	return string1;
-	}
-	
-	free(string1);
-// 	free(string2);
-}*/
 
 
 static void
@@ -597,11 +519,8 @@ parse_atom(Eina_Strbuf *mybuffer)
 
    arr = eina_str_split(eina_strbuf_string_get(mybuffer), "<entry>", 0);
 	
-		
-		
    for (i = 0; arr[i]; i++)
 	{
-		
 		Feed_Data *data_add = calloc(1, sizeof(Feed_Data));
 		
 		data_add->title = eina_stringshare_add(find_data(arr[i], "<title", "</title>"));
@@ -614,7 +533,6 @@ parse_atom(Eina_Strbuf *mybuffer)
 				
 // 				data_add->subtitle = eina_stringshare_add(find_data(arr[i], "<subtitle", "</subtitle>"));
 				
-		
 		feed_data_list = eina_list_append(feed_data_list, data_add);
 	}
 	
@@ -631,8 +549,6 @@ parse_rdf(Eina_Strbuf *mybuffer)
 
    arr = eina_str_split(eina_strbuf_string_get(mybuffer), "<item>", 0);
 	
-		
-		
    for (i = 0; arr[i]; i++)
 	{
 		
@@ -655,7 +571,7 @@ parse_rdf(Eina_Strbuf *mybuffer)
 static Eina_Bool
 _url_data_cb(void *data, int type EINA_UNUSED, void *event_info)
 {
-   Ecore_Con_Event_Url_Data *url_data = event_info;
+	Ecore_Con_Event_Url_Data *url_data = event_info;
 	
 // 	eina_strbuf_append_length(feeddata, ((const char*) &url_data->data[0]), url_data->size);
 	eina_strbuf_append_length(data, (const char*)url_data->data, url_data->size);
@@ -670,8 +586,6 @@ _url_data_cb(void *data, int type EINA_UNUSED, void *event_info)
 static Eina_Bool
 _data_complete(void *data, int type, void *event_info)
 {
-	
-	
 	Ecore_Con_Event_Url_Complete *url_complete = event_info;
 
 	printf("COMPLETE\n");
@@ -681,7 +595,18 @@ _data_complete(void *data, int type, void *event_info)
 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
 	
 	if(url_complete->status >= 200 && url_complete->status <= 226)
-	{
+	{		
+		printf("free: \n");
+		printf("LIST COUNT BEFOR: %i\n", eina_list_count(feed_data_list));
+		
+		Feed_Data *p;
+		EINA_LIST_FREE(feed_data_list, p)
+		{ 
+			free(p); 
+		}
+
+		printf("LIST COUNT AFTER: %i\n", eina_list_count(feed_data_list));
+		
 		edje_object_signal_emit(edje_obj, "reload", "default");
 		
 			if(strstr((char *)eina_strbuf_string_get(data), "<rss") != 0)
@@ -728,7 +653,6 @@ _get_data()
 	
 	Eina_Bool r;
 	
-	
 	printf("GET DATA\n");
 	
 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
@@ -752,22 +676,8 @@ _get_data()
 	}
 	else
 	{
-		printf("free: \n");
-		printf("LIST COUNT BEFOR: %i\n", eina_list_count(feed_data_list));
-		
-		Feed_Data *p;
-		EINA_LIST_FREE(feed_data_list, p)
-		{ 
-			free(p); 
-		}
 
-		printf("LIST COUNT AFTER: %i\n", eina_list_count(feed_data_list));
 	}
-	
-	
-// 	ecore_con_url_free(ec_url);
-//    ecore_con_url_shutdown();
-//    ecore_con_shutdown();
 }
 
 
@@ -836,7 +746,6 @@ int elm_main(int argc, char *argv[])
 	
 	set_color(edje_obj);
 	
-// 	_set_content(edje_obj, NULL, NULL, NULL);
 	_get_data();
 	_save_eet();
   //run app RUN!

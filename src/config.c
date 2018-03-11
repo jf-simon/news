@@ -114,8 +114,9 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 
 	printf("SAVE FOUND: %i\n", found);
 _save_eet();
+
+//  refresh feed it url has changed
 // _get_data();
-_set_content(ly, NULL, NULL, NULL);
 }
 
 
