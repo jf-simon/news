@@ -248,6 +248,10 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
    Evas_Object *win = data;
 	Evas_Object *box, *lbl, *bt, *scroller;
 	
+	Feed_Data *list_data;
+	Eina_List *l;
+	int i = 0;
+		
 	if(eina_list_count(feed_data_list) == 0)
 		return;
 	
@@ -272,9 +276,6 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	char buf1[PATH_MAX];
 	char buf[PATH_MAX];
 	
-	Feed_Data *list_data;
-	int i = 0;
-	Eina_List *l;
 	EINA_LIST_FOREACH(feed_data_list, l, list_data)
    {
 		
@@ -506,6 +507,7 @@ parse_rss(Eina_Strbuf *mybuffer)
 	free(arr[0]);
    free(arr);
 	
+	eina_strbuf_reset(mybuffer);
 // 	if(feed_data_list 1 != feed_data_list 1)
 // 		feed_data_list = feed_data_list_tmp;
 }
@@ -538,6 +540,8 @@ parse_atom(Eina_Strbuf *mybuffer)
 	
 	free(arr[0]);
    free(arr);
+	
+	eina_strbuf_reset(mybuffer);
 }
 
 
@@ -565,6 +569,8 @@ parse_rdf(Eina_Strbuf *mybuffer)
 	
 	free(arr[0]);
    free(arr);
+	
+	eina_strbuf_reset(mybuffer);
 }
 
 
@@ -624,7 +630,6 @@ _data_complete(void *data, int type, void *event_info)
 				printf("ATOM FEED\n");
 				parse_atom(data);
 			}
-		
 	}
 	else
 		edje_object_signal_emit(edje_obj, "reload", "failed");
