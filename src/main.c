@@ -3,6 +3,7 @@
 Evas_Object *win = NULL;
 Evas_Object *ly = NULL;
 static    Evas_Object *popup = NULL;
+static    Ecore_Timer *timer = NULL;
 
 	Ecore_Con_Url *ec_url = NULL;
 
@@ -299,8 +300,11 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 			{
 		   boxh = elm_box_add(box);
 			elm_box_horizontal_set(boxh, EINA_TRUE);
-			elm_box_padding_set(boxh, 10, 0);
-			evas_object_show(boxh);
+			
+			if(!ci_icons)
+				elm_box_padding_set(boxh, 10, 0);
+			
+				evas_object_show(boxh);
 			
 					if(!ci_icons)
 					{
@@ -365,7 +369,12 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
    elm_scroller_propagate_events_set(scroller, EINA_TRUE);
    elm_scroller_page_relative_set(scroller, 0, 1);
 	
-	evas_object_resize(popup, 480, 600);
+	if(!ci_icons)
+		evas_object_resize(popup, 480, 600);
+	else
+		evas_object_resize(popup, 400, 600);
+		
+   
    evas_object_show(popup);
 }
 
@@ -753,6 +762,8 @@ int elm_main(int argc, char *argv[])
 	
 	_get_data();
 	_save_eet();
+	
+	timer = ecore_timer_add(600, _get_data, NULL);
   //run app RUN!
   elm_run();
   
