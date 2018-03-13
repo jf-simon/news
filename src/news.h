@@ -27,8 +27,7 @@ unsigned int  createHEX(int r, int g, int b, int a);
 void         _config_load();
 void         _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 void         _set_content(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED);
-
-	
+void 			_set_feed_icon();
 void 			_get_data();
 
 int        id_num;
@@ -38,8 +37,11 @@ Evas_Object *ly;
 
 int         ci_id;
 const char *ci_url;
+const char *ci_icon;
 Eina_Bool   ci_icons;
 Eina_Bool   ci_bigicons;
+Eina_Bool   ci_popupnew;
+double   	ci_refresh;
 int         ci_r;
 int         ci_g;
 int         ci_b;
@@ -49,13 +51,16 @@ Eina_List *configlist;
 
 
 typedef struct {
-        int         id;
-        const char *url;
-		  Eina_Bool   icons;
-		  Eina_Bool   bigicons;
-		  int         r;
-	     int         g;
-        int         b;
-        int         a;
+        int         	id;
+        const char 	*url;
+        const char 	*icon;
+		  Eina_Bool   	icons;
+		  Eina_Bool   	bigicons;
+		  Eina_Bool   	popupnew;
+		  double   	  	refresh;
+		  int         	r;
+	     int         	g;
+        int         	b;
+        int         	a;
 } Config_Item;
 
