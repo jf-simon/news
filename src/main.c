@@ -276,7 +276,7 @@ _tt_icon(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *tt)
 static void
 show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
-   Evas_Object *win = data;
+//    Evas_Object *win = data;
 	Evas_Object *box, *lbl, *bt, *scroller;
 	
 	Feed_Data *list_data;
@@ -563,6 +563,8 @@ parse_rss(Eina_Strbuf *mybuffer)
 	else
 	{
 		printf("TITLE UNGLEICH\n");
+		if(ci_popupnew == 1)
+			show_popup(NULL, NULL, NULL, NULL);
 		
 		edje_object_signal_emit(ly, "item_new", "new");
 			saved_title = eina_stringshare_add(list_values->title);

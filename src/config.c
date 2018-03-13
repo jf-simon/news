@@ -295,7 +295,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    evas_object_data_set(mainbox, "check_bigicons", check_bigicons);
 	
 	check_popupnew = elm_check_add(box_settings);
-	elm_object_disabled_set(check_popupnew, 1);
+// 	elm_object_disabled_set(check_popupnew, 1);
 	elm_object_text_set(check_popupnew, "Popup on new News");
    elm_check_state_set(check_popupnew, ci_popupnew);
    E_ALIGN(check_popupnew, 0.0, 0.0);
