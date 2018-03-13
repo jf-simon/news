@@ -9,7 +9,9 @@ static    Ecore_Timer *timer = NULL;
 
 	Eina_Strbuf *feeddata = NULL;
 	const char* lastcheck;
+	const char* saved_title = "";
 	Eina_List *feed_data_list = NULL;
+	Eina_List *feed_data_list_tmp = NULL;
 
 typedef struct {
         Eina_List   *configlist_eet;
@@ -19,8 +21,11 @@ typedef struct {
 typedef struct {
         int         id;
         const char *url;
+        const char *icon;
 		  Eina_Bool   icons;
 		  Eina_Bool   bigicons;
+		  Eina_Bool   popupnew;
+		  double      refresh;
 		  int         r;
 	     int         g;
         int         b;
@@ -64,8 +69,11 @@ _my_conf_descriptor_init(void)
 
     MY_CONF_SUB_ADD_BASIC(id, EET_T_INT);
     MY_CONF_SUB_ADD_BASIC(url, EET_T_STRING);
+    MY_CONF_SUB_ADD_BASIC(icon, EET_T_STRING);
     MY_CONF_SUB_ADD_BASIC(icons, EET_T_UCHAR);
     MY_CONF_SUB_ADD_BASIC(bigicons, EET_T_UCHAR);
+    MY_CONF_SUB_ADD_BASIC(popupnew, EET_T_UCHAR);
+    MY_CONF_SUB_ADD_BASIC(refresh, EET_T_DOUBLE);
 	 MY_CONF_SUB_ADD_BASIC(r, EET_T_INT);
     MY_CONF_SUB_ADD_BASIC(g, EET_T_INT);
     MY_CONF_SUB_ADD_BASIC(b, EET_T_INT);
@@ -200,6 +208,28 @@ delete_popup_edje(void *data, Evas_Object *obj EINA_UNUSED, const char *emission
      }
 }*/
 
+void
+_set_feed_icon()
+{
+	Evas_Object *edje_obj = elm_layout_edje_get(ly);
+	
+	Evas_Object *ic = elm_icon_add(win);
+		
+	if(strcmp(ci_icon, "") != 0 || ci_icon == NULL)
+	{
+		elm_image_file_set(ic, ci_icon, NULL);
+		elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
+		elm_object_part_content_set(ly, "image", ic);
+		edje_object_signal_emit(ly, "image_feed", "off");
+	}
+	else
+	{
+		elm_object_part_content_unset(ly, "image"); 
+		edje_object_signal_emit(ly, "image_feed", "on");
+		evas_object_hide(ic);
+	}
+}
+
 
 static void
 _it_clicked(void *data, Evas_Object *obj,
@@ -207,7 +237,7 @@ _it_clicked(void *data, Evas_Object *obj,
 {
    printf("item was clicked: %s\n", (char *)data);
    if (!data) return;
-//    Evas_Object *li = obj;
+	
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "%s", (char *)data);
    evas_object_smart_callback_call(win, "gadget_open_uri", (char *)data);
@@ -264,6 +294,8 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
      }
 
 	
+	edje_object_signal_emit(ly, "item_new", "default");
+		
    popup = elm_win_add(win, "Popup",  ELM_WIN_POPUP_MENU);
    elm_win_alpha_set(popup, 1);
 	
@@ -297,13 +329,14 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 					evas_object_show(o);
 			}
 			else
-			{
+			{				
 		   boxh = elm_box_add(box);
 			elm_box_horizontal_set(boxh, EINA_TRUE);
 			
 			if(!ci_icons)
+			{
 				elm_box_padding_set(boxh, 10, 0);
-			
+			}
 				evas_object_show(boxh);
 			
 					if(!ci_icons)
@@ -327,9 +360,9 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 							elm_object_tooltip_content_cb_set(ic, _tt_icon, list_data->imagelink, NULL);
 						}
 					}
-					
+// 					char* elm_entry_markup_to_utf8 	( 	const char *  	s	) 	
 				   lbl = elm_label_add(boxh);
-					snprintf(buf1, sizeof(buf1), "<a href=%s><b>%s</b><br>%s</a><br><br><custom align=right><small>%s</small></custom>", list_data->link, list_data->title, list_data->description, list_data->pubdate);
+					snprintf(buf1, sizeof(buf1), "<a href=%s><b>%s</b><br>%s</a><br><br><custom align=right><small>%s</small></custom>", list_data->link, list_data->title, elm_entry_markup_to_utf8(list_data->description), list_data->pubdate);
 					elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
 					elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(300));
 					elm_object_text_set(lbl, buf1);
@@ -493,14 +526,13 @@ parse_rss(Eina_Strbuf *mybuffer)
 		return;
 	
    for (i = 0; arr[i]; i++)
-	{
-// 		if(i == 0)
-// 		{
-// 			data_add->title = eina_stringshare_add(find_data(arr[i], "<lastBuildDate", "</lastBuildDate>"));
-// 		}
+	{		
 		Feed_Data *data_add = calloc(1, sizeof(Feed_Data));
 		
 		data_add->title = eina_stringshare_add(find_data(arr[i], "<title", "</title>"));
+		
+// 		if(i == 1)
+// 			saved_title = eina_stringshare_add(data_add->title);
 
 		data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "</link>"));
 
@@ -517,8 +549,24 @@ parse_rss(Eina_Strbuf *mybuffer)
    free(arr);
 	
 	eina_strbuf_reset(mybuffer);
-// 	if(feed_data_list 1 != feed_data_list 1)
-// 		feed_data_list = feed_data_list_tmp;
+	
+    Feed_Data *list_values = NULL;
+	 list_values = eina_list_nth(feed_data_list, 1);
+	 
+	 
+
+	if(strcmp(list_values->title, saved_title) == 0)
+	{
+		printf("TITLE GLEICH\n");
+		edje_object_signal_emit(ly, "item_new", "default");
+	}
+	else
+	{
+		printf("TITLE UNGLEICH\n");
+		
+		edje_object_signal_emit(ly, "item_new", "new");
+			saved_title = eina_stringshare_add(list_values->title);
+	}
 }
 
 
@@ -610,9 +658,7 @@ _data_complete(void *data, int type, void *event_info)
 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
 	
 	if(url_complete->status >= 200 && url_complete->status <= 226)
-	{		
-		printf("free: \n");
-		printf("LIST COUNT BEFOR: %i\n", eina_list_count(feed_data_list));
+	{
 		
 		Feed_Data *p;
 		EINA_LIST_FREE(feed_data_list, p)
@@ -652,7 +698,7 @@ _data_complete(void *data, int type, void *event_info)
 	
 	char buf[PATH_MAX];
 
-	snprintf(buf, sizeof(buf), "%d.%d.%d | %d:%d:%d",newtime->tm_mday, newtime->tm_mon+1, newtime->tm_year+1900, newtime->tm_hour, newtime->tm_min, newtime->tm_sec);
+	snprintf(buf, sizeof(buf), "%d.%d.%d | %02d:%02d:%02d",newtime->tm_mday, newtime->tm_mon+1, newtime->tm_year+1900, newtime->tm_hour, newtime->tm_min, newtime->tm_sec);
 	lastcheck = eina_stringshare_add(buf);
 
    return ECORE_CALLBACK_DONE;
@@ -692,6 +738,14 @@ _get_data()
 	{
 
 	}
+}
+
+static Eina_Bool
+_get_data_timer(void *data)
+{
+	_get_data();
+	
+	return ECORE_CALLBACK_RENEW;
 }
 
 
@@ -759,11 +813,11 @@ int elm_main(int argc, char *argv[])
 	_config_load(ly);							// load config data from eet to tmp vars
 	
 	set_color(edje_obj);
-	
+	_set_feed_icon();
 	_get_data();
 	_save_eet();
-	
-	timer = ecore_timer_add(600, _get_data, NULL);
+	printf("REFRESH: %0.2lf\n", ci_refresh*60);
+	timer = ecore_timer_add(ci_refresh*60, _get_data_timer, NULL);
   //run app RUN!
   elm_run();
   
