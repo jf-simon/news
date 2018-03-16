@@ -1,5 +1,9 @@
 # news
 
+Sceenshot:
+
+https://www.enlightenment.org/ss/display.php?image=e-5aab754017f9e7.56654015.jpg
+
 working:
 
 - atom/rss feeds
