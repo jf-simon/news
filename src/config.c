@@ -57,7 +57,8 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 	printf("SAVE\n");
 	
 	Evas_Object *mainbox = data;
-   Evas_Object *ly = evas_object_data_get(mainbox, "ly");
+//    Evas_Object *ly = evas_object_data_get(mainbox, "ly");
+	
 	
 	
 	if(data != NULL)
@@ -68,7 +69,15 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    Evas_Object *check_bigicons = evas_object_data_get(mainbox, "check_bigicons");
    Evas_Object *check_popupnew = evas_object_data_get(mainbox, "check_popupnew");
    Evas_Object *sl_refresh = evas_object_data_get(mainbox, "sl_refresh");
-//    Evas_Object *en_factor = evas_object_data_get(mainbox, "en_factor");
+	
+// 	if(strcmp(ci_icon, elm_object_text_get(en_icon)) != 0)
+		_set_feed_icon();
+		
+// 	if(strcmp(ci_url, elm_object_text_get(en_url)) != 0)
+// 	{
+// 		printf("changed\n");
+// 		 _get_data();
+// 	}
 	ci_url = elm_object_text_get(en_url);
 	ci_icon = elm_object_text_get(en_icon);
    ci_icons = elm_check_state_get(check_icons);
@@ -114,7 +123,6 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 
 	printf("SAVE FOUND: %0.2lf\n", ci_refresh);
 _save_eet();
-_set_feed_icon();
 
 _timer_reset();
 //  refresh feed it url has changed
@@ -181,7 +189,7 @@ void
 _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {	
 	Evas_Object *en_url, *en_keyword, *en_icon, *popup, *fr, *cs;
-   Evas_Object *o, *mainbox, *box_settings, *box_url, *box_icon, *box_value, *box_unit, *box_factor, *lbl, *check_icons, *check_bigicons, *check_popupnew, *check_popupkeyword, *sl_refresh;
+   Evas_Object *o, *mainbox, *box_settings, *box_url, *box_icon, *lbl, *check_icons, *check_bigicons, *check_popupnew, *check_popupkeyword, *sl_refresh;
 	
 	Evas_Object *ly = obj;
 	Evas_Object *win = data;
@@ -411,7 +419,6 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    elm_object_content_set(fr, box_settings);
    elm_box_pack_end(mainbox, fr);
 
-   evas_object_smart_callback_add(en_url, "changed", _config_save1, mainbox);
 	evas_object_smart_callback_add(cs, "changed", _colorselector_changed_cb, mainbox); 
 	
 

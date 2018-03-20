@@ -29,7 +29,7 @@ void         _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 void         _set_content(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED);
 void 			_set_feed_icon();
 void 			_get_data();
-void 			_timer_refresh();
+void 			_timer_reset();
 void 			stringReplace(char *search, char *replace, char *string);
 
 int        id_num;
@@ -43,7 +43,7 @@ const char *ci_icon;
 Eina_Bool   ci_icons;
 Eina_Bool   ci_bigicons;
 Eina_Bool   ci_popupnew;
-Eina_Bool   ci_popupkeyword;
+const char *ci_popupkeyword;
 double   	ci_refresh;
 int         ci_r;
 int         ci_g;
@@ -60,7 +60,7 @@ typedef struct {
 		  Eina_Bool   	icons;
 		  Eina_Bool   	bigicons;
 		  Eina_Bool   	popupnew;
-		  Eina_Bool   	popupkeyword;
+		  const char 	*popupkeyword;
 		  double   	  	refresh;
 		  int         	r;
 	     int         	g;
