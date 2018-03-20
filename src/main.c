@@ -10,6 +10,7 @@ static    Ecore_Timer *timer = NULL;
 	Eina_Strbuf *feeddata = NULL;
 	const char* lastcheck;
 	const char* saved_title = "";
+	int firststart = 0;
 	Eina_List *feed_data_list = NULL;
 	Eina_List *feed_data_list_tmp = NULL;
 
@@ -246,12 +247,12 @@ _it_clicked(void *data, Evas_Object *obj,
 
 static void
 _reload_start(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
-{
+{/*
    if(popup)
      {
         evas_object_del(popup);
         popup = NULL;
-     }
+     }*/
    _get_data();
 }
 
@@ -270,11 +271,9 @@ _tt_icon(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *tt)
    
 	return ic;
 }
-
-
-
+/*
 static void
-show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+create_content(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
 //    Evas_Object *win = data;
 	Evas_Object *box, *lbl, *bt, *scroller;
@@ -282,17 +281,12 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	Feed_Data *list_data;
 	Eina_List *l;
 	int i = 0;
+ printf("CREATE content1\n");
 		
 	if(eina_list_count(feed_data_list) == 0)
 		return;
 	
-   if(popup)
-     {
-        evas_object_del(popup);
-        popup = NULL;
-        return;
-     }
-
+ printf("CREATE content\n");
 	
 	edje_object_signal_emit(ly, "item_new", "default");
 		
@@ -312,6 +306,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	EINA_LIST_FOREACH(feed_data_list, l, list_data)
    {
 		
+					
 			if(i == 0)
 			{
 					lbl = elm_label_add(box);
@@ -347,7 +342,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 							snprintf(buf, sizeof(buf), "/home/simon/CODING/news/data/themes/images/news.png");
 						else
 							snprintf(buf, sizeof(buf), "%s.jpg", list_data->imagelink);
-						
+									
 						elm_image_file_set(ic, buf, NULL);
 						evas_object_size_hint_min_set(ic, 150, 56);
 						evas_object_size_hint_weight_set(ic, 0, EVAS_HINT_EXPAND);
@@ -360,11 +355,172 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 							elm_object_tooltip_content_cb_set(ic, _tt_icon, list_data->imagelink, NULL);
 						}
 					}
-// 					char* elm_entry_markup_to_utf8 	( 	const char *  	s	) 	
+					
 				   lbl = elm_label_add(boxh);
 					snprintf(buf1, sizeof(buf1), "<a href=%s><b>%s</b><br>%s</a><br><br><custom align=right><small>%s</small></custom>", list_data->link, list_data->title, elm_entry_markup_to_utf8(list_data->description), list_data->pubdate);
 					elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
-					elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(300));
+					elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(300));					
+					elm_object_text_set(lbl, buf1);
+					evas_object_size_hint_align_set(lbl, 0.5, 0.5);
+					elm_box_pack_end(boxh, lbl);
+					evas_object_show(lbl);
+					evas_object_smart_callback_add(ic, "clicked", _it_clicked, list_data->link);
+					
+// 					evas_object_smart_callback_add(lbl, "anchor,clicked", _it_clicked, list_data->link);
+								
+			elm_box_pack_end(box, boxh);
+			evas_object_show(boxh);
+			
+			o = elm_separator_add(box);
+			elm_separator_horizontal_set(o, EINA_TRUE);
+			elm_box_pack_end(box, o);
+			evas_object_show(o);
+
+			}
+		
+			i++;
+	}
+	
+//    bt = elm_button_add(box);
+//    elm_object_text_set(bt, "refresh");
+//    evas_object_smart_callback_add(bt, "pressed", _get_data, NULL);
+//    elm_box_pack_end(box, bt);
+//    evas_object_show(bt);
+
+	scroller = elm_scroller_add(popup);
+   evas_object_size_hint_weight_set(scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(popup, scroller);
+   evas_object_show(scroller);
+   elm_object_content_set(scroller, box);
+   elm_scroller_bounce_set(scroller, EINA_TRUE, EINA_FALSE);
+   elm_scroller_policy_set(scroller, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_ON);
+   elm_scroller_propagate_events_set(scroller, EINA_TRUE);
+   elm_scroller_page_relative_set(scroller, 0, 1);
+	
+	if(!ci_icons)
+		evas_object_resize(popup, 480, 600);
+	else
+		evas_object_resize(popup, 400, 600);
+	
+   elm_object_content_set(popup, scroller);
+	
+}
+
+
+static void
+show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+{
+
+  if(popup)
+     {
+        evas_object_del(popup);
+        popup = NULL;
+		  printf("del popup\n");
+        return;
+     }
+   
+   evas_object_show(popup);
+}*/
+
+
+
+ // POPUP ORG
+static void
+show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+{
+//    Evas_Object *win = data;
+	Evas_Object *box, *lbl, *bt, *scroller;
+	
+	Feed_Data *list_data;
+	Eina_List *l;
+	int i = 0;
+		
+	if(eina_list_count(feed_data_list) == 0)
+		return;
+	
+   if(popup)
+     {
+        evas_object_del(popup);
+        popup = NULL;
+        return;
+     }
+	
+	edje_object_signal_emit(ly, "item_new", "default");
+		
+   popup = elm_win_add(win, "Popup",  ELM_WIN_POPUP_MENU);
+   elm_win_alpha_set(popup, 1);
+	
+   box = elm_box_add(popup);
+   elm_box_horizontal_set(box, EINA_FALSE);
+	elm_box_padding_set(box, 10, 0);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, 0);
+   evas_object_show(box);
+		
+	Evas_Object *o, *boxh, *ic;
+	char buf1[PATH_MAX];
+	char buf[PATH_MAX];
+	
+	EINA_LIST_FOREACH(feed_data_list, l, list_data)
+   {
+		
+					
+			if(i == 0)
+			{					
+					lbl = elm_label_add(box);
+					if(list_data->description == NULL)
+							snprintf(buf1, sizeof(buf1), "<bigger>%s</bigger><br><br><small>Last check: %s</small>", list_data->title, lastcheck);
+					else
+						snprintf(buf1, sizeof(buf1), "<bigger>%s</bigger><br><br><big>%s</big><br><br><small>Last check: %s</small>", list_data->title, list_data->description, lastcheck);
+					
+					elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
+					elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(400));
+					elm_object_text_set(lbl, buf1);
+					evas_object_size_hint_align_set(lbl, 0.5, 0.5);
+					elm_box_pack_end(box, lbl);
+					evas_object_show(lbl);
+
+					o = elm_separator_add(box);
+					elm_separator_horizontal_set(o, EINA_TRUE);
+					elm_box_pack_end(box, o);
+					evas_object_show(o);
+			}
+			else
+			{				
+		   boxh = elm_box_add(box);
+			elm_box_horizontal_set(boxh, EINA_TRUE);
+			
+			if(!ci_icons)
+			{
+				elm_box_padding_set(boxh, 10, 0);
+			}
+				evas_object_show(boxh);
+			
+					if(!ci_icons)
+					{
+						ic = elm_icon_add(boxh);
+						
+						if(list_data->imagelink == NULL)
+							snprintf(buf, sizeof(buf), "/home/simon/CODING/news/data/themes/images/news.png");
+						else
+							snprintf(buf, sizeof(buf), "%s.jpg", list_data->imagelink);
+									
+						elm_image_file_set(ic, buf, NULL);
+						evas_object_size_hint_min_set(ic, 150, 56);
+						evas_object_size_hint_weight_set(ic, 0, EVAS_HINT_EXPAND);
+						evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
+						elm_box_pack_end(boxh, ic);
+						evas_object_show(ic);
+					
+						if(!ci_bigicons)
+						{
+							elm_object_tooltip_content_cb_set(ic, _tt_icon, list_data->imagelink, NULL);
+						}
+					}
+					
+				   lbl = elm_label_add(boxh);
+					snprintf(buf1, sizeof(buf1), "<a href=%s><b>%s</b><br>%s</a><br><br><custom align=right><small>%s</small></custom>", list_data->link, list_data->title, elm_entry_markup_to_utf8(list_data->description), list_data->pubdate);
+					elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
+					elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(300));					
 					elm_object_text_set(lbl, buf1);
 					evas_object_size_hint_align_set(lbl, 0.5, 0.5);
 					elm_box_pack_end(boxh, lbl);
@@ -526,14 +682,15 @@ parse_rss(Eina_Strbuf *mybuffer)
 		return;
 	
    for (i = 0; arr[i]; i++)
-	{		
+	{	
+		stringReplace("<![CDATA[", "", arr[i]);
+		stringReplace("]]>", "", arr[i]);
+// 		stringReplace("Trump","<highlight>Trump</higlight>", arr[i]);
+// 						printf("Title: %s\n", arr[i]);
 		Feed_Data *data_add = calloc(1, sizeof(Feed_Data));
 		
 		data_add->title = eina_stringshare_add(find_data(arr[i], "<title", "</title>"));
 		
-// 		if(i == 1)
-// 			saved_title = eina_stringshare_add(data_add->title);
-
 		data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "</link>"));
 
 		data_add->description = eina_stringshare_add(find_data(arr[i], "<description", "</description>"));
@@ -541,8 +698,10 @@ parse_rss(Eina_Strbuf *mybuffer)
 		data_add->imagelink = eina_stringshare_add(find_data(arr[i], "<img src=\"", ".jpg\" "));
 
 		data_add->pubdate = eina_stringshare_add(find_data(arr[i], "<pubDate", "</pubDate>"));
-
+		
 		feed_data_list = eina_list_append(feed_data_list, data_add);
+		
+// 		printf("TITLE: %s\n", data_add->title);
 	}
 	
 	free(arr[0]);
@@ -550,24 +709,34 @@ parse_rss(Eina_Strbuf *mybuffer)
 	
 	eina_strbuf_reset(mybuffer);
 	
-    Feed_Data *list_values = NULL;
-	 list_values = eina_list_nth(feed_data_list, 1);
+	Feed_Data *list_values = NULL;
+	list_values = eina_list_nth(feed_data_list, 1);
+	
+	
+// 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
+// 	edje_object_part_text_set(edje_obj, "name", list_values->title);
 	 
-	 
-
 	if(strcmp(list_values->title, saved_title) == 0)
 	{
 		printf("TITLE GLEICH\n");
-		edje_object_signal_emit(ly, "item_new", "default");
+// 		edje_object_signal_emit(ly, "item_new", "default");
 	}
 	else
 	{
 		printf("TITLE UNGLEICH\n");
-		if(ci_popupnew == 1)
-			show_popup(NULL, NULL, NULL, NULL);
 		
 		edje_object_signal_emit(ly, "item_new", "new");
-			saved_title = eina_stringshare_add(list_values->title);
+		saved_title = eina_stringshare_add(list_values->title);
+		
+		if(popup)
+      {
+			evas_object_del(popup);
+			popup = NULL;
+			show_popup(NULL, NULL, NULL, NULL);
+			printf("POPUP\n");
+		}
+		else if(ci_popupnew == 1 && firststart != 0)
+			show_popup(NULL, NULL, NULL, NULL);
 	}
 }
 
@@ -601,6 +770,25 @@ parse_atom(Eina_Strbuf *mybuffer)
    free(arr);
 	
 	eina_strbuf_reset(mybuffer);
+	
+   Feed_Data *list_values = NULL;
+	list_values = eina_list_nth(feed_data_list, 1);
+	 
+	if(strcmp(list_values->title, saved_title) == 0)
+	{
+		printf("TITLE GLEICH\n");
+// 		edje_object_signal_emit(ly, "item_new", "default");
+	}
+	else
+	{
+		printf("TITLE UNGLEICH\n");
+		
+		edje_object_signal_emit(ly, "item_new", "new");
+		saved_title = eina_stringshare_add(list_values->title);
+			
+		if(ci_popupnew == 1 && firststart != 0)
+			show_popup(NULL, NULL, NULL, NULL);
+	}
 }
 
 
@@ -660,8 +848,7 @@ _data_complete(void *data, int type, void *event_info)
 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
 	
 	if(url_complete->status >= 200 && url_complete->status <= 226)
-	{
-		
+	{	
 		Feed_Data *p;
 		EINA_LIST_FREE(feed_data_list, p)
 		{ 
@@ -689,8 +876,13 @@ _data_complete(void *data, int type, void *event_info)
 			}
 	}
 	else
+	{
 		edje_object_signal_emit(edje_obj, "reload", "failed");
-
+	}
+	
+		
+		firststart = 1;
+// 	create_content(NULL, NULL, NULL,  NULL);
 	
 	struct tm *newtime;
 	time_t long_time;
@@ -748,6 +940,19 @@ _get_data_timer(void *data)
 	_get_data();
 	
 	return ECORE_CALLBACK_RENEW;
+}
+
+
+void
+_timer_reset()
+{
+	
+	if(timer)
+	{
+		ecore_timer_del(timer);
+	}
+	
+	timer = ecore_timer_add(ci_refresh*60, _get_data_timer, NULL);
 }
 
 
@@ -818,8 +1023,10 @@ int elm_main(int argc, char *argv[])
 	_set_feed_icon();
 	_get_data();
 	_save_eet();
+	
 	printf("REFRESH: %0.2lf\n", ci_refresh*60);
 	timer = ecore_timer_add(ci_refresh*60, _get_data_timer, NULL);
+	
   //run app RUN!
   elm_run();
   

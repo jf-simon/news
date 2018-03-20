@@ -115,6 +115,8 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 	printf("SAVE FOUND: %0.2lf\n", ci_refresh);
 _save_eet();
 _set_feed_icon();
+
+_timer_reset();
 //  refresh feed it url has changed
 // _get_data();
 }
@@ -178,8 +180,8 @@ _config_save1(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 void
 _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {	
-	Evas_Object *en_url, *en_icon, *popup, *fr, *cs;
-   Evas_Object *o, *mainbox, *box_settings, *box_url, *box_icon, *box_value, *box_unit, *box_factor, *lbl, *check_icons, *check_bigicons, *check_popupnew, *sl_refresh;
+	Evas_Object *en_url, *en_keyword, *en_icon, *popup, *fr, *cs;
+   Evas_Object *o, *mainbox, *box_settings, *box_url, *box_icon, *box_value, *box_unit, *box_factor, *lbl, *check_icons, *check_bigicons, *check_popupnew, *check_popupkeyword, *sl_refresh;
 	
 	Evas_Object *ly = obj;
 	Evas_Object *win = data;
@@ -256,7 +258,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			evas_object_show(lbl);
 			
 			en_icon = elm_entry_add(box_icon);
-			elm_object_disabled_set(en_icon, 1);
+// 			elm_object_disabled_set(en_icon, 1);
 			elm_config_context_menu_disabled_set(EINA_FALSE);
 			elm_object_text_set(en_icon, ci_icon);
 			elm_entry_editable_set(en_icon, EINA_TRUE);
@@ -303,6 +305,50 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 	elm_box_pack_end(box_settings, check_popupnew);
 	evas_object_show(check_popupnew);
    evas_object_data_set(mainbox, "check_popupnew", check_popupnew);
+	
+	
+   o = elm_separator_add(box_settings);
+   elm_separator_horizontal_set(o, EINA_TRUE);
+   elm_box_pack_end(box_settings, o);
+   evas_object_show(o);
+	
+	lbl = elm_label_add(box_settings);
+	elm_object_text_set(lbl, "Keyword handling");
+	evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	elm_box_pack_end(box_settings, lbl);
+	evas_object_show(lbl);
+	
+	check_popupkeyword = elm_check_add(box_settings);
+// 	elm_object_disabled_set(check_popupkeyword, 1);
+	elm_object_text_set(check_popupkeyword, "Popup on new News");
+   elm_check_state_set(check_popupkeyword, ci_popupkeyword);
+   E_ALIGN(check_popupkeyword, 0.0, 0.0);
+ 	E_WEIGHT(check_popupkeyword, EVAS_HINT_EXPAND, 0);
+	elm_box_pack_end(box_settings, check_popupkeyword);
+	evas_object_show(check_popupkeyword);
+   evas_object_data_set(mainbox, "check_popupkeyword", check_popupkeyword);
+	
+	check_popupkeyword = elm_check_add(box_settings);
+// 	elm_object_disabled_set(check_popupkeyword, 1);
+	elm_object_text_set(check_popupkeyword, "Highlight Keywords");
+   elm_check_state_set(check_popupkeyword, ci_popupkeyword);
+   E_ALIGN(check_popupkeyword, 0.0, 0.0);
+ 	E_WEIGHT(check_popupkeyword, EVAS_HINT_EXPAND, 0);
+	elm_box_pack_end(box_settings, check_popupkeyword);
+	evas_object_show(check_popupkeyword);
+   evas_object_data_set(mainbox, "check_popupkeyword", check_popupkeyword);
+	
+	en_keyword = elm_entry_add(box_settings);
+	elm_config_context_menu_disabled_set(EINA_FALSE);
+	elm_object_text_set(en_keyword, ci_popupkeyword);
+	elm_entry_editable_set(en_keyword, EINA_TRUE);
+	elm_entry_single_line_set(en_keyword, EINA_TRUE);
+	evas_object_size_hint_weight_set(en_keyword, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(en_keyword, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	elm_box_pack_end(box_settings, en_keyword);
+	evas_object_show(en_keyword);
+	evas_object_data_set(mainbox, "en_keyword", en_keyword);
 	
    sl_refresh = elm_slider_add(box_settings);
 	E_ALIGN(sl_refresh, 0.0, 0.5);
