@@ -745,7 +745,7 @@ _data_complete(void *data, int type, void *event_info)
 	snprintf(buf, sizeof(buf), "%d.%d.%d | %02d:%02d:%02d",newtime->tm_mday, newtime->tm_mon+1, newtime->tm_year+1900, newtime->tm_hour, newtime->tm_min, newtime->tm_sec);
 	lastcheck = eina_stringshare_add(buf);
 
-	ecore_con_url_free(ec_url);
+// 	ecore_con_url_free(ec_url);
    return ECORE_CALLBACK_DONE;
 }
 
@@ -763,8 +763,8 @@ _get_data()
 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
 	edje_object_signal_emit(edje_obj, "reload", "visible");
 
-// 	if(ec_url)
-// 		ecore_con_url_free(ec_url);
+	if(ec_url)
+		ecore_con_url_free(ec_url);
 	
 	ec_url = ecore_con_url_custom_new(ci_url, "GET");
 	
