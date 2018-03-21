@@ -55,8 +55,8 @@ collections {
             description {
 					visible: 1;
                state         : "default" 0.0;
-               rel1.relative : 0.1 0.1;
-               rel2.relative : 0.9 0.9;
+               rel1.relative: 0.045 0.045;
+               rel2.relative: 0.955 0.955;
             }
          }
 //          part {
