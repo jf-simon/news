@@ -73,11 +73,11 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 // 	if(strcmp(ci_icon, elm_object_text_get(en_icon)) != 0)
 		_set_feed_icon();
 		
-// 	if(strcmp(ci_url, elm_object_text_get(en_url)) != 0)
-// 	{
-// 		printf("changed\n");
-// 		 _get_data();
-// 	}
+	if(strcmp(ci_url, elm_object_text_get(en_url)) != 0)
+	{
+		printf("changed\n");
+		 _get_data();
+	}
 	ci_url = elm_object_text_get(en_url);
 	ci_icon = elm_object_text_get(en_icon);
    ci_icons = elm_check_state_get(check_icons);
@@ -319,7 +319,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    elm_separator_horizontal_set(o, EINA_TRUE);
    elm_box_pack_end(box_settings, o);
    evas_object_show(o);
-	
+	/*
 	lbl = elm_label_add(box_settings);
 	elm_object_text_set(lbl, "Keyword handling");
 	evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -357,7 +357,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 	elm_box_pack_end(box_settings, en_keyword);
 	evas_object_show(en_keyword);
 	evas_object_data_set(mainbox, "en_keyword", en_keyword);
-	
+	*/
    sl_refresh = elm_slider_add(box_settings);
 	E_ALIGN(sl_refresh, 0.0, 0.5);
 	elm_slider_unit_format_set(sl_refresh, "%1.0f min");
