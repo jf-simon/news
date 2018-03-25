@@ -15,6 +15,7 @@ _config_load(void *data)
 		{
 			ci_url = eina_stringshare_add(list_data->url);
 			ci_icon = eina_stringshare_add(list_data->icon);
+			saved_title = eina_stringshare_add(list_data->saved_title);
 			ci_icons = list_data->icons;
 			ci_bigicons = list_data->bigicons;
 			ci_popupnew = list_data->popupnew;
@@ -93,6 +94,7 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 			list_data->url = ci_url;
 			list_data->icon = ci_icon;
 			list_data->icons = ci_icons;
+			list_data->saved_title = saved_title;
 			list_data->bigicons = ci_bigicons;
 			list_data->popupnew = ci_popupnew;
 			list_data->refresh = ci_refresh;

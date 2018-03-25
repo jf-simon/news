@@ -9,7 +9,7 @@ Ecore_Con_Url *ec_url = NULL;
 
 Eina_Strbuf *feeddata = NULL;
 const char* lastcheck;
-const char* saved_title = "";
+// const char *saved_title = "";
 int firststart = 0;
 Eina_List *feed_data_list = NULL;
 Eina_List *feed_data_list_tmp = NULL;
@@ -23,6 +23,7 @@ typedef struct {
         int         id;
         const char *url;
         const char *icon;
+        const char *saved_title;
 		  Eina_Bool   icons;
 		  Eina_Bool   bigicons;
 		  Eina_Bool   popupnew;
@@ -71,6 +72,7 @@ _my_conf_descriptor_init(void)
     MY_CONF_SUB_ADD_BASIC(id, EET_T_INT);
     MY_CONF_SUB_ADD_BASIC(url, EET_T_STRING);
     MY_CONF_SUB_ADD_BASIC(icon, EET_T_STRING);
+    MY_CONF_SUB_ADD_BASIC(saved_title, EET_T_STRING);
     MY_CONF_SUB_ADD_BASIC(icons, EET_T_UCHAR);
     MY_CONF_SUB_ADD_BASIC(bigicons, EET_T_UCHAR);
     MY_CONF_SUB_ADD_BASIC(popupnew, EET_T_UCHAR);
@@ -293,7 +295,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
         popup = NULL;
         return;
      }
-	
+	_config_save(mainbox, NULL, NULL, NULL);
 	edje_object_signal_emit(ly, "item_new", "default");
 		
    popup = elm_win_add(win, "Popup",  ELM_WIN_POPUP_MENU);
@@ -561,18 +563,12 @@ parse_rss(Eina_Strbuf *mybuffer)
 	Feed_Data *list_values = NULL;
 	list_values = eina_list_nth(feed_data_list, 1);
 	
-	
-// 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
-// 	edje_object_part_text_set(edje_obj, "name", list_values->title);
 	 
-	if(strcmp(list_values->title, saved_title) == 0)
-	{
-		printf("TITLE GLEICH\n");
-// 		edje_object_signal_emit(ly, "item_new", "default");
-	}
-	else
+	if(saved_title == NULL || strcmp(list_values->title, saved_title) != 0)
 	{
 		printf("TITLE UNGLEICH\n");
+		printf("TITLE ORG:\t%s\n", list_values->title);
+		printf("TITLE SAVED:\t%s\n", saved_title);
 		
 		edje_object_signal_emit(ly, "item_new", "new");
 		saved_title = eina_stringshare_add(list_values->title);
@@ -587,6 +583,11 @@ parse_rss(Eina_Strbuf *mybuffer)
 // 		else 
 			if(ci_popupnew == 1 && firststart != 0)
 			show_popup(NULL, NULL, NULL, NULL);
+	}
+	else
+	{
+		printf("TITLE GLEICH\n");
+// 		edje_object_signal_emit(ly, "item_new", "default");
 	}
 }
 
@@ -624,20 +625,30 @@ parse_atom(Eina_Strbuf *mybuffer)
    Feed_Data *list_values = NULL;
 	list_values = eina_list_nth(feed_data_list, 1);
 	 
-	if(strcmp(list_values->title, saved_title) == 0)
-	{
-		printf("TITLE GLEICH\n");
-// 		edje_object_signal_emit(ly, "item_new", "default");
-	}
-	else
+	if(saved_title == NULL || strcmp(list_values->title, saved_title) != 0)
 	{
 		printf("TITLE UNGLEICH\n");
+		printf("TITLE ORG:\t%s\n", list_values->title);
+		printf("TITLE SAVED:\t%s\n", saved_title);
 		
 		edje_object_signal_emit(ly, "item_new", "new");
 		saved_title = eina_stringshare_add(list_values->title);
-			
-		if(ci_popupnew == 1 && firststart != 0)
+		
+// 		if(popup)
+//       {
+// 			evas_object_del(popup);
+// 			popup = NULL;
+// 			show_popup(NULL, NULL, NULL, NULL);
+// 			printf("POPUP\n");
+// 		}
+// 		else 
+			if(ci_popupnew == 1 && firststart != 0)
 			show_popup(NULL, NULL, NULL, NULL);
+	}
+	else
+	{
+		printf("TITLE GLEICH\n");
+// 		edje_object_signal_emit(ly, "item_new", "default");
 	}
 }
 

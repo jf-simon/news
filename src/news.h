@@ -33,13 +33,17 @@ void 			_timer_reset();
 void 			stringReplace(char *search, char *replace, char *string);
 
 int        id_num;
+const char *saved_title;
+
 
 Evas_Object *win;
 Evas_Object *ly;
+Evas_Object *mainbox;
 
 int         ci_id;
 const char *ci_url;
 const char *ci_icon;
+// const char *ci_saved_title;
 Eina_Bool   ci_icons;
 Eina_Bool   ci_bigicons;
 Eina_Bool   ci_popupnew;
@@ -57,6 +61,7 @@ typedef struct {
         int         	id;
         const char 	*url;
         const char 	*icon;
+        const char 	*saved_title;
 		  Eina_Bool   	icons;
 		  Eina_Bool   	bigicons;
 		  Eina_Bool   	popupnew;
