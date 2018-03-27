@@ -592,7 +592,7 @@ parse_rss(Eina_Strbuf *mybuffer)
 
 
 static void
-parse_atom1(Eina_Strbuf *mybuffer)
+parse_atom(Eina_Strbuf *mybuffer)
 {
 	char **arr;
 	int i=0;
