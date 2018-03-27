@@ -592,7 +592,69 @@ parse_rss(Eina_Strbuf *mybuffer)
 
 
 static void
-parse_atom(Eina_Strbuf *mybuffer)
+parse_atom1(Eina_Strbuf *mybuffer)
+{
+	char **arr;
+	int i=0;
+
+   arr = eina_str_split(eina_strbuf_string_get(mybuffer), "<item>", 0);
+	
+   for (i = 0; arr[i]; i++)
+	{
+		Feed_Data *data_add = calloc(1, sizeof(Feed_Data));
+		
+		data_add->title = eina_stringshare_add(find_data(arr[i], "<entry", "</entry>"));
+				
+		data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "/>"));
+				
+		data_add->description = eina_stringshare_add(find_data(arr[i], "<summary", "</summary>"));
+				
+		data_add->pubdate = eina_stringshare_add(find_data(arr[i], "<updated", "</updated>"));
+				
+// 				data_add->subtitle = eina_stringshare_add(find_data(arr[i], "<subtitle", "</subtitle>"));
+				
+		feed_data_list = eina_list_append(feed_data_list, data_add);
+		printf("ARRAY = YES %s\n", data_add->title);
+	}
+	
+	free(arr[0]);
+   free(arr);
+	
+	eina_strbuf_reset(mybuffer);
+	
+   Feed_Data *list_values = NULL;
+	list_values = eina_list_nth(feed_data_list, 0);
+	 
+	if(saved_title == NULL || strcmp(list_values->title, saved_title) != 0)
+	{
+		printf("TITLE UNGLEICH\n");
+		printf("TITLE ORG:\t%s\n", list_values->title);
+		printf("TITLE SAVED:\t%s\n", saved_title);
+		
+		edje_object_signal_emit(ly, "item_new", "new");
+		saved_title = eina_stringshare_add(list_values->title);
+		
+// 		if(popup)
+//       {
+// 			evas_object_del(popup);
+// 			popup = NULL;
+// 			show_popup(NULL, NULL, NULL, NULL);
+// 			printf("POPUP\n");
+// 		}
+// 		else 
+			if(ci_popupnew == 1 && firststart != 0)
+			show_popup(NULL, NULL, NULL, NULL);
+	}
+	else
+	{
+		printf("TITLE GLEICH\n");
+// 		edje_object_signal_emit(ly, "item_new", "default");
+	}
+}
+
+
+static void
+parse_atom1(Eina_Strbuf *mybuffer)
 {
 	char **arr;
 	int i=0;
@@ -738,7 +800,7 @@ _data_complete(void *data, int type, void *event_info)
 			else if(strstr((char *)eina_strbuf_string_get(data), "<rss xmlns:atom") != 0)
 			{
 				printf("ATOM FEED\n");
-				parse_atom(data);
+				parse_atom1(data);
 			}
 	}
 	else
