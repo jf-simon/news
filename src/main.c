@@ -9,7 +9,6 @@ Ecore_Con_Url *ec_url = NULL;
 
 Eina_Strbuf *feeddata = NULL;
 const char* lastcheck;
-// const char *saved_title = "";
 int firststart = 0;
 Eina_List *feed_data_list = NULL;
 Eina_List *feed_data_list_tmp = NULL;
@@ -598,7 +597,7 @@ parse_atom(Eina_Strbuf *mybuffer)
 	char **arr;
 	int i=0;
 
-   arr = eina_str_split(eina_strbuf_string_get(mybuffer), "<entry>", 0);
+   arr = eina_str_split(eina_strbuf_string_get(mybuffer), "<item", 0);
 	
    for (i = 0; arr[i]; i++)
 	{
@@ -608,13 +607,14 @@ parse_atom(Eina_Strbuf *mybuffer)
 				
 		data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "/>"));
 				
-		data_add->description = eina_stringshare_add(find_data(arr[i], "<summary", "</summary>"));
+		data_add->description = eina_stringshare_add(find_data(arr[i], "<description", "</description>"));
 				
 		data_add->pubdate = eina_stringshare_add(find_data(arr[i], "<updated", "</updated>"));
 				
 // 				data_add->subtitle = eina_stringshare_add(find_data(arr[i], "<subtitle", "</subtitle>"));
 				
 		feed_data_list = eina_list_append(feed_data_list, data_add);
+		printf("ARRAY = YES %s\n", data_add->title);
 	}
 	
 	free(arr[0]);
@@ -623,7 +623,7 @@ parse_atom(Eina_Strbuf *mybuffer)
 	eina_strbuf_reset(mybuffer);
 	
    Feed_Data *list_values = NULL;
-	list_values = eina_list_nth(feed_data_list, 1);
+	list_values = eina_list_nth(feed_data_list, 0);
 	 
 	if(saved_title == NULL || strcmp(list_values->title, saved_title) != 0)
 	{
@@ -720,7 +720,7 @@ _data_complete(void *data, int type, void *event_info)
 		
 		edje_object_signal_emit(edje_obj, "reload", "default");
 		
-			if(strstr((char *)eina_strbuf_string_get(data), "<rss") != 0)
+			if(strstr((char *)eina_strbuf_string_get(data), "<rss vers") != 0)
 			{
 				printf("RSS FEED\n");
 				parse_rss(data);
@@ -731,6 +731,11 @@ _data_complete(void *data, int type, void *event_info)
 				parse_rdf(data);
 			}
 			else if(strstr((char *)eina_strbuf_string_get(data), "<feed xmlns=\"http://www.w3.org/2005/Atom\">") != 0)
+			{
+				printf("ATOM FEED\n");
+				parse_atom(data);
+			}
+			else if(strstr((char *)eina_strbuf_string_get(data), "<rss xmlns:atom") != 0)
 			{
 				printf("ATOM FEED\n");
 				parse_atom(data);
@@ -877,10 +882,10 @@ int elm_main(int argc, char *argv[])
 	
 	_config_load(ly);							// load config data from eet to tmp vars
 	
-	set_color(edje_obj);
 	_set_feed_icon();
 	_get_data();
 	_save_eet();
+	set_color(NULL);
 	
 	printf("REFRESH: %0.2lf\n", ci_refresh*60);
 	if(ci_refresh <= 0){ci_refresh = 10;};

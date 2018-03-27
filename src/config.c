@@ -42,6 +42,7 @@ _config_load(void *data)
 		ci_a = 255;
 	}
 	
+	printf("COLOR LOAD: %i %i %i %i\n", ci_r, ci_g, ci_b, ci_a);
 	printf("LOAD FOUND: %i\n", found);
 }
 
@@ -70,6 +71,12 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    Evas_Object *check_bigicons = evas_object_data_get(mainbox, "check_bigicons");
    Evas_Object *check_popupnew = evas_object_data_get(mainbox, "check_popupnew");
    Evas_Object *sl_refresh = evas_object_data_get(mainbox, "sl_refresh");
+   Evas_Object *cs = evas_object_data_get(mainbox, "cs");
+	
+	
+
+   elm_colorselector_color_get(cs, &ci_r, &ci_g, &ci_b, &ci_a);
+	printf("COLOR SAVE: %i %i %i %i\n", ci_r, ci_g, ci_b, ci_a);
 	
 // 	if(strcmp(ci_icon, elm_object_text_get(en_icon)) != 0)
 		_set_feed_icon();
@@ -147,7 +154,7 @@ _colorselector_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UN
 
    elm_colorselector_color_get(obj, &ci_r, &ci_g, &ci_b, &ci_a);
 	
-	evas_object_color_set(ic, ci_r, ci_g, ci_b, ci_a);
+// 	evas_object_color_set(ic, ci_r, ci_g, ci_b, ci_a);
 	
 	set_color(ly);
 }
