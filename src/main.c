@@ -249,12 +249,12 @@ _it_clicked(void *data, Evas_Object *obj,
 
 static void
 _reload_start(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
-{/*
+{
    if(popup)
      {
         evas_object_del(popup);
         popup = NULL;
-     }*/
+     }
    _get_data();
 }
 

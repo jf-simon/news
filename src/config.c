@@ -191,7 +191,7 @@ void
 _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {	
 	Evas_Object *en_url, *en_keyword, *en_icon, *popup, *fr, *cs;
-   Evas_Object *o, *mainbox, *box_settings, *box_url, *box_icon, *lbl, *check_icons, *check_bigicons, *check_popupnew, *check_popupkeyword, *sl_refresh;
+   Evas_Object *o, *box_settings, *box_url, *box_icon, *lbl, *check_icons, *check_bigicons, *check_popupnew, *check_popupkeyword, *sl_refresh;
 	
 	Evas_Object *ly = obj;
 	Evas_Object *win = data;
