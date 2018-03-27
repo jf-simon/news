@@ -798,9 +798,14 @@ _data_complete(void *data, int type, void *event_info)
 				printf("ATOM FEED\n");
 				parse_atom(data);
 			}
+			else if(strstr((char *)eina_strbuf_string_get(data), "<rss xmlns:content") != 0)
+			{
+				printf("RSS1 FEED\n");
+				parse_rss(data);
+			}
 			else if(strstr((char *)eina_strbuf_string_get(data), "<rss xmlns:atom") != 0)
 			{
-				printf("ATOM FEED\n");
+				printf("ATOM1 FEED\n");
 				parse_atom1(data);
 			}
 	}
