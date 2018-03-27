@@ -609,7 +609,7 @@ parse_atom(Eina_Strbuf *mybuffer)
 				
 		data_add->description = eina_stringshare_add(find_data(arr[i], "<description", "</description>"));
 				
-		data_add->pubdate = eina_stringshare_add(find_data(arr[i], "<updated", "</updated>"));
+		data_add->pubdate = eina_stringshare_add(find_data(arr[i], "<pubDate", "</pubDate>"));
 				
 // 				data_add->subtitle = eina_stringshare_add(find_data(arr[i], "<subtitle", "</subtitle>"));
 				
