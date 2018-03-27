@@ -58,10 +58,7 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 	
 	printf("SAVE\n");
 	
-	Evas_Object *mainbox = data;
-//    Evas_Object *ly = evas_object_data_get(mainbox, "ly");
-	
-	
+	Evas_Object *mainbox = data;	
 	
 	if(data != NULL)
 	{
@@ -78,9 +75,15 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    elm_colorselector_color_get(cs, &ci_r, &ci_g, &ci_b, &ci_a);
 	printf("COLOR SAVE: %i %i %i %i\n", ci_r, ci_g, ci_b, ci_a);
 	
-// 	if(strcmp(ci_icon, elm_object_text_get(en_icon)) != 0)
+	
+		printf("en: %s\n", elm_object_text_get(en_icon));
+		printf("ci; %s\n", ci_icon);
+	
+	if(strcmp(ci_icon, elm_object_text_get(en_icon)) != 0)
+	{
 		_set_feed_icon();
-		
+		printf("icon changed\n");
+	}	
 	if(strcmp(ci_url, elm_object_text_get(en_url)) != 0)
 	{
 		printf("changed\n");
@@ -186,12 +189,12 @@ _settings_2(void *data, Evas_Object *obj, const char *emission EINA_UNUSED, cons
 	printf("SETTINGS2\n");
 	_settings(win, ly, NULL);
 }
-
+/*
 void
 _config_save1(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
 	_config_save(data, NULL, NULL, NULL);	
-}
+}*/
 
 
 void

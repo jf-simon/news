@@ -264,11 +264,12 @@ _tt_icon(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *tt)
    Evas_Object *ic = elm_icon_add(tt);
    char buf[PATH_MAX];
 	
-   snprintf(buf, sizeof(buf), "%s.png", (const char*)data);
+   snprintf(buf, sizeof(buf), "%s.jpg", (const char*)data);
    elm_image_file_set(ic, buf, NULL);
-   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
+//    elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
    evas_object_resize(ic, 300, 169);
 	evas_object_size_hint_min_set(ic, 300, 169);
+	printf("POPUP IMAGE: %s\n", buf);
    
 	return ic;
 }
@@ -294,7 +295,9 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
         popup = NULL;
         return;
      }
+
 	_config_save(mainbox, NULL, NULL, NULL);
+	
 	edje_object_signal_emit(ly, "item_new", "default");
 		
    popup = elm_win_add(win, "Popup",  ELM_WIN_POPUP_MENU);
@@ -353,7 +356,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 							snprintf(buf, sizeof(buf), "/home/simon/CODING/news/data/themes/images/news.png");
 						else
 							snprintf(buf, sizeof(buf), "%s.jpg", list_data->imagelink);
-									
+															
 						elm_image_file_set(ic, buf, NULL);
 						evas_object_size_hint_min_set(ic, 150, 56);
 						evas_object_size_hint_weight_set(ic, 0, EVAS_HINT_EXPAND);
@@ -361,7 +364,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 						elm_box_pack_end(boxh, ic);
 						evas_object_show(ic);
 					
-						if(!ci_bigicons)
+						if(!ci_bigicons && list_data->imagelink != NULL)
 						{
 							elm_object_tooltip_content_cb_set(ic, _tt_icon, list_data->imagelink, NULL);
 						}
@@ -377,7 +380,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 					evas_object_show(lbl);
 					evas_object_smart_callback_add(ic, "clicked", _it_clicked, list_data->link);
 					
-// 					evas_object_smart_callback_add(lbl, "anchor,clicked", _it_clicked, list_data->link);
+					evas_object_smart_callback_add(lbl, "anchor,clicked", _it_clicked, list_data->link);
 								
 			elm_box_pack_end(box, boxh);
 			evas_object_show(boxh);
@@ -615,7 +618,7 @@ parse_atom(Eina_Strbuf *mybuffer)
 // 				data_add->subtitle = eina_stringshare_add(find_data(arr[i], "<subtitle", "</subtitle>"));
 				
 		feed_data_list = eina_list_append(feed_data_list, data_add);
-		printf("ARRAY = YES %s\n", data_add->title);
+// 		printf("ARRAY = YES %s\n", data_add->title);
 	}
 	
 	free(arr[0]);
@@ -677,7 +680,7 @@ parse_atom1(Eina_Strbuf *mybuffer)
 // 				data_add->subtitle = eina_stringshare_add(find_data(arr[i], "<subtitle", "</subtitle>"));
 				
 		feed_data_list = eina_list_append(feed_data_list, data_add);
-		printf("ARRAY = YES %s\n", data_add->title);
+// 		printf("ARRAY = YES %s\n", data_add->title);
 	}
 	
 	free(arr[0]);
