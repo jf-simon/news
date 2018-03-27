@@ -421,6 +421,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 void
 set_color(Evas_Object *ly)
 {
+	printf("COLOR CLASS: %i %i %i %i\n", ci_r, ci_g, ci_b, ci_a);
 	edje_object_color_class_set(ly, "colorclass",
                                ci_r, ci_g, ci_b, ci_a,
                                255, 255, 255, 0,
@@ -942,12 +943,14 @@ int elm_main(int argc, char *argv[])
 	ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER, _gadget_exit, NULL);
 	
 	
-	_config_load(ly);							// load config data from eet to tmp vars
+	_config_load(edje_obj);							// load config data from eet to tmp vars
 	
+// 	set_color(ly);
+	
+	edje_object_color_class_set(edje_obj, "colorclass", ci_r, ci_g, ci_b, ci_a, 255, 255, 255, 0, 39, 90, 187, 255);
 	_set_feed_icon();
 	_get_data();
 	_save_eet();
-	set_color(NULL);
 	
 	printf("REFRESH: %0.2lf\n", ci_refresh*60);
 	if(ci_refresh <= 0){ci_refresh = 10;};
