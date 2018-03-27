@@ -597,13 +597,13 @@ parse_atom(Eina_Strbuf *mybuffer)
 	char **arr;
 	int i=0;
 
-   arr = eina_str_split(eina_strbuf_string_get(mybuffer), "<item>", 0);
+   arr = eina_str_split(eina_strbuf_string_get(mybuffer), "<entry>", 0);
 	
    for (i = 0; arr[i]; i++)
 	{
 		Feed_Data *data_add = calloc(1, sizeof(Feed_Data));
 		
-		data_add->title = eina_stringshare_add(find_data(arr[i], "<entry", "</entry>"));
+		data_add->title = eina_stringshare_add(find_data(arr[i], "<title", "</title>"));
 				
 		data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "/>"));
 				
