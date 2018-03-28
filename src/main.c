@@ -265,11 +265,13 @@ _tt_icon(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *tt)
    char buf[PATH_MAX];
 	
    snprintf(buf, sizeof(buf), "%s.jpg", (const char*)data);
+	int h, w;
    elm_image_file_set(ic, buf, NULL);
+	elm_image_object_size_get(ic, &w, &h);
 //    elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
    evas_object_resize(ic, 300, 169);
 	evas_object_size_hint_min_set(ic, 300, 169);
-	printf("POPUP IMAGE: %s\n", buf);
+	printf("POPUP IMAGE: %i %i\n", w, h);
    
 	return ic;
 }
@@ -353,7 +355,12 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 						ic = elm_icon_add(boxh);
 						
 						if(list_data->imagelink == NULL)
-							snprintf(buf, sizeof(buf), "/home/simon/CODING/news/data/themes/images/news.png");
+						{
+							
+							snprintf(buf, sizeof(buf), "%s/images/news.png", PACKAGE_DATA_DIR);
+// 							snprintf(buf, sizeof(buf), "/home/simon/CODING/news/data/themes/images/news.png");
+
+						}
 						else
 							snprintf(buf, sizeof(buf), "%s.jpg", list_data->imagelink);
 															
