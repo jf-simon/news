@@ -1,1 +1,167 @@
-
+[08:07:17] <jf_simon> Hi
+[08:09:29] <raster> ho
+[08:15:13] --> srinidhi (~srinidhi@opensuse/member/srinidhi) has joined #e
+[08:23:51] --> Puppet_Master (~Puppet_Ma@109.190.253.11) has joined #e
+[08:24:40] <jf_simon> hi raster, is it possible to set the callback event "anchor,clicked" to elm_object_text_set in a elm_label?
+[08:28:10] <raster> jf_simon: no - only works on entires.
+[08:28:19] <raster> you can make an entry non-editable...
+[08:28:22] <raster> but only entries
+[08:28:25] <jf_simon> ok thanks
+[08:29:45] <-- Puppet_Master (~Puppet_Ma@109.190.253.11) has quit (Quit: WeeChat 2.1)
+[08:36:54] <raster> :)
+[08:44:39] --> Kubu (~naourr@2a01cb0005497800a697551df6021b63.ipv6.abo.wanadoo.fr) has joined #e
+[08:51:27] <-- jcarl43 (~jcarl@S01061c1b689d9d2f.vc.shawcable.net) has quit (Quit: WeeChat 2.1)
+[08:53:57] <-- srinidhi (~srinidhi@opensuse/member/srinidhi) has quit (Ping timeout: 240 seconds)
+[08:56:52] --> Besnik_b (~Besnik@ppp-94-66-221-51.home.otenet.gr) has joined #e
+[08:58:12] --> nils_2_ (~nils_2@unaffiliated/nils-2/x-2480262) has joined #e
+[08:59:10] <-- nils_2 (~nils_2@unaffiliated/nils-2/x-2480262) has quit (Ping timeout: 264 seconds)
+[08:59:18] <-> nils_2_ is now known as nils_2
+[08:59:31] <-- stefan_schmidt (~stefan@p200300E9D3C0628D9B167539CB20602A.dip0.t-ipconnect.de) has quit (Ping timeout: 252 seconds)
+[09:01:05] <jf_simon> raster: works. but entry needs about 3 time longer to load as a label. i put them in a scollable popup (round 50 entrys)
+[09:02:37] <raster> they do more too :)
+[09:02:50] <jf_simon> hehe :)
+[09:03:27] <jf_simon> but not usable for me. takes too long
+[09:03:48] <raster> dont add entires that are not visible
+[09:04:04] <raster> stick in invisible evas rectangles instead
+[09:04:13] <raster> set a min size hint on the rect to use up space
+[09:04:14] <raster> and bingo
+[09:04:26] <raster> replace rects with real entries as the rects become visible
+[09:04:26] <raster> :)
+[09:04:49] <raster> (and delete and store as they become hidden, store cursor pos etc.)
+[09:05:42] <jf_simon> what i want to do is to make the text clickable to open the webpage
+[09:05:43] <jf_simon> https://www.enlightenment.org/ss/display.php?image=e-5aab754017f9e7.56654015.jpg
+[09:06:11] <raster> all of the text?
+[09:06:17] <raster> ort just specifci bits of text?
+[09:06:34] <jf_simon> thought about all :)
+[09:06:42] <raster> so all of it?
+[09:06:51] <jf_simon> yes
+[09:08:25] <raster> then looking at your layouty
+[09:08:49] <raster> each item (image + text on right + separator above or below) is like a tablwe?
+[09:08:54] <raster> or its 1 big table?
+[09:09:21] <raster> still - it's smarty to not create objects for objects until they become visible
+[09:09:23] <jf_simon> every item is a box
+[09:09:40] <raster> it will speed up time to show always and save mem for things someone doesnt view
+[09:09:42] <raster> but
+[09:09:45] <raster> even if you dont
+[09:09:51] <raster> instead of a box
+[09:09:54] <raster> use a table
+[09:09:57] <raster> left cell == image
+[09:10:00] <raster> right cell == text
+[09:10:10] <raster> but also put a rectangl in the SAME right cell
+[09:10:15] <raster> so its on top of the label
+[09:10:17] <raster> show the rect
+[09:10:22] <raster> and have its color be 0 0 0 0
+[09:10:39] <raster> set weight to 1 1 of the rect
+[09:10:53] <raster> and align to -1 -1  (fill the cell)
+[09:11:07] <raster> so u have a rect on top of the etxt that expands to cover the whole cell where the text is
+[09:11:15] <raster> you can make it also span both left and right cell ...
+[09:11:21] <raster> which i think would be better
+[09:11:22] <raster> anyway
+[09:11:36] <raster> then listen to mouse down, mouse up ... and hold event too
+[09:11:44] <raster> on hold event cancel any clikc u were handling
+[09:11:51] <raster> on mouse down record x, y value
+[09:11:59] <raster> on mouse up check x, y coors
+[09:12:01] <raster> coords
+[09:12:13] <raster> if x,y coords are not too far away from the down x, y
+[09:12:33] --> stefan_schmidt (~stefan@p200300E9D3C062B67AA19ABC9160F393.dip0.t-ipconnect.de) has joined #e
+[09:13:21] <raster> e.g. (dx = x2 - x1; dy = y2 - y1; if ((dx * dx) + (dy * dy) <= (5 * 5) && (!(ev->flags & HOLD)) { we clicked and no hold flags set }
+[09:13:24] <raster> :)
+[09:14:08] <jf_simon> oh wow :)
+[09:14:20] <raster> see thew trick?
+[09:14:29] <jf_simon> yes
+[09:14:29] <raster> use invisible rects to capture events anywhere
+[09:14:31] <jf_simon> thanks a lot
+[09:14:39] <raster> use tables to allow you to span them over other visible elements
+[09:14:45] <raster> you can do this with many things
+[09:14:59] <raster> you could also use an elm button on top too
+[09:15:05] <raster> with no label or icon in it
+[09:15:11] <raster> but set the elm button color to 0 0 0 0
+[09:15:15] <raster> it'll be invisible
+[09:15:21] <raster> then just listen to "clicked" events on the button
+[09:15:22] <raster> :)
+[09:15:37] <raster> then avoid the couwn, hold, up + coord handling yourself
+[09:15:38] <raster> :)
+[09:16:00] <raster> you could have also just done every item there as a button
+[09:16:11] <raster> have a custom style (edje file, edc estuff)
+[09:16:15] <raster> for your button that is "empty"
+[09:16:25] <raster> with no visible text or 3d button look
+[09:16:31] <raster> just a swallow for the icon - nothing else
+[09:16:34] <raster> and then....
+[09:16:44] <raster> put the horizontal box INSIDE the button
+[09:16:55] <raster> then the image, label etc. inside of the box
+[09:16:56] <raster> etc.
+[09:17:01] <raster> that would also work fine
+[09:17:16] <raster> yes - the icon can be another widget like a box or table
+[09:17:20] <raster> with more content inside of that
+[09:17:20] <raster> :)
+[09:17:25] <jf_simon> :) 
+[09:17:44] <jf_simon> thanks for the detailed explanation
+[09:17:44] <raster> i can come up with more ways to slice and dice this
+[09:17:57] <raster> it's worth asking for help and pointers :)
+[09:18:40] <jf_simon> Now I have new thoughts to continue working
+[09:18:46] <jf_simon> thanks alot
+[09:18:50] <raster> :)
+[09:19:00] <raster> i would go for the invisible button method myself
+[09:19:20] <raster> AND i'd also use the invisible rect "placeholders" in the vertical box/list
+[09:19:29] <raster> to fill the non-visible items
+[09:19:35] <raster> also listen to move and resize events on these rects
+[09:20:08] <raster> when they move and resize just add an ecore job to defer evaluating the geomtry
+[09:20:18] <raster> (if there is a job for the obj delete it first then add a new job)
+[09:20:27] <raster> in the job callback get geometry and compare to canvas viewport
+[09:20:39] <raster> if it intersects the viewport then its within the window
+[09:20:47] <raster> then... create the actual content
+[09:20:54] <raster> of course if it already has content...
+[09:21:03] <raster> then do nothing unless its outside the canvas viewport
+[09:21:12] <raster> then delete the content and replace with an empty rect again
+[09:21:22] <raster> you could delay this with a timer in case people scroll up and down a bit
+[09:21:29] <raster> so u dont want to delete things "too fast"
+[09:21:30] <raster> :)
+[09:21:48] <raster> nice bit here is you can also defer downloading of images and data until things become visible
+[09:21:58] <raster> so actually dont even do the http requests for that data until its needed
+[09:22:10] <raster> then do it async in the bg and once the data is available create the content
+[09:22:11] <raster> :)
+[09:22:32] <raster> its the native toolkit equivalent of all that ajax stuff for filling page content on demand
+[09:22:33] <raster> :)
+[09:22:43] <jf_simon> i will start with the new layout to have a clickable button :)
+[09:23:00] <jf_simon> the rest i a bit to difficult for me. but want to lean it
+[09:23:10] <raster> sure
+[09:23:12] <jf_simon> but this will need time :)
+[09:23:14] <raster> it's worth doing to learn
+[09:23:22] <raster> once you've done it .. it wont feel so far in future
+[09:23:30] <raster> and you 'll go "oooh that technique. got it"
+[09:23:48] <jf_simon> fore sure. remember me first start in coding
+[09:23:49] <raster> and you will end up able to make nice clean code to do it
+[09:23:56] <raster> sure
+[09:24:06] <raster> do things step by step
+[09:24:16] <raster> leanr a new technique/idea/concept each time
+[09:24:20] <raster> improve as you go
+[09:24:32] <jf_simon> lerning by doing 
+[09:24:39] <jf_simon> this is my way
+[09:24:46] <raster> this is why people like genlist
+[09:24:58] <raster> it does this "only keep the active set of items" thing for you
+[09:25:11] <raster> and it'll call your realize function when it needs content
+[09:25:25] <raster> and delete the object you return when it doesnt need it any more
+[09:25:32] <raster> it does that work for you
+[09:25:41] <raster> you still need to create the content
+[09:26:09] <raster> with genlist instead you can create "dummy content"
+[09:26:14] <raster> eg a blank or default image
+[09:26:17] <raster> and some empty text
+[09:26:25] <raster> or maybe image/icon indicating "i'm fetching the data..."
+[09:26:39] <raster> then when you return that attach to the object you return the async fetch data
+[09:27:00] <raster> lsten for delete events on that obj for when genlist nukes the obj (so you can cancel the http fetch)
+[09:27:14] <raster> then when the http fetch is "done" store the downloaded data on the object
+[09:27:25] <raster> (evas_object_data_set/get with string keys)
+[09:27:40] <raster> and then call "update" on that genlist item that the object is for
+[09:27:49] <raster> (storte the genlist item handle too in a key)
+[09:27:58] <raster> store
+[09:28:00] <raster> i mean
+[09:28:24] <raster> then the update will cause genlist to delete the old obj and re-realize it (ie update)
+[09:28:32] <raster> so this time you return real content (not dummy)
+[09:28:53] <raster> though i'd store the data in the genlist data item pointer when you create the list item :)
+[09:29:41] <raster> more ways to slice and dice this
+[09:29:42] <raster> :)
+[09:29:58] <jf_simon> i will try and ask again :)
+[09:30:03] <raster> :)
+[09:30:08] <raster> so go go - try stuff
+[09:30:09] <raster> :)
+[09:30:16] <jf_simon> thanks, will do
