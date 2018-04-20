@@ -46,6 +46,7 @@ const char *ci_icon;
 Eina_Bool   ci_icons;
 Eina_Bool   ci_bigicons;
 Eina_Bool   ci_popupnew;
+Eina_Bool   ci_indicator;
 double   	ci_refresh;
 int         ci_r;
 int         ci_g;
@@ -63,6 +64,7 @@ typedef struct {
 		  Eina_Bool   	icons;
 		  Eina_Bool   	bigicons;
 		  Eina_Bool   	popupnew;
+		  Eina_Bool   	indicator;
 		  double   	  	refresh;
 		  int         	r;
 	     int         	g;

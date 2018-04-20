@@ -20,6 +20,7 @@ _config_load(void *data)
 			ci_bigicons = list_data->bigicons;
 			ci_popupnew = list_data->popupnew;
 			ci_refresh = list_data->refresh;
+			ci_indicator = list_data->indicator;
 			ci_r = list_data->r;
 			ci_g = list_data->g;
 			ci_b = list_data->b;
@@ -34,6 +35,7 @@ _config_load(void *data)
 		ci_icon = eina_stringshare_add("");
 		ci_icons = 0;
 		ci_bigicons = 0;
+		ci_popupnew = 0;
 		ci_popupnew = 0;
 		ci_refresh = 10;
 		ci_r = 11;
@@ -66,6 +68,7 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    Evas_Object *en_icon = evas_object_data_get(mainbox, "en_icon");
    Evas_Object *check_icons = evas_object_data_get(mainbox, "check_icons");
    Evas_Object *check_bigicons = evas_object_data_get(mainbox, "check_bigicons");
+   Evas_Object *check_indicator = evas_object_data_get(mainbox, "check_indicator");
    Evas_Object *check_popupnew = evas_object_data_get(mainbox, "check_popupnew");
    Evas_Object *sl_refresh = evas_object_data_get(mainbox, "sl_refresh");
    Evas_Object *cs = evas_object_data_get(mainbox, "cs");
@@ -94,6 +97,7 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    ci_icons = elm_check_state_get(check_icons);
    ci_bigicons = elm_check_state_get(check_bigicons);
    ci_popupnew = elm_check_state_get(check_popupnew);
+   ci_indicator = elm_check_state_get(check_indicator);
 	ci_refresh = elm_slider_value_get(sl_refresh);
 	}
 	
@@ -106,6 +110,7 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 			list_data->icons = ci_icons;
 			list_data->saved_title = saved_title;
 			list_data->bigicons = ci_bigicons;
+			list_data->indicator = ci_indicator;
 			list_data->popupnew = ci_popupnew;
 			list_data->refresh = ci_refresh;
 			list_data->r = ci_r;
@@ -125,6 +130,7 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 		list_data1->bigicons = ci_bigicons;
 		list_data1->popupnew = ci_popupnew;
 		list_data1->refresh = ci_refresh;
+		list_data1->indicator = ci_indicator;
 		list_data1->r = ci_r;
 		list_data1->g = ci_g;
 		list_data1->b = ci_b;
@@ -201,7 +207,7 @@ void
 _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {	
 	Evas_Object *en_url, *en_keyword, *en_icon, *popup, *fr, *cs;
-   Evas_Object *o, *box_settings, *box_url, *box_icon, *lbl, *check_icons, *check_bigicons, *check_popupnew, *check_popupkeyword, *sl_refresh;
+   Evas_Object *o, *box_settings, *box_url, *box_icon, *lbl, *check_icons, *check_bigicons, *check_popupnew, *check_popupkeyword, *check_indicator, *sl_refresh;
 	
 	Evas_Object *ly = obj;
 	Evas_Object *win = data;
@@ -325,6 +331,17 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 	elm_box_pack_end(box_settings, check_popupnew);
 	evas_object_show(check_popupnew);
    evas_object_data_set(mainbox, "check_popupnew", check_popupnew);
+	
+	
+	check_indicator = elm_check_add(box_settings);
+// 	elm_object_disabled_set(check_popupnew, 1);
+	elm_object_text_set(check_indicator, "don't show update indicator [white bottom bar]");
+   elm_check_state_set(check_indicator, ci_indicator);
+   E_ALIGN(check_indicator, 0.0, 0.0);
+ 	E_WEIGHT(check_indicator, EVAS_HINT_EXPAND, 0);
+	elm_box_pack_end(box_settings, check_indicator);
+	evas_object_show(check_indicator);
+   evas_object_data_set(mainbox, "check_indicator", check_indicator);	
 	
 	
    o = elm_separator_add(box_settings);
