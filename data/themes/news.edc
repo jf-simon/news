@@ -86,6 +86,7 @@ collections {
                state: "default" 0.0;
                visible: 1;
                rel1.relative: 0.045 0.0;
+					rel1.offset: 0 1;
                rel2.relative: 0.955 0.06;
                color: 100 255 0 0;
 					}
@@ -93,6 +94,7 @@ collections {
                state: "new" 0.0;
                visible: 1;
                rel1.relative: 0.045 0.0;
+					rel1.offset: 0 1;
                rel2.relative: 0.955 0.06;
                color: 100 255 0 255;
 					}
@@ -106,6 +108,7 @@ collections {
                visible: 0;
                rel1.relative: 0.045 0.955;
                rel2.relative: 0.955 1.0;
+					rel2.offset: 0 -1;
                color: 255 255 255 0;
 					}
           description {
@@ -113,6 +116,7 @@ collections {
                visible: 1;
                rel1.relative: 0.045 0.955;
                rel2.relative: 0.955 1.0;
+					rel2.offset: 0 -1;
                color: 255 255 255 255;
 					}
           description {
@@ -120,6 +124,7 @@ collections {
                visible: 1;
                rel1.relative: 0.045 0.955;
                rel2.relative: 0.955 1.0;
+					rel2.offset: 0 -1;
                color: 255 0 0 255;
 					}
 				}
