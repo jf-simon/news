@@ -461,7 +461,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	if(!ci_icons)
 		evas_object_resize(popup, 480, 600);
 	else
-		evas_object_resize(popup, 400, 600);
+		evas_object_resize(popup, 450, 600);
 		
    
    evas_object_show(popup);
@@ -646,7 +646,7 @@ static void
 parse_atom(Eina_Strbuf *mybuffer)
 {
 	char **arr;
-	int i=0;
+	int i;
 
    arr = eina_str_split(eina_strbuf_string_get(mybuffer), "<entry>", 0);
 	
@@ -674,7 +674,7 @@ parse_atom(Eina_Strbuf *mybuffer)
 	eina_strbuf_reset(mybuffer);
 	
    Feed_Data *list_values = NULL;
-	list_values = eina_list_nth(feed_data_list, 0);
+	list_values = eina_list_nth(feed_data_list, 1);
 	 
 	if(saved_title == NULL || strcmp(list_values->title, saved_title) != 0)
 	{
@@ -699,6 +699,8 @@ parse_atom(Eina_Strbuf *mybuffer)
 	else
 	{
 		printf("TITLE GLEICH\n");
+		printf("TITLE ORG1:\t%s\n", list_values->title);
+		printf("TITLE SAVED1:\t%s\n", saved_title);
 // 		edje_object_signal_emit(ly, "item_new", "default");
 	}
 }
@@ -708,7 +710,7 @@ static void
 parse_atom1(Eina_Strbuf *mybuffer)
 {
 	char **arr;
-	int i=0;
+	int i;
 
    arr = eina_str_split(eina_strbuf_string_get(mybuffer), "<item", 0);
 	
@@ -736,7 +738,7 @@ parse_atom1(Eina_Strbuf *mybuffer)
 	eina_strbuf_reset(mybuffer);
 	
    Feed_Data *list_values = NULL;
-	list_values = eina_list_nth(feed_data_list, 0);
+	list_values = eina_list_nth(feed_data_list, 1);
 	 
 	if(saved_title == NULL || strcmp(list_values->title, saved_title) != 0)
 	{
