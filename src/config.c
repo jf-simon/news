@@ -20,7 +20,10 @@ _config_load(void *data)
 			ci_bigicons = list_data->bigicons;
 			ci_popupnew = list_data->popupnew;
 			ci_refresh = list_data->refresh;
+			ci_fontsize = list_data->fontsize;
 			ci_indicator = list_data->indicator;
+			ci_x_value = list_data->x_value;
+			ci_y_value = list_data->y_value;
 			ci_r = list_data->r;
 			ci_g = list_data->g;
 			ci_b = list_data->b;
@@ -38,6 +41,9 @@ _config_load(void *data)
 		ci_popupnew = 0;
 		ci_popupnew = 0;
 		ci_refresh = 10;
+		ci_fontsize = 12;
+		ci_x_value = 480;
+		ci_y_value = 600;
 		ci_r = 11;
 		ci_g = 54;
 		ci_b = 71;
@@ -46,6 +52,7 @@ _config_load(void *data)
 	
 	printf("COLOR LOAD: %i %i %i %i\n", ci_r, ci_g, ci_b, ci_a);
 	printf("LOAD FOUND: %i\n", found);
+	printf("LOAD FONTSIZE: %f\n", ci_fontsize);
 }
 
 
@@ -71,6 +78,9 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    Evas_Object *check_indicator = evas_object_data_get(mainbox, "check_indicator");
    Evas_Object *check_popupnew = evas_object_data_get(mainbox, "check_popupnew");
    Evas_Object *sl_refresh = evas_object_data_get(mainbox, "sl_refresh");
+   Evas_Object *sl_fontsize = evas_object_data_get(mainbox, "sl_fontsize");
+   Evas_Object *sl_x_value = evas_object_data_get(mainbox, "sl_x_value");
+   Evas_Object *sl_y_value = evas_object_data_get(mainbox, "sl_y_value");
    Evas_Object *cs = evas_object_data_get(mainbox, "cs");
 	
 	
@@ -99,6 +109,9 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    ci_popupnew = elm_check_state_get(check_popupnew);
    ci_indicator = elm_check_state_get(check_indicator);
 	ci_refresh = elm_slider_value_get(sl_refresh);
+	ci_fontsize = elm_slider_value_get(sl_fontsize);
+	ci_x_value = elm_slider_value_get(sl_x_value);
+	ci_y_value = elm_slider_value_get(sl_y_value);
 	}
 	
    EINA_LIST_FOREACH(configlist, l, list_data)
@@ -113,6 +126,9 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 			list_data->indicator = ci_indicator;
 			list_data->popupnew = ci_popupnew;
 			list_data->refresh = ci_refresh;
+			list_data->fontsize = ci_fontsize;
+			list_data->x_value = ci_x_value;
+			list_data->y_value = ci_y_value;
 			list_data->r = ci_r;
 			list_data->g = ci_g;
 			list_data->b = ci_b;
@@ -130,6 +146,9 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 		list_data1->bigicons = ci_bigicons;
 		list_data1->popupnew = ci_popupnew;
 		list_data1->refresh = ci_refresh;
+		list_data1->fontsize = ci_fontsize;
+		list_data1->x_value = ci_x_value;
+		list_data1->y_value = ci_y_value;
 		list_data1->indicator = ci_indicator;
 		list_data1->r = ci_r;
 		list_data1->g = ci_g;
@@ -139,7 +158,7 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 		configlist = eina_list_append(configlist, list_data1);
 	}
 
-	printf("SAVE FOUND: %0.2lf\n", ci_refresh);
+	printf("SAVE FOUND: %0.lf\n", ci_fontsize);
 _save_eet();
 
 _timer_reset();
@@ -207,7 +226,7 @@ void
 _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {	
 	Evas_Object *en_url, *en_keyword, *en_icon, *popup, *fr, *cs;
-   Evas_Object *o, *box_settings, *box_url, *box_icon, *lbl, *check_icons, *check_bigicons, *check_popupnew, *check_popupkeyword, *check_indicator, *sl_refresh;
+   Evas_Object *o, *box_settings, *box_url, *box_icon, *lbl, *check_icons, *check_bigicons, *check_popupnew, *check_popupkeyword, *check_indicator, *sl_refresh, *sl_fontsize, *sl_x_value, *sl_y_value;
 	
 	Evas_Object *ly = obj;
 	Evas_Object *win = data;
@@ -387,11 +406,72 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 	evas_object_show(en_keyword);
 	evas_object_data_set(mainbox, "en_keyword", en_keyword);
 	*/
+	
+	sl_fontsize = elm_slider_add(box_settings);
+	E_ALIGN(sl_fontsize, 0.0, 0.5);
+	elm_slider_unit_format_set(sl_fontsize, "%1.0f px");
+	elm_slider_indicator_format_set(sl_fontsize, "%1.0f");
+	elm_slider_value_set(sl_fontsize, ci_refresh);
+	elm_slider_span_size_set(sl_fontsize, 120);
+	elm_slider_min_max_set(sl_fontsize, 1, 60);
+	elm_object_text_set(sl_fontsize, "Fontsize: ");
+	elm_slider_value_set(sl_fontsize, ci_fontsize);
+// 				step = _step_size_calculate(0, 9);
+// 				elm_slider_step_set(sl_fontsize, 50.0);
+   elm_box_pack_end(box_settings, sl_fontsize);
+   evas_object_show(sl_fontsize);
+	evas_object_data_set(mainbox, "sl_fontsize", sl_fontsize);
+
+	
+	o = elm_separator_add(box_settings);
+   elm_separator_horizontal_set(o, EINA_TRUE);
+   elm_box_pack_end(box_settings, o);
+   evas_object_show(o);
+	
+
+	sl_x_value = elm_slider_add(box_settings);
+	E_ALIGN(sl_x_value, 0.0, 0.5);
+	elm_slider_unit_format_set(sl_x_value, "%1.0f px");
+	elm_slider_indicator_format_set(sl_x_value, "%1.0f");
+// 	elm_slider_value_set(sl_x_value, ci_x_value);
+	elm_slider_span_size_set(sl_x_value, 120);
+	elm_slider_min_max_set(sl_x_value, 100, 1000);
+	elm_object_text_set(sl_x_value, "Width of Popup: ");
+	elm_slider_value_set(sl_x_value, ci_x_value);
+// 				step = _step_size_calculate(0, 9);
+// 				elm_slider_step_set(sl_x_value, 50.0);
+   elm_box_pack_end(box_settings, sl_x_value);
+   evas_object_show(sl_x_value);
+	evas_object_data_set(mainbox, "sl_x_value", sl_x_value);
+	
+	
+	sl_y_value = elm_slider_add(box_settings);
+	E_ALIGN(sl_y_value, 0.0, 0.5);
+	elm_slider_unit_format_set(sl_y_value, "%1.0f px");
+	elm_slider_indicator_format_set(sl_y_value, "%1.0f");
+// 	elm_slider_value_set(sl_y_value, ci_y_value);
+	elm_slider_span_size_set(sl_y_value, 120);
+	elm_slider_min_max_set(sl_y_value, 100, 1000);
+	elm_object_text_set(sl_y_value, "Hight of Popup: ");
+	elm_slider_value_set(sl_y_value, ci_y_value);
+// 				step = _step_size_calculate(0, 9);
+// 				elm_slider_step_set(sl_y_value, 50.0);
+   elm_box_pack_end(box_settings, sl_y_value);
+   evas_object_show(sl_y_value);
+	evas_object_data_set(mainbox, "sl_y_value", sl_y_value);
+
+	
+	o = elm_separator_add(box_settings);
+   elm_separator_horizontal_set(o, EINA_TRUE);
+   elm_box_pack_end(box_settings, o);
+   evas_object_show(o);	
+	
+	
    sl_refresh = elm_slider_add(box_settings);
 	E_ALIGN(sl_refresh, 0.0, 0.5);
 	elm_slider_unit_format_set(sl_refresh, "%1.0f min");
 	elm_slider_indicator_format_set(sl_refresh, "%1.0f");
-	elm_slider_value_set(sl_refresh, ci_refresh);
+// 	elm_slider_value_set(sl_refresh, ci_refresh);
 	elm_slider_span_size_set(sl_refresh, 120);
 	elm_slider_min_max_set(sl_refresh, 1, 60);
 	elm_object_text_set(sl_refresh, "Refresh Intervall: ");

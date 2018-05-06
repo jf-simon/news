@@ -28,6 +28,9 @@ typedef struct {
 		  Eina_Bool   popupnew;
 		  Eina_Bool   indicator;
 		  double      refresh;
+		  double      fontsize;
+		  double      x_value;
+		  double      y_value;
 		  int         r;
 	     int         g;
         int         b;
@@ -78,6 +81,9 @@ _my_conf_descriptor_init(void)
     MY_CONF_SUB_ADD_BASIC(popupnew, EET_T_UCHAR);
     MY_CONF_SUB_ADD_BASIC(indicator, EET_T_UCHAR);
     MY_CONF_SUB_ADD_BASIC(refresh, EET_T_DOUBLE);
+    MY_CONF_SUB_ADD_BASIC(fontsize, EET_T_DOUBLE);
+    MY_CONF_SUB_ADD_BASIC(x_value, EET_T_DOUBLE);
+    MY_CONF_SUB_ADD_BASIC(y_value, EET_T_DOUBLE);
 	 MY_CONF_SUB_ADD_BASIC(r, EET_T_INT);
     MY_CONF_SUB_ADD_BASIC(g, EET_T_INT);
     MY_CONF_SUB_ADD_BASIC(b, EET_T_INT);
@@ -375,7 +381,8 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 					}
 					
 				   lbl = elm_label_add(boxh);
-					snprintf(buf1, sizeof(buf1), "<b>%s</b><br>%s</a><br><br><custom align=right><small>%s</small></custom>", list_data->title, elm_entry_markup_to_utf8(list_data->description), list_data->pubdate);
+					snprintf(buf1, sizeof(buf1), "<b><font_size=%f>%s</font_size></b><br><font_size=%f>%s</font_size></a><br><br><custom align=right><small>%s</small></custom>", ci_fontsize, list_data->title, ci_fontsize, elm_entry_markup_to_utf8(list_data->description), list_data->pubdate);
+// 					snprintf(buf1, sizeof(buf1), "<b>%s</b><br>%s</a><br><br><custom align=right><small>%s</small></custom>", list_data->title, ci_fontsize, elm_entry_markup_to_utf8(list_data->description), list_data->pubdate);
 					elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
 					elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(300));
 					elm_object_text_set(lbl, buf1);
@@ -459,11 +466,17 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
    elm_scroller_page_relative_set(scroller, 0, 1);
 	
 	if(!ci_icons)
-		evas_object_resize(popup, 480, 600);
+// 		evas_object_resize(popup, 480, 600);
+		evas_object_resize(popup, ci_x_value, ci_y_value);
 	else
-		evas_object_resize(popup, 450, 600);
-		
-   
+	{
+// 		evas_object_resize(popup, 450, 600);
+		if(ci_x_value - 30 <= 0)
+			evas_object_resize(popup, ci_x_value, ci_y_value);
+		else
+			evas_object_resize(popup, ci_x_value-30, ci_y_value);
+	}	
+
    evas_object_show(popup);
 }
 
