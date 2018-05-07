@@ -345,8 +345,11 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 					evas_object_show(o);
 			}
 			else
-			{				
-		   boxh = elm_box_add(box);
+			{
+				if(i == 1)
+					saved_title = eina_stringshare_add(list_data->title);
+
+			boxh = elm_box_add(box);
 			elm_box_horizontal_set(boxh, EINA_TRUE);
 					evas_object_size_hint_align_set(boxh, EVAS_HINT_FILL, EVAS_HINT_FILL);
 			
