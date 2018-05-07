@@ -13,6 +13,9 @@ working:
 - coloring the feeds
 - showing/hiding Feed Images
 - click an image to open the articel in webbrowser
+- display/hiding feed images
+- set the popup dimension
+- set font size
 
 not working:
 
