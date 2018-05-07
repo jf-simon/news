@@ -333,9 +333,10 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 						snprintf(buf1, sizeof(buf1), "<bigger>%s</bigger><br><br><big>%s</big><br><br><small>Last check: %s</small>", list_data->title, list_data->description, lastcheck);
 					
 					elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
-					elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(400));
+// 					elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(400));
 					elm_object_text_set(lbl, buf1);
-					evas_object_size_hint_align_set(lbl, 0.5, 0.5);
+					evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+					evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 					elm_box_pack_end(box, lbl);
 					evas_object_show(lbl);
 
@@ -387,7 +388,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 					snprintf(buf1, sizeof(buf1), "<b><font_size=%f>%s</font_size></b><br><font_size=%f>%s</font_size></a><br><br><custom align=right><small>%s</small></custom>", ci_fontsize, list_data->title, ci_fontsize, elm_entry_markup_to_utf8(list_data->description), list_data->pubdate);
 // 					snprintf(buf1, sizeof(buf1), "<b>%s</b><br>%s</a><br><br><custom align=right><small>%s</small></custom>", list_data->title, ci_fontsize, elm_entry_markup_to_utf8(list_data->description), list_data->pubdate);
 					elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
-					elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(300));
+// 					elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(300));
 					elm_object_text_set(lbl, buf1);
 					evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
 					evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

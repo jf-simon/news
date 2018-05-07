@@ -162,7 +162,7 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 _save_eet();
 
 _timer_reset();
-//  refresh feed it url has changed
+//  refresh feed if url has changed
 // _get_data();
 }
 
