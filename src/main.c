@@ -310,6 +310,8 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
    popup = elm_win_add(win, "Popup",  ELM_WIN_POPUP_MENU);
    elm_win_alpha_set(popup, 1);
 
+/*	
+	
    box = elm_box_add(popup);
    elm_box_horizontal_set(box, EINA_FALSE);
 	elm_box_padding_set(box, 10, 0);
@@ -407,52 +409,104 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 			}
 		
 			i++;
+	}*/
+
+
+	
+////////////////// TABLE TEST ///////////////////
+
+		Evas_Object *tb, *bt1, *bt2, *bt3, *ic;
+		   
+	char buf1[PATH_MAX];
+	char buf[PATH_MAX];
+		tb = elm_table_add(popup);
+		elm_table_padding_set(tb, 5,10);
+   evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(tb, 0, 0);
+	
+		evas_object_show(tb);
+		int y = 0;
+		
+	EINA_LIST_FOREACH(feed_data_list, l, list_data)
+   {			
+		
+		if(i == 0)
+			{					
+					lbl = elm_label_add(popup);
+					if(list_data->description == NULL)
+							snprintf(buf1, sizeof(buf1), "<bigger>%s</bigger><br><br><small>Last check: %s</small>", list_data->title, lastcheck);
+					else
+						snprintf(buf1, sizeof(buf1), "<bigger>%s</bigger><br><br><big>%s</big><br><br><small>Last check: %s</small>", list_data->title, list_data->description, lastcheck);
+					
+					elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
+// 					elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(400));
+					elm_object_text_set(lbl, buf1);
+					evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+					evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+					   elm_table_pack(tb, lbl, 0, y, 2, 1);
+					evas_object_show(lbl);
+					printf("I == 0\n");
+			}
+			else
+			{
+					if(!ci_icons)
+					{
+						ic = elm_icon_add(popup);
+						
+						if(list_data->imagelink == NULL)
+							snprintf(buf, sizeof(buf), "%s/images/news.png", PACKAGE_DATA_DIR);
+						else
+							snprintf(buf, sizeof(buf), "%s.jpg", list_data->imagelink);
+															
+						elm_image_file_set(ic, buf, NULL);
+						evas_object_size_hint_min_set(ic, 150, 56);
+						evas_object_size_hint_weight_set(ic, 0, EVAS_HINT_EXPAND);
+						evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
+					   elm_table_pack(tb, ic, 0, y+1, 1, 1);
+						evas_object_show(ic);
+					
+						if(!ci_bigicons && list_data->imagelink != NULL)
+						{
+							elm_object_tooltip_content_cb_set(ic, _content_image, list_data->imagelink, NULL);
+						}
+						
+						evas_object_smart_callback_add(ic, "clicked", _it_clicked, list_data->link);
+					}
+		
+				   lbl = elm_label_add(popup);
+					snprintf(buf1, sizeof(buf1), "<b><font_size=%f>%s</font_size></b><br><font_size=%f>%s</font_size></a><br><br><custom align=right><small>%s</small></custom>", ci_fontsize, list_data->title, ci_fontsize, elm_entry_markup_to_utf8(list_data->description), list_data->pubdate);
+// 					snprintf(buf1, sizeof(buf1), "<b>%s</b><br>%s</a><br><br><custom align=right><small>%s</small></custom>", list_data->title, ci_fontsize, elm_entry_markup_to_utf8(list_data->description), list_data->pubdate);
+					elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
+// 					elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(300));
+					elm_object_text_set(lbl, buf1);
+					evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+					evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+					
+					bt = elm_button_add(popup);
+					elm_object_text_set(bt, "Button 1.1");
+					evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+					evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+					evas_object_color_set(bt, 0, 0, 0, 0);
+					evas_object_show(bt);
+					
+					evas_object_smart_callback_add(bt, "clicked", _it_clicked, list_data->link);
+					
+					if(!ci_icons)
+					{
+						elm_table_pack(tb, lbl, 1, y+1, 1, 1);
+						elm_table_pack(tb, bt, 1, y+1, 1, 1);
+					}
+					else
+					{
+						elm_table_pack(tb, lbl, 0, y+1, 1, 1);
+						elm_table_pack(tb, bt, 0, y+1, 1, 1);
+					}
+					evas_object_show(lbl);
+			}
+			y++;
+			i++;
 	}
 
-//    bt = elm_button_add(box);
-//    elm_object_text_set(bt, "refresh");
-//    evas_object_smart_callback_add(bt, "pressed", _get_data, NULL);
-//    elm_box_pack_end(box, bt);
-//    evas_object_show(bt);
-
-////////////////// TABLE TEST ///////////////////
-/*
-		Evas_Object *tb;
-		   
-		tb = elm_table_add(popup);
-		evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, 0);
-// 		elm_win_resize_object_add(popup, tb);
-		evas_object_data_set(win, "tb", tb);
-		evas_object_show(tb);
-		
-		bt = elm_button_add(popup);
-   elm_object_text_set(bt, "Button 1");
-   evas_object_size_hint_weight_set(bt, 0.25, 0.25);
-//    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_table_pack(tb, bt, 0, 0, 1, 1);
-   evas_object_show(bt);
-	
-			bt = elm_button_add(popup);
-   elm_object_text_set(bt, "Button 1.1");
-   evas_object_size_hint_weight_set(bt, 0.25, 0.25);
-//    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_table_pack(tb, bt, 1, 0, 1, 1);
-   evas_object_show(bt);
-	
-			bt = elm_button_add(popup);
-   elm_object_text_set(bt, "Button 2.0");
-   evas_object_size_hint_weight_set(bt, 0.25, 0.25);
-//    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_table_pack(tb, bt, 0, 1, 1, 1);
-   evas_object_show(bt);
-	
-			bt = elm_button_add(popup);
-   elm_object_text_set(bt, "Button 2.1");
-   evas_object_size_hint_weight_set(bt, 0.25, 0.25);
-//    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_table_pack(tb, bt, 1, 1, 1, 1);
-   evas_object_show(bt);
-*/
 
 ////////////////// TABLE TEST END ///////////////////
 
@@ -462,8 +516,8 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
    evas_object_size_hint_weight_set(scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(popup, scroller);
    evas_object_show(scroller);
-   elm_object_content_set(scroller, box);
-//    elm_object_content_set(scroller, tb);
+//    elm_object_content_set(scroller, box);
+   elm_object_content_set(scroller, tb);
    elm_scroller_bounce_set(scroller, EINA_TRUE, EINA_FALSE);
    elm_scroller_policy_set(scroller, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_AUTO);
    elm_scroller_propagate_events_set(scroller, EINA_TRUE);
@@ -862,7 +916,7 @@ _data_complete(void *data, int type, void *event_info)
 				printf("RDF FEED\n");
 				parse_rdf(data);
 			}
-			else if(strstr((char *)eina_strbuf_string_get(data), "<feed xmlns=\"http://www.w3.org/2005/Atom\">") != 0)
+			else if(strstr((char *)eina_strbuf_string_get(data), "<feed xmlns=\"http://www.w3.org/2005/Atom\"") != 0)
 			{
 				printf("ATOM FEED\n");
 				parse_atom(data);
@@ -876,6 +930,10 @@ _data_complete(void *data, int type, void *event_info)
 			{
 				printf("ATOM1 FEED\n");
 				parse_atom1(data);
+			}
+			else
+			{
+				printf("NOT SUPPORTED\n");
 			}
 	}
 	else
