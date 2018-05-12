@@ -497,7 +497,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 					elm_object_text_set(bt, "Button 1.1");
 					evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
 					evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-					evas_object_color_set(bt, 0, 0, 0, 64);
+					evas_object_color_set(bt, 0, 0, 0, 0);
 					evas_object_show(bt);
 					
 					evas_object_smart_callback_add(bt, "pressed", _it_clicked, list_data->link);
