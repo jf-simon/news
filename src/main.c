@@ -433,7 +433,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 
 
 	
-////////////////// TABLE TEST ///////////////////
+////////////////// TABLE ///////////////////
 
 	tb = elm_table_add(popup);
 	elm_table_padding_set(tb, 5,10);
