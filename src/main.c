@@ -647,6 +647,7 @@ find_data(char *string, char *start1, char *end1)
 		{
 			arr = eina_str_split(string1, "href=\"", 2);
 		
+		stringReplace("\"", "", arr[1]);
 // 			printf("TEST: %s\n\n", arr[1]);
 			
 			return arr[1];
