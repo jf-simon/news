@@ -251,15 +251,19 @@ _it_clicked(void *data, Evas_Object *obj,
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "%s", (char *)data);
    evas_object_smart_callback_call(win, "gadget_open_uri", (char *)data);
-	
-	evas_object_color_set(obj, 0, 0, 0, 64);
 }
 
 static void
-_it_clicked_out(void *data, Evas_Object *obj,
+_it_clicked_pressed(void *data, Evas_Object *obj,
                  void *event_info EINA_UNUSED)
 {
-	
+	evas_object_color_set(obj, 0, 0, 0, 28);
+}
+
+static void
+_it_clicked_unpressed(void *data, Evas_Object *obj,
+                 void *event_info EINA_UNUSED)
+{	
 	evas_object_color_set(obj, 0, 0, 0, 0);
 }
 
@@ -481,7 +485,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 							elm_object_tooltip_content_cb_set(ic, _content_image, list_data->imagelink, NULL);
 						}
 						
-						evas_object_smart_callback_add(ic, "clicked", _it_clicked, list_data->link);
+// 						evas_object_smart_callback_add(ic, "clicked", _it_clicked, list_data->link);
 					}
 		
 				   lbl = elm_label_add(popup);
@@ -500,8 +504,9 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 					evas_object_color_set(bt, 0, 0, 0, 0);
 					evas_object_show(bt);
 					
-					evas_object_smart_callback_add(bt, "pressed", _it_clicked, list_data->link);
-					evas_object_smart_callback_add(bt, "unpressed", _it_clicked_out, list_data->link);
+					evas_object_smart_callback_add(bt, "clicked", _it_clicked, list_data->link);
+					evas_object_smart_callback_add(bt, "pressed", _it_clicked_pressed, list_data->link);
+					evas_object_smart_callback_add(bt, "unpressed", _it_clicked_unpressed, list_data->link);
 					
 					if(!ci_icons)
 					{
@@ -639,6 +644,16 @@ find_data(char *string, char *start1, char *end1)
 // 			printf("TEST: %s\n\n", string1);
 			return string1;
 		}
+		else if(!strcmp(end1, "/>"))
+		{
+			arr = eina_str_split(string1, "href=\"", 2);
+		
+// 			printf("TEST: %s\n\n", arr[1]);
+			
+			return arr[1];
+			free(arr[0]);
+			free(arr);
+		}
 		else
 		{
 			arr = eina_str_split(string1, ">", 2);
@@ -748,7 +763,7 @@ parse_atom(Eina_Strbuf *mybuffer)
 // 				data_add->subtitle = eina_stringshare_add(find_data(arr[i], "<subtitle", "</subtitle>"));
 				
 		feed_data_list = eina_list_append(feed_data_list, data_add);
-// 		printf("ARRAY = YES %s\n", data_add->title);
+		printf("ARRAY = YES %s\n", data_add->link);
 	}
 	
 	free(arr[0]);
