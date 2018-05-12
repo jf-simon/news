@@ -251,7 +251,18 @@ _it_clicked(void *data, Evas_Object *obj,
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "%s", (char *)data);
    evas_object_smart_callback_call(win, "gadget_open_uri", (char *)data);
+	
+	evas_object_color_set(obj, 0, 0, 0, 64);
 }
+
+static void
+_it_clicked_out(void *data, Evas_Object *obj,
+                 void *event_info EINA_UNUSED)
+{
+	
+	evas_object_color_set(obj, 0, 0, 0, 0);
+}
+
 
 
 static void
@@ -430,7 +441,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	EINA_LIST_FOREACH(feed_data_list, l, list_data)
    {			
 		
-		if(i == 0)
+		if(y == 0)
 			{					
 					lbl = elm_label_add(popup);
 					if(list_data->description == NULL)
@@ -486,10 +497,11 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 					elm_object_text_set(bt, "Button 1.1");
 					evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
 					evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-					evas_object_color_set(bt, 0, 0, 0, 0);
+					evas_object_color_set(bt, 0, 0, 0, 64);
 					evas_object_show(bt);
 					
-					evas_object_smart_callback_add(bt, "clicked", _it_clicked, list_data->link);
+					evas_object_smart_callback_add(bt, "pressed", _it_clicked, list_data->link);
+					evas_object_smart_callback_add(bt, "unpressed", _it_clicked_out, list_data->link);
 					
 					if(!ci_icons)
 					{
@@ -504,7 +516,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 					evas_object_show(lbl);
 			}
 			y++;
-			i++;
+// 			i++;
 	}
 
 
