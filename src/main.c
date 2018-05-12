@@ -257,7 +257,7 @@ static void
 _it_clicked_pressed(void *data, Evas_Object *obj,
                  void *event_info EINA_UNUSED)
 {
-	evas_object_color_set(obj, 0, 0, 0, 28);
+	evas_object_color_set(obj, 0, 0, 0, 30);
 }
 
 static void
@@ -498,7 +498,6 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 					evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 					
 					bt = elm_button_add(popup);
-					elm_object_text_set(bt, "Button 1.1");
 					evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
 					evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 					evas_object_color_set(bt, 0, 0, 0, 0);
