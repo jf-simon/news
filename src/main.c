@@ -442,10 +442,20 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	
 	evas_object_show(tb);
 			
+	
+
+			
 	EINA_LIST_FOREACH(feed_data_list, l, list_data)
    {
+		Evas_Object *rect;
+		rect = evas_object_rectangle_add(popup);
+		evas_object_size_hint_min_set(rect, 150, 1);
+		evas_object_size_hint_align_set(rect, EVAS_HINT_FILL, EVAS_HINT_FILL);
+		evas_object_size_hint_weight_set(rect, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+		evas_object_color_set(rect, 128, 128, 128, 64);
+		
 		if(y == 0)
-		{					
+		{
 			lbl = elm_label_add(popup);
 			
 			if(list_data->description == NULL)
@@ -454,13 +464,15 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 				snprintf(buf1, sizeof(buf1), "<bigger>%s</bigger><br><br><big>%s</big><br><br><small>Last check: %s</small>", list_data->title, list_data->description, lastcheck);
 					
 			elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
-// 			elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(400));
 			elm_object_text_set(lbl, buf1);
 			evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
 			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			
 			elm_table_pack(tb, lbl, 0, y, 2, 1);
+			
+// 			elm_table_pack(tb, rect, 0, y+1, 2, 1);
+			
 			evas_object_show(lbl);
-			printf("I == 0\n");
 		}
 		else
 		{
@@ -477,7 +489,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 				evas_object_size_hint_min_set(ic, 150, 56);
 				evas_object_size_hint_weight_set(ic, 0, EVAS_HINT_EXPAND);
 				evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
-				 elm_table_pack(tb, ic, 0, y+1, 1, 1);
+				elm_table_pack(tb, ic, 0, y+1, 1, 1);
 				evas_object_show(ic);
 					
 				if(!ci_bigicons && list_data->imagelink != NULL)
@@ -504,21 +516,37 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 			evas_object_smart_callback_add(bt, "clicked", _it_clicked, list_data->link);
 			evas_object_smart_callback_add(bt, "pressed", _it_clicked_pressed, list_data->link);
 			evas_object_smart_callback_add(bt, "unpressed", _it_clicked_unpressed, list_data->link);
-					
+				
+
+			
+			
+			
 			if(!ci_icons)
 			{
 				elm_table_pack(tb, lbl, 1, y+1, 1, 1);
 				elm_table_pack(tb, bt, 1, y+1, 1, 1);
+				elm_table_pack(tb, rect, 0, y+2, 2, 1);
 			}
 			else
 			{
 				elm_table_pack(tb, lbl, 0, y+1, 1, 1);
 				elm_table_pack(tb, bt, 0, y+1, 1, 1);
+				elm_table_pack(tb, rect, 0, y+2, 1, 1);
 			}
 			
+			evas_object_show(rect);
 			evas_object_show(lbl);
+			
+// 			Evas_Object *o;
+// 			o = elm_separator_add(popup);
+// 			elm_separator_horizontal_set(o, EINA_TRUE);
+// 			elm_table_pack(tb, o, 1, y+2, 1, 1);
+// 			evas_object_show(o);
+
 		}
-			y++;
+			y=y+2;
+			
+
 	}
 
 
@@ -747,8 +775,9 @@ parse_atom(Eina_Strbuf *mybuffer)
 		data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "/>"));
 				
 		data_add->description = eina_stringshare_add(find_data(arr[i], "<summary", "</summary>"));
+		
 		if(data_add->description == NULL)
-		data_add->description = eina_stringshare_add(find_data(arr[i], "<content", "</content>"));
+			data_add->description = eina_stringshare_add(find_data(arr[i], "<content", "</content>"));
 				
 		data_add->pubdate = eina_stringshare_add(find_data(arr[i], "<updated", "</updated>"));
 				
