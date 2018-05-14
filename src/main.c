@@ -527,7 +527,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 			if(!ci_icons)
 			{
 				elm_table_pack(tb, lbl, 1, y+1, 1, 1);
-				elm_table_pack(tb, bt, 1, y+1, 1, 1);
+				elm_table_pack(tb, bt, 0, y+1, 2, 1);
 				elm_table_pack(tb, rect, 0, y+2, 2, 1);
 			}
 			else

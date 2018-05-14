@@ -296,12 +296,12 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			evas_object_show(box_icon);
 			
 			lbl = elm_label_add(box_icon);
-			elm_object_text_set(lbl, "Feed Image <small>[blank for standard]</small>: ");
+			elm_object_text_set(lbl, "<align=left>Feed Image<br><small>local location or online link<br>[blank for standard]</small>: ");
 			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-			evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+			evas_object_size_hint_align_set(lbl, 0, EVAS_HINT_FILL);
 			elm_box_pack_end(box_icon, lbl);
 			evas_object_show(lbl);
-			
+						
 			en_icon = elm_entry_add(box_icon);
 // 			elm_object_disabled_set(en_icon, 1);
 			elm_config_context_menu_disabled_set(EINA_FALSE);
