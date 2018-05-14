@@ -540,22 +540,12 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 			evas_object_show(rect);
 			evas_object_show(lbl);
 			
-// 			Evas_Object *o;
-// 			o = elm_separator_add(popup);
-// 			elm_separator_horizontal_set(o, EINA_TRUE);
-// 			elm_table_pack(tb, o, 1, y+2, 1, 1);
-// 			evas_object_show(o);
-			y=y+3;
-
+			y=y+2;
 		}
-			
-
 	}
 
 
-////////////////// TABLE TEST END ///////////////////
-
-
+////////////////// TABLE END ///////////////////
 
 	scroller = elm_scroller_add(popup);
    evas_object_size_hint_weight_set(scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
