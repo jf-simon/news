@@ -470,9 +470,12 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 			
 			elm_table_pack(tb, lbl, 0, y, 2, 1);
 			
-// 			elm_table_pack(tb, rect, 0, y+1, 2, 1);
+			elm_table_pack(tb, rect, 0, y+1, 2, 1);
 			
 			evas_object_show(lbl);
+			evas_object_show(rect);
+			y++;
+
 		}
 		else
 		{
@@ -542,9 +545,9 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 // 			elm_separator_horizontal_set(o, EINA_TRUE);
 // 			elm_table_pack(tb, o, 1, y+2, 1, 1);
 // 			evas_object_show(o);
+			y=y+3;
 
 		}
-			y=y+2;
 			
 
 	}
