@@ -335,14 +335,14 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 	
 	
 			tb_feed = elm_table_add(popup);
-// 			evas_object_size_hint_weight_set(tb_feed, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-// 			evas_object_size_hint_align_set(tb_feed, 0, 0);
+			evas_object_size_hint_weight_set(tb_feed, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			evas_object_size_hint_align_set(tb_feed, EVAS_HINT_FILL, EVAS_HINT_FILL);
 			evas_object_show(tb_feed);
 			
 			lbl = elm_label_add(popup);
 			elm_object_text_set(lbl, "URL: ");
 			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-			evas_object_size_hint_align_set(lbl, 0, EVAS_HINT_FILL);
+			evas_object_size_hint_align_set(lbl, 0, 0);
 			elm_table_pack(tb_feed, lbl, 0, 0, 1, 1);
 			evas_object_show(lbl);
 			
@@ -459,11 +459,10 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			evas_object_size_hint_align_set(sl_x_value, EVAS_HINT_FILL, 0);
 			elm_slider_unit_format_set(sl_x_value, "%1.0f px");
 			elm_slider_indicator_format_set(sl_x_value, "%1.0f");
-		// 	elm_slider_value_set(sl_x_value, ci_y_value);
 // 			elm_slider_span_size_set(sl_x_value, 120);
 			elm_slider_min_max_set(sl_x_value, 100, 1000);
 // 			elm_object_text_set(sl_x_value, "Hight of Popup: ");
-			elm_slider_value_set(sl_x_value, ci_y_value);
+			elm_slider_value_set(sl_x_value, ci_x_value);
 		// 				step = _step_size_calculate(0, 9);
 		// 				elm_slider_step_set(sl_x_value, 50.0);
 			elm_table_pack(tb_popup, sl_x_value, 1, 1, 1, 1);
