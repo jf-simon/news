@@ -279,10 +279,20 @@ _step_size_calculate(double min, double max)
    int steps = 0;
 
    steps = max - min;
-   if (steps) step = (1.0 / steps);
+   if (steps) step = (10.0 / steps);
    return step;
 }
 
+static double
+_step_size_calculate_1(double min, double max)
+{
+   double step = 0.0;
+   int steps = 0;
+
+   steps = max - min;
+   if (steps) step = (1.0 / steps);
+   return step;
+}
 
 void
 _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
@@ -394,8 +404,8 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			elm_slider_indicator_format_set(sl_refresh, "%1.0f");
 			elm_slider_min_max_set(sl_refresh, 1, 60);
 			elm_slider_value_set(sl_refresh, ci_refresh);
-// 			step = _step_size_calculate(0, 1);
-			elm_slider_step_set(sl_refresh, 0.01);
+			step = _step_size_calculate_1(1, 60);
+			elm_slider_step_set(sl_refresh, step );
 			elm_table_pack(tb_feed, sl_refresh, 1, 2, 1, 1);
 			evas_object_show(sl_refresh);
 			evas_object_data_set(tb, "sl_refresh", sl_refresh);
@@ -483,8 +493,8 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			elm_slider_indicator_format_set(sl_fontsize, "%1.0f");
 			elm_slider_min_max_set(sl_fontsize, 1, 60);
 			elm_slider_value_set(sl_fontsize, ci_fontsize);
-		// 				step = _step_size_calculate(0, 9);
-			elm_slider_step_set(sl_fontsize, 0.01);
+			step = _step_size_calculate_1(1, 60);
+			elm_slider_step_set(sl_fontsize, step);
 			elm_table_pack(tb_popup, sl_fontsize, 1, 7, 1, 1);
 			evas_object_show(sl_fontsize);
 			evas_object_data_set(tb, "sl_fontsize", sl_fontsize);
@@ -503,8 +513,8 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			elm_slider_indicator_format_set(sl_x_value, "%1.0f");
 			elm_slider_min_max_set(sl_x_value, 100, 1000);
 			elm_slider_value_set(sl_x_value, ci_x_value);
-		// 				step = _step_size_calculate(0, 9);
-			elm_slider_step_set(sl_x_value, 0.10);
+			step = _step_size_calculate(100, 1000);
+			elm_slider_step_set(sl_x_value, step);
 			elm_table_pack(tb_popup, sl_x_value, 1, 8, 1, 1);
 			evas_object_show(sl_x_value);
 			evas_object_data_set(tb, "sl_x_value", sl_x_value);
@@ -524,8 +534,8 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			elm_slider_indicator_format_set(sl_y_value, "%1.0f");
 			elm_slider_min_max_set(sl_y_value, 100, 1000);
 			elm_slider_value_set(sl_y_value, ci_y_value);
-		// 				step = _step_size_calculate(0, 9);
-			elm_slider_step_set(sl_y_value, 0.10);
+			step = _step_size_calculate(100, 1000);
+			elm_slider_step_set(sl_y_value, step);
 			elm_table_pack(tb_popup, sl_y_value, 1, 9, 1, 1);
 			evas_object_show(sl_y_value);
 			evas_object_data_set(tb, "sl_y_value", sl_y_value);
