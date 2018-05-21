@@ -777,7 +777,7 @@ parse_atom(Eina_Strbuf *mybuffer)
 // 				data_add->subtitle = eina_stringshare_add(find_data(arr[i], "<subtitle", "</subtitle>"));
 				
 		feed_data_list = eina_list_append(feed_data_list, data_add);
-		printf("ARRAY = YES %s\n", data_add->link);
+// 		printf("ARRAY = YES %s\n", data_add->link);
 	}
 	
 	free(arr[0]);

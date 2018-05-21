@@ -67,21 +67,21 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 	
 	printf("SAVE\n");
 	
-	Evas_Object *mainbox = data;	
+	Evas_Object *tb = data;	
 	
 	if(data != NULL)
 	{
-   Evas_Object *en_url = evas_object_data_get(mainbox, "en_url");
-   Evas_Object *en_icon = evas_object_data_get(mainbox, "en_icon");
-   Evas_Object *check_icons = evas_object_data_get(mainbox, "check_icons");
-   Evas_Object *check_bigicons = evas_object_data_get(mainbox, "check_bigicons");
-   Evas_Object *check_indicator = evas_object_data_get(mainbox, "check_indicator");
-   Evas_Object *check_popupnew = evas_object_data_get(mainbox, "check_popupnew");
-   Evas_Object *sl_refresh = evas_object_data_get(mainbox, "sl_refresh");
-   Evas_Object *sl_fontsize = evas_object_data_get(mainbox, "sl_fontsize");
-   Evas_Object *sl_x_value = evas_object_data_get(mainbox, "sl_x_value");
-   Evas_Object *sl_y_value = evas_object_data_get(mainbox, "sl_y_value");
-   Evas_Object *cs = evas_object_data_get(mainbox, "cs");
+   Evas_Object *en_url = evas_object_data_get(tb, "en_url");
+   Evas_Object *en_icon = evas_object_data_get(tb, "en_icon");
+   Evas_Object *check_icons = evas_object_data_get(tb, "check_icons");
+   Evas_Object *check_bigicons = evas_object_data_get(tb, "check_bigicons");
+   Evas_Object *check_indicator = evas_object_data_get(tb, "check_indicator");
+   Evas_Object *check_popupnew = evas_object_data_get(tb, "check_popupnew");
+   Evas_Object *sl_refresh = evas_object_data_get(tb, "sl_refresh");
+   Evas_Object *sl_fontsize = evas_object_data_get(tb, "sl_fontsize");
+   Evas_Object *sl_x_value = evas_object_data_get(tb, "sl_x_value");
+   Evas_Object *sl_y_value = evas_object_data_get(tb, "sl_y_value");
+   Evas_Object *cs = evas_object_data_get(tb, "cs");
 	
 	
 
@@ -176,9 +176,9 @@ unsigned int createHEX(int r, int g, int b, int a)
 static void
 _colorselector_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {	
-	Evas_Object *mainbox = data;
-   Evas_Object *ic = evas_object_data_get(mainbox, "ic");
-   Evas_Object *ly = evas_object_data_get(mainbox, "ly");
+	Evas_Object *tb = data;
+   Evas_Object *ic = evas_object_data_get(tb, "ic");
+   Evas_Object *ly = evas_object_data_get(tb, "ly");
 
    elm_colorselector_color_get(obj, &ci_r, &ci_g, &ci_b, &ci_a);
 	
@@ -221,11 +221,62 @@ _config_save1(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 	_config_save(data, NULL, NULL, NULL);	
 }*/
 
+static void
+_config_show_feed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+	Evas_Object *tb = data;
+	
+   Evas_Object *popup_frame = evas_object_data_get(tb, "popup_frame");
+	Evas_Object *feed_frame = evas_object_data_get(tb, "feed_frame");
+	Evas_Object *advanced_frame = evas_object_data_get(tb, "advanced_frame");
+
+//    evas_object_hide();
+   evas_object_hide(popup_frame);
+   evas_object_hide(advanced_frame);
+   evas_object_show(feed_frame);
+	printf("SHOW FEED\n");
+}
+
+
+static void
+_config_show_popup(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+	Evas_Object *tb = data;
+	
+   Evas_Object *popup_frame = evas_object_data_get(tb, "popup_frame");
+	Evas_Object *feed_frame = evas_object_data_get(tb, "feed_frame");
+	Evas_Object *advanced_frame = evas_object_data_get(tb, "advanced_frame");
+//    evas_object_hide();
+   evas_object_hide(feed_frame);
+   evas_object_hide(advanced_frame);
+   evas_object_show(popup_frame);
+	printf("SHOW POPUP\n");
+}
+
+
+static void
+_config_show_advanced(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+	Evas_Object *tb = data;
+	
+   Evas_Object *popup_frame = evas_object_data_get(tb, "popup_frame");
+	Evas_Object *feed_frame = evas_object_data_get(tb, "feed_frame");
+	Evas_Object *advanced_frame = evas_object_data_get(tb, "advanced_frame");
+	
+	
+//    evas_object_hide();
+   evas_object_hide(feed_frame);
+   evas_object_hide(popup_frame);
+   evas_object_show(advanced_frame);
+	
+	printf("SHOW ADVANCED\n");
+}
+
 
 void
 _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {	
-	Evas_Object *en_url, *en_keyword, *en_icon, *popup, *fr, *cs;
+	Evas_Object *en_url, *en_keyword, *en_icon, *popup, *fr, *cs, *mainfr, *tb, *list, *it, *popup_frame, *tb_feed, *tb_popup, *tb_advanced, *feed_frame, *advanced_frame, *advanced_popup;
    Evas_Object *o, *box_settings, *box_url, *box_icon, *lbl, *check_icons, *check_bigicons, *check_popupnew, *check_popupkeyword, *check_indicator, *sl_refresh, *sl_fontsize, *sl_x_value, *sl_y_value;
 	
 	Evas_Object *ly = obj;
@@ -234,309 +285,285 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    popup = elm_win_add(win, "win", ELM_WIN_BASIC);
    elm_win_alpha_set(popup, 1);
 	
-   mainbox = elm_box_add(popup);
 	
 	
-   elm_box_horizontal_set(mainbox, EINA_FALSE);
-   E_EXPAND(mainbox);
-   E_ALIGN(mainbox, 0.0, 0.0);
-   evas_object_show(mainbox);
 	
 	
-   fr = elm_frame_add(mainbox);
-   elm_object_text_set(fr, "News Settings");
-   E_EXPAND(fr);
-   E_ALIGN(fr, 0.5, 0.5);
-   E_FILL(fr);
-   evas_object_show(fr);
-
-   box_settings = elm_box_add(fr);
-   elm_box_horizontal_set(box_settings, EINA_FALSE);
-   E_EXPAND(box_settings);
-   evas_object_show(box_settings);
-
 	
-		   box_url = elm_box_add(box_settings);
-			elm_box_horizontal_set(box_url, EINA_TRUE);
-			E_EXPAND(box_url);
-			E_ALIGN(box_url, 0.0, 0.5);
-			evas_object_show(box_url);
+	
+   tb = elm_table_add(popup);
+	evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(tb);
+	
+	
+	lbl = elm_label_add(tb);
+   evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_style_set(lbl, "marker");
+   elm_object_text_set(lbl, "News Configuration");
+   elm_table_pack(tb, lbl, 0, 0, 2, 1);
+   evas_object_show(lbl);
+	
+	
+	
+	
+	
+	   list = elm_list_add(tb);
+	evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(tb, list, 0, 1, 1, 1);
+   elm_list_select_mode_set(list, ELM_OBJECT_SELECT_MODE_ALWAYS);
+   elm_scroller_content_min_limit(list, 1, 1);
+   it = elm_list_item_append(list, "Feed", NULL, NULL,
+                             _config_show_feed, tb);
+   elm_list_item_selected_set(it, 1);
+   it = elm_list_item_append(list, "Popup", NULL, NULL,
+                             _config_show_popup, tb);
+   it = elm_list_item_append(list, "Advanced", NULL, NULL,
+                             _config_show_advanced, tb);
+   elm_list_go(list);
+   evas_object_show(list);
+	
+	
+/// FEED FRAME ///
+	feed_frame = elm_frame_add(popup);
+   elm_object_text_set(feed_frame, "Feed");
+	evas_object_size_hint_weight_set(feed_frame, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(feed_frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
+//    evas_object_show(feed_frame);
+   elm_table_pack(tb, feed_frame, 1, 1, 1, 1);
+	
+	
+			tb_feed = elm_table_add(popup);
+// 			evas_object_size_hint_weight_set(tb_feed, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+// 			evas_object_size_hint_align_set(tb_feed, 0, 0);
+			evas_object_show(tb_feed);
 			
-			lbl = elm_label_add(box_url);
-			elm_object_text_set(lbl, "Feed URL: ");
+			lbl = elm_label_add(popup);
+			elm_object_text_set(lbl, "URL: ");
 			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-			evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
-			elm_box_pack_end(box_url, lbl);
+			evas_object_size_hint_align_set(lbl, 0, EVAS_HINT_FILL);
+			elm_table_pack(tb_feed, lbl, 0, 0, 1, 1);
 			evas_object_show(lbl);
 			
-			en_url = elm_entry_add(box_url);
+			en_url = elm_entry_add(popup);
 			elm_config_context_menu_disabled_set(EINA_FALSE);
 			elm_object_text_set(en_url, ci_url);
+			elm_object_part_text_set(en_url, "elm.guide", "Enter Feed URL");
 			elm_entry_editable_set(en_url, EINA_TRUE);
 			elm_entry_single_line_set(en_url, EINA_TRUE);
 			evas_object_size_hint_weight_set(en_url, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 			evas_object_size_hint_align_set(en_url, EVAS_HINT_FILL, EVAS_HINT_FILL);
-			elm_box_pack_end(box_url, en_url);
+			elm_table_pack(tb_feed, en_url, 1, 0, 1, 1);
 			evas_object_show(en_url);
-			evas_object_data_set(mainbox, "en_url", en_url);
-			
-			elm_box_pack_end(box_settings, box_url);
+			evas_object_data_set(tb, "en_url", en_url);
 	
 
-
-   o = elm_separator_add(box_settings);
-   elm_separator_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(box_settings, o);
-   evas_object_show(o);
-	
-			box_icon = elm_box_add(box_settings);
-			elm_box_horizontal_set(box_icon, EINA_TRUE);
-			E_EXPAND(box_icon);
-			E_ALIGN(box_icon, 0.0, 0.5);
-			evas_object_show(box_icon);
-			
-			lbl = elm_label_add(box_icon);
-			elm_object_text_set(lbl, "<align=left>Feed Image<br><small>local location or online link<br>[blank for standard]</small>: ");
+			lbl = elm_label_add(popup);
+			elm_object_text_set(lbl, "Image: ");
 			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 			evas_object_size_hint_align_set(lbl, 0, EVAS_HINT_FILL);
-			elm_box_pack_end(box_icon, lbl);
+			elm_object_tooltip_text_set(lbl, "local location or online link<br>[blank for standard]");
+			elm_table_pack(tb_feed, lbl, 0, 1, 1, 1);
 			evas_object_show(lbl);
 						
-			en_icon = elm_entry_add(box_icon);
-// 			elm_object_disabled_set(en_icon, 1);
+			en_icon = elm_entry_add(popup);
 			elm_config_context_menu_disabled_set(EINA_FALSE);
 			elm_object_text_set(en_icon, ci_icon);
+			elm_object_part_text_set(en_icon, "elm.guide", "Enter Feed Image");
 			elm_entry_editable_set(en_icon, EINA_TRUE);
 			elm_entry_single_line_set(en_icon, EINA_TRUE);
 			evas_object_size_hint_weight_set(en_icon, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 			evas_object_size_hint_align_set(en_icon, EVAS_HINT_FILL, EVAS_HINT_FILL);
-			elm_box_pack_end(box_icon, en_icon);
+			elm_object_tooltip_text_set(en_icon, "local location or online link<br>[blank for standard]");
+			elm_table_pack(tb_feed, en_icon, 1, 1, 1, 1);
 			evas_object_show(en_icon);
-			evas_object_data_set(mainbox, "en_icon", en_icon);
+			evas_object_data_set(tb, "en_icon", en_icon);
 			
-			elm_box_pack_end(box_settings, box_icon);
+			
+			lbl = elm_label_add(popup);
+			elm_object_text_set(lbl, "Refresh Intervall: ");
+			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			evas_object_size_hint_align_set(lbl, 0, 0);
+			elm_object_tooltip_text_set(lbl, "local location or online link<br>[blank for standard]");
+			elm_table_pack(tb_feed, lbl, 0, 2, 1, 1);
+			evas_object_show(lbl);
+			
+			sl_refresh = elm_slider_add(popup);
+			evas_object_size_hint_weight_set(sl_refresh, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			evas_object_size_hint_align_set(sl_refresh, EVAS_HINT_FILL, 0);
+			elm_slider_unit_format_set(sl_refresh, "%1.0f min");
+			elm_slider_indicator_format_set(sl_refresh, "%1.0f");
+// 			elm_slider_span_size_set(sl_refresh, 120);
+			elm_slider_min_max_set(sl_refresh, 1, 60);
+// 			elm_object_text_set(sl_refresh, "Refresh Intervall: ");
+			elm_slider_value_set(sl_refresh, ci_refresh);
+		// 				step = _step_size_calculate(0, 9);
+		// 				elm_slider_step_set(sl_refresh, 50.0);
+			elm_table_pack(tb_feed, sl_refresh, 1, 2, 1, 1);
+			evas_object_show(sl_refresh);
+			evas_object_data_set(tb, "sl_refresh", sl_refresh);
+			
+
+   elm_object_content_set(feed_frame, tb_feed);
+	evas_object_data_set(tb, "feed_frame", feed_frame);
+/// FEED FRAME END ///
+
+/// POPUP FRAME ///
+	popup_frame = elm_frame_add(popup);
+   elm_object_text_set(popup_frame, "Popup");
+	evas_object_size_hint_weight_set(popup_frame, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(popup_frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
+//    evas_object_show(popup_frame);
+   elm_table_pack(tb, popup_frame, 1, 1, 1, 1);
+	
+			tb_popup = elm_table_add(popup);
+// 			evas_object_size_hint_weight_set(tb_popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			evas_object_size_hint_align_set(tb_popup, 0, 0);
+			evas_object_show(tb_popup);
+			
+			lbl = elm_label_add(popup);
+			elm_object_text_set(lbl, "Frontsize: ");
+// 			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			evas_object_size_hint_align_set(lbl, 0, 0);
+			elm_table_pack(tb_popup, lbl, 0, 0, 1, 1);
+			evas_object_show(lbl);
+			
+			sl_fontsize = elm_slider_add(popup);
+			evas_object_size_hint_weight_set(sl_fontsize, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			evas_object_size_hint_align_set(sl_fontsize, EVAS_HINT_FILL, 0);
+			elm_slider_unit_format_set(sl_fontsize, "%1.0f px");
+			elm_slider_indicator_format_set(sl_fontsize, "%1.0f");
+			elm_slider_value_set(sl_fontsize, ci_refresh);
+// 			elm_slider_span_size_set(sl_fontsize, 120);
+			elm_slider_min_max_set(sl_fontsize, 1, 60);
+// 			elm_object_text_set(sl_fontsize, "Fontsize: ");
+			elm_slider_value_set(sl_fontsize, ci_fontsize);
+		// 				step = _step_size_calculate(0, 9);
+		// 				elm_slider_step_set(sl_fontsize, 50.0);
+			elm_table_pack(tb_popup, sl_fontsize, 1, 0, 1, 1);
+			evas_object_show(sl_fontsize);
+			evas_object_data_set(tb, "sl_fontsize", sl_fontsize);
 	
 
-
-   o = elm_separator_add(box_settings);
-   elm_separator_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(box_settings, o);
-   evas_object_show(o);
-	
-	check_icons = elm_check_add(box_settings);
-	elm_object_text_set(check_icons, "Don't show images");
-   elm_check_state_set(check_icons, ci_icons);
-   E_ALIGN(check_icons, 0.0, 0.0);
- 	E_WEIGHT(check_icons, EVAS_HINT_EXPAND, 0);
-	elm_box_pack_end(box_settings, check_icons);
-	evas_object_show(check_icons);
-   evas_object_data_set(mainbox, "check_icons", check_icons);
-	
-	check_bigicons = elm_check_add(box_settings);
-	elm_object_text_set(check_bigicons, "Don't show big images on mouse over");
-   elm_check_state_set(check_bigicons, ci_bigicons);
-   E_ALIGN(check_bigicons, 0.0, 0.0);
- 	E_WEIGHT(check_bigicons, EVAS_HINT_EXPAND, 0);
-	elm_box_pack_end(box_settings, check_bigicons);
-	evas_object_show(check_bigicons);
-   evas_object_data_set(mainbox, "check_bigicons", check_bigicons);
-	
-	check_popupnew = elm_check_add(box_settings);
-// 	elm_object_disabled_set(check_popupnew, 1);
-	elm_object_text_set(check_popupnew, "Popup on new News");
-   elm_check_state_set(check_popupnew, ci_popupnew);
-   E_ALIGN(check_popupnew, 0.0, 0.0);
- 	E_WEIGHT(check_popupnew, EVAS_HINT_EXPAND, 0);
-	elm_box_pack_end(box_settings, check_popupnew);
-	evas_object_show(check_popupnew);
-   evas_object_data_set(mainbox, "check_popupnew", check_popupnew);
-	
-	
-	check_indicator = elm_check_add(box_settings);
-// 	elm_object_disabled_set(check_popupnew, 1);
-	elm_object_text_set(check_indicator, "don't show update indicator [white bottom bar]");
-   elm_check_state_set(check_indicator, ci_indicator);
-   E_ALIGN(check_indicator, 0.0, 0.0);
- 	E_WEIGHT(check_indicator, EVAS_HINT_EXPAND, 0);
-	elm_box_pack_end(box_settings, check_indicator);
-	evas_object_show(check_indicator);
-   evas_object_data_set(mainbox, "check_indicator", check_indicator);	
-	
-	
-   o = elm_separator_add(box_settings);
-   elm_separator_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(box_settings, o);
-   evas_object_show(o);
-	/*
-	lbl = elm_label_add(box_settings);
-	elm_object_text_set(lbl, "Keyword handling");
-	evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_box_pack_end(box_settings, lbl);
-	evas_object_show(lbl);
-	
-	check_popupkeyword = elm_check_add(box_settings);
-// 	elm_object_disabled_set(check_popupkeyword, 1);
-	elm_object_text_set(check_popupkeyword, "Popup on new News");
-   elm_check_state_set(check_popupkeyword, ci_popupkeyword);
-   E_ALIGN(check_popupkeyword, 0.0, 0.0);
- 	E_WEIGHT(check_popupkeyword, EVAS_HINT_EXPAND, 0);
-	elm_box_pack_end(box_settings, check_popupkeyword);
-	evas_object_show(check_popupkeyword);
-   evas_object_data_set(mainbox, "check_popupkeyword", check_popupkeyword);
-	
-	check_popupkeyword = elm_check_add(box_settings);
-// 	elm_object_disabled_set(check_popupkeyword, 1);
-	elm_object_text_set(check_popupkeyword, "Highlight Keywords");
-   elm_check_state_set(check_popupkeyword, ci_popupkeyword);
-   E_ALIGN(check_popupkeyword, 0.0, 0.0);
- 	E_WEIGHT(check_popupkeyword, EVAS_HINT_EXPAND, 0);
-	elm_box_pack_end(box_settings, check_popupkeyword);
-	evas_object_show(check_popupkeyword);
-   evas_object_data_set(mainbox, "check_popupkeyword", check_popupkeyword);
-	
-	en_keyword = elm_entry_add(box_settings);
-	elm_config_context_menu_disabled_set(EINA_FALSE);
-	elm_object_text_set(en_keyword, ci_popupkeyword);
-	elm_entry_editable_set(en_keyword, EINA_TRUE);
-	elm_entry_single_line_set(en_keyword, EINA_TRUE);
-	evas_object_size_hint_weight_set(en_keyword, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(en_keyword, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	elm_box_pack_end(box_settings, en_keyword);
-	evas_object_show(en_keyword);
-	evas_object_data_set(mainbox, "en_keyword", en_keyword);
-	*/
-	
-	sl_fontsize = elm_slider_add(box_settings);
-	E_ALIGN(sl_fontsize, 0.0, 0.5);
-	elm_slider_unit_format_set(sl_fontsize, "%1.0f px");
-	elm_slider_indicator_format_set(sl_fontsize, "%1.0f");
-	elm_slider_value_set(sl_fontsize, ci_refresh);
-	elm_slider_span_size_set(sl_fontsize, 120);
-	elm_slider_min_max_set(sl_fontsize, 1, 60);
-	elm_object_text_set(sl_fontsize, "Fontsize: ");
-	elm_slider_value_set(sl_fontsize, ci_fontsize);
-// 				step = _step_size_calculate(0, 9);
-// 				elm_slider_step_set(sl_fontsize, 50.0);
-   elm_box_pack_end(box_settings, sl_fontsize);
-   evas_object_show(sl_fontsize);
-	evas_object_data_set(mainbox, "sl_fontsize", sl_fontsize);
-
-	
-	o = elm_separator_add(box_settings);
-   elm_separator_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(box_settings, o);
-   evas_object_show(o);
-	
-
-	sl_x_value = elm_slider_add(box_settings);
-	E_ALIGN(sl_x_value, 0.0, 0.5);
-	elm_slider_unit_format_set(sl_x_value, "%1.0f px");
-	elm_slider_indicator_format_set(sl_x_value, "%1.0f");
-// 	elm_slider_value_set(sl_x_value, ci_x_value);
-	elm_slider_span_size_set(sl_x_value, 120);
-	elm_slider_min_max_set(sl_x_value, 100, 1000);
-	elm_object_text_set(sl_x_value, "Width of Popup: ");
-	elm_slider_value_set(sl_x_value, ci_x_value);
-// 				step = _step_size_calculate(0, 9);
-// 				elm_slider_step_set(sl_x_value, 50.0);
-   elm_box_pack_end(box_settings, sl_x_value);
-   evas_object_show(sl_x_value);
-	evas_object_data_set(mainbox, "sl_x_value", sl_x_value);
+			lbl = elm_label_add(popup);
+			elm_object_text_set(lbl, "Width: ");
+// 			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			evas_object_size_hint_align_set(lbl, 0, 0);
+			elm_object_tooltip_text_set(lbl, "local location or online link<br>[blank for standard]");
+			elm_table_pack(tb_popup, lbl, 0, 1, 1, 1);
+			evas_object_show(lbl);
+						
+			sl_x_value = elm_slider_add(popup);
+			evas_object_size_hint_weight_set(sl_x_value, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			evas_object_size_hint_align_set(sl_x_value, EVAS_HINT_FILL, 0);
+			elm_slider_unit_format_set(sl_x_value, "%1.0f px");
+			elm_slider_indicator_format_set(sl_x_value, "%1.0f");
+		// 	elm_slider_value_set(sl_x_value, ci_y_value);
+// 			elm_slider_span_size_set(sl_x_value, 120);
+			elm_slider_min_max_set(sl_x_value, 100, 1000);
+// 			elm_object_text_set(sl_x_value, "Hight of Popup: ");
+			elm_slider_value_set(sl_x_value, ci_y_value);
+		// 				step = _step_size_calculate(0, 9);
+		// 				elm_slider_step_set(sl_x_value, 50.0);
+			elm_table_pack(tb_popup, sl_x_value, 1, 1, 1, 1);
+			evas_object_show(sl_x_value);
+			evas_object_data_set(tb, "sl_x_value", sl_x_value);
+			
+			
+			lbl = elm_label_add(popup);
+			elm_object_text_set(lbl, "Hight: ");
+// 			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			evas_object_size_hint_align_set(lbl, 0, 0);
+			elm_object_tooltip_text_set(lbl, "local location or online link<br>[blank for standard]");
+			elm_table_pack(tb_popup, lbl, 0, 2, 1, 1);
+			evas_object_show(lbl);
+			
+			sl_y_value = elm_slider_add(popup);
+			evas_object_size_hint_weight_set(sl_y_value, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			evas_object_size_hint_align_set(sl_y_value, EVAS_HINT_FILL, 0);
+			elm_slider_unit_format_set(sl_y_value, "%1.0f px");
+			elm_slider_indicator_format_set(sl_y_value, "%1.0f");
+		// 	elm_slider_value_set(sl_y_value, ci_y_value);
+// 			elm_slider_span_size_set(sl_y_value, 120);
+			elm_slider_min_max_set(sl_y_value, 100, 1000);
+// 			elm_object_text_set(sl_y_value, "Hight of Popup: ");
+			elm_slider_value_set(sl_y_value, ci_y_value);
+		// 				step = _step_size_calculate(0, 9);
+		// 				elm_slider_step_set(sl_y_value, 50.0);
+			elm_table_pack(tb_popup, sl_y_value, 1, 2, 1, 1);
+			evas_object_show(sl_y_value);
+			evas_object_data_set(tb, "sl_y_value", sl_y_value);
 	
 	
-	sl_y_value = elm_slider_add(box_settings);
-	E_ALIGN(sl_y_value, 0.0, 0.5);
-	elm_slider_unit_format_set(sl_y_value, "%1.0f px");
-	elm_slider_indicator_format_set(sl_y_value, "%1.0f");
-// 	elm_slider_value_set(sl_y_value, ci_y_value);
-	elm_slider_span_size_set(sl_y_value, 120);
-	elm_slider_min_max_set(sl_y_value, 100, 1000);
-	elm_object_text_set(sl_y_value, "Hight of Popup: ");
-	elm_slider_value_set(sl_y_value, ci_y_value);
-// 				step = _step_size_calculate(0, 9);
-// 				elm_slider_step_set(sl_y_value, 50.0);
-   elm_box_pack_end(box_settings, sl_y_value);
-   evas_object_show(sl_y_value);
-	evas_object_data_set(mainbox, "sl_y_value", sl_y_value);
+   elm_object_content_set(popup_frame, tb_popup);
+	evas_object_data_set(tb, "popup_frame", popup_frame);
+/// POPUP FRAME END ///
+	
+/// ADVANCED FRAME ///
+	advanced_frame = elm_frame_add(popup);
+   elm_object_text_set(advanced_frame, "Advanced");
+	evas_object_size_hint_weight_set(advanced_frame, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(advanced_frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
+//    evas_object_show(advanced_frame);
+   elm_table_pack(tb, advanced_frame, 1, 1, 1, 1);
+	
+			tb_advanced = elm_table_add(popup);
+// 			evas_object_size_hint_weight_set(advanced_popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+// 			evas_object_size_hint_align_set(advanced_popup, 0, 0);
+			evas_object_show(tb_advanced);
+			
+			lbl = elm_label_add(popup);
+			elm_object_text_set(lbl, "Set background color for standard feed image if no custom is set: ");
+			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			evas_object_size_hint_align_set(lbl, 0, EVAS_HINT_FILL);
+			elm_table_pack(tb_advanced, lbl, 0, 0, 1, 1);
+			evas_object_show(lbl);
+			
+			cs = elm_colorselector_add(popup);
+			evas_object_size_hint_weight_set(cs, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			evas_object_size_hint_align_set(cs, EVAS_HINT_FILL, EVAS_HINT_FILL);
+			
+			elm_colorselector_mode_set(cs, ELM_COLORSELECTOR_BOTH);
+			elm_colorselector_palette_name_set(cs, "news");
+			elm_colorselector_palette_color_add(cs, 253, 232, 82, 255);
+			elm_colorselector_palette_color_add(cs, 255, 186, 0, 255);
+			elm_colorselector_palette_color_add(cs, 223, 147, 37, 255);
+			elm_colorselector_palette_color_add(cs, 238, 119, 99, 255);
+			elm_colorselector_palette_color_add(cs, 164, 182, 166, 255);
+			elm_colorselector_palette_color_add(cs, 146, 175, 29, 255);
+			elm_colorselector_palette_color_add(cs, 41, 68, 59, 255);
+			elm_colorselector_palette_color_add(cs, 0, 109, 128, 255);
+			elm_colorselector_palette_color_add(cs, 11, 54, 71, 255);
+			elm_colorselector_palette_color_add(cs, 41, 46, 68, 255);
+			elm_colorselector_palette_color_add(cs, 116, 13, 14, 255);
+			elm_colorselector_palette_color_add(cs, 101, 33, 44, 255);
+			elm_colorselector_palette_color_add(cs, 132, 50, 118, 255);
+			elm_colorselector_palette_color_add(cs, 68, 40, 55, 255);
+			elm_colorselector_palette_color_add(cs, 63, 37, 60, 255);
+			elm_colorselector_palette_color_add(cs, 115, 87, 63, 255);
+			elm_colorselector_palette_color_add(cs, 66, 70, 73, 255);
+			elm_colorselector_palette_color_add(cs, 255, 255, 255, 255);
+			elm_colorselector_palette_color_add(cs, 0, 0, 0, 255);
+			elm_table_pack(tb_advanced, cs, 0, 1, 1, 1);
+			evas_object_show(cs);
+			evas_object_data_set(tb, "cs", cs);
+			
 
 	
-	o = elm_separator_add(box_settings);
-   elm_separator_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(box_settings, o);
-   evas_object_show(o);	
 	
+   elm_object_content_set(advanced_frame, tb_advanced );
+	evas_object_data_set(tb, "advanced_frame", advanced_frame);
+/// ADVANCED FRAME END ///
 	
-   sl_refresh = elm_slider_add(box_settings);
-	E_ALIGN(sl_refresh, 0.0, 0.5);
-	elm_slider_unit_format_set(sl_refresh, "%1.0f min");
-	elm_slider_indicator_format_set(sl_refresh, "%1.0f");
-// 	elm_slider_value_set(sl_refresh, ci_refresh);
-	elm_slider_span_size_set(sl_refresh, 120);
-	elm_slider_min_max_set(sl_refresh, 1, 60);
-	elm_object_text_set(sl_refresh, "Refresh Intervall: ");
-	elm_slider_value_set(sl_refresh, ci_refresh);
-// 				step = _step_size_calculate(0, 9);
-// 				elm_slider_step_set(sl_refresh, 50.0);
-   elm_box_pack_end(box_settings, sl_refresh);
-   evas_object_show(sl_refresh);
-	evas_object_data_set(mainbox, "sl_refresh", sl_refresh);
-
+	   evas_object_data_set(tb, "win", win);
+   evas_object_data_set(tb, "ly", ly);
 	
-	o = elm_separator_add(box_settings);
-   elm_separator_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(box_settings, o);
-   evas_object_show(o);
+   elm_object_content_set(popup, tb);
+_config_show_feed(tb, NULL, NULL);
 	
-	
-	cs = elm_colorselector_add(box_settings);
-   evas_object_size_hint_weight_set(cs, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_size_hint_align_set(cs, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    
-	elm_colorselector_mode_set(cs, ELM_COLORSELECTOR_BOTH);
-	elm_colorselector_palette_name_set(cs, "news");
-	elm_colorselector_palette_color_add(cs, 253, 232, 82, 255);
-   elm_colorselector_palette_color_add(cs, 255, 186, 0, 255);
-   elm_colorselector_palette_color_add(cs, 223, 147, 37, 255);
-   elm_colorselector_palette_color_add(cs, 238, 119, 99, 255);
-   elm_colorselector_palette_color_add(cs, 164, 182, 166, 255);
-   elm_colorselector_palette_color_add(cs, 146, 175, 29, 255);
-   elm_colorselector_palette_color_add(cs, 41, 68, 59, 255);
-   elm_colorselector_palette_color_add(cs, 0, 109, 128, 255);
-   elm_colorselector_palette_color_add(cs, 11, 54, 71, 255);
-   elm_colorselector_palette_color_add(cs, 41, 46, 68, 255);
-   elm_colorselector_palette_color_add(cs, 116, 13, 14, 255);
-   elm_colorselector_palette_color_add(cs, 101, 33, 44, 255);
-   elm_colorselector_palette_color_add(cs, 132, 50, 118, 255);
-   elm_colorselector_palette_color_add(cs, 68, 40, 55, 255);
-   elm_colorselector_palette_color_add(cs, 63, 37, 60, 255);
-   elm_colorselector_palette_color_add(cs, 115, 87, 63, 255);
-   elm_colorselector_palette_color_add(cs, 66, 70, 73, 255);
-   elm_colorselector_palette_color_add(cs, 255, 255, 255, 255);
-   elm_colorselector_palette_color_add(cs, 0, 0, 0, 255);
-   elm_box_pack_end(box_settings, cs);
-   evas_object_show(cs);
-	evas_object_data_set(mainbox, "cs", cs);
-	
-	
-	o = elm_separator_add(box_settings);
-   elm_separator_horizontal_set(o, EINA_TRUE);
-   elm_box_pack_end(box_settings, o);
-   evas_object_show(o);
-
-
-   elm_object_content_set(fr, box_settings);
-   elm_box_pack_end(mainbox, fr);
-
-	evas_object_smart_callback_add(cs, "changed", _colorselector_changed_cb, mainbox); 
-	
-
-   evas_object_data_set(mainbox, "win", win);
-   evas_object_data_set(mainbox, "ly", ly);
-	
-   elm_object_content_set(popup, mainbox);
-	
-	evas_object_event_callback_add(popup, EVAS_CALLBACK_MOUSE_OUT, _config_save, mainbox);
+	evas_object_smart_callback_add(cs, "changed", _colorselector_changed_cb, tb); 
+	evas_object_event_callback_add(popup, EVAS_CALLBACK_MOUSE_OUT, _config_save, tb);
 	evas_object_event_callback_add(popup, EVAS_CALLBACK_HIDE, _popup_del, NULL);
    evas_object_show(popup);
 }
