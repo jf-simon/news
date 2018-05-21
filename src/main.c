@@ -701,6 +701,9 @@ parse_rss(Eina_Strbuf *mybuffer)
 		
 		data_add->title = eina_stringshare_add(find_data(arr[i], "<title", "</title>"));
 		
+		if(i == 0)
+			feedname = eina_stringshare_add(data_add->title);
+		
 		data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "</link>"));
 
 		data_add->description = eina_stringshare_add(find_data(arr[i], "<description", "</description>"));
@@ -765,6 +768,9 @@ parse_atom(Eina_Strbuf *mybuffer)
 		
 		data_add->title = eina_stringshare_add(find_data(arr[i], "<title", "</title>"));
 				
+		if(i == 0)
+			feedname = eina_stringshare_add(data_add->title);
+		
 		data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "/>"));
 				
 		data_add->description = eina_stringshare_add(find_data(arr[i], "<summary", "</summary>"));
@@ -831,7 +837,10 @@ parse_atom1(Eina_Strbuf *mybuffer)
 		Feed_Data *data_add = calloc(1, sizeof(Feed_Data));
 		
 		data_add->title = eina_stringshare_add(find_data(arr[i], "<title", "</title>"));
-				
+
+		if(i == 0)
+			feedname = eina_stringshare_add(data_add->title);
+		
 		data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "/>"));
 				
 		data_add->description = eina_stringshare_add(find_data(arr[i], "<description", "</description>"));
@@ -894,7 +903,10 @@ parse_rdf(Eina_Strbuf *mybuffer)
 		Feed_Data *data_add = calloc(1, sizeof(Feed_Data));
 		
 		data_add->title = eina_stringshare_add(find_data(arr[i], "<title>", "</title>"));
-				
+		
+		if(i == 0)
+			feedname = eina_stringshare_add(data_add->title);
+		
 		data_add->link = eina_stringshare_add(find_data(arr[i], "<link>", "</link>"));
 				
 		data_add->description = eina_stringshare_add(find_data(arr[i], "<description>", "</description>"));

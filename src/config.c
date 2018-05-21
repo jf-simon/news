@@ -41,7 +41,7 @@ _config_load(void *data)
 		ci_popupnew = 0;
 		ci_popupnew = 0;
 		ci_refresh = 10;
-		ci_fontsize = 12;
+		ci_fontsize = 10;
 		ci_x_value = 480;
 		ci_y_value = 600;
 		ci_r = 11;
@@ -302,7 +302,10 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 	
 	Evas_Object *ly = obj;
 	Evas_Object *win = data;
-		  
+	
+	
+	char buf[PATH_MAX];
+	
 	double step;
    popup = elm_win_add(win, "win", ELM_WIN_BASIC);
    elm_win_alpha_set(popup, 1);
@@ -315,7 +318,8 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_style_set(lbl, "marker");
-   elm_object_text_set(lbl, "News Configuration");
+	snprintf(buf, sizeof(buf), "News Configuration - %s", feedname);
+   elm_object_text_set(lbl, buf);
    elm_table_pack(tb, lbl, 0, 0, 2, 1);
    evas_object_show(lbl);
 	

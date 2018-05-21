@@ -35,6 +35,7 @@ void 			stringReplace(char *search, char *replace, char *string);
 int        id_num;
 
 const char *saved_title;
+const char *feedname;
 
 
 Evas_Object *win;
