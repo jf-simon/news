@@ -318,7 +318,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_style_set(lbl, "marker");
-	snprintf(buf, sizeof(buf), "News Configuration - %s", feedname);
+	snprintf(buf, sizeof(buf), "News Configuration - [%s]", feedname);
    elm_object_text_set(lbl, buf);
    elm_table_pack(tb, lbl, 0, 0, 2, 1);
    evas_object_show(lbl);
@@ -581,6 +581,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			evas_object_show(lbl);
 
 			cs = elm_colorselector_add(popup);
+			elm_colorselector_color_set(cs, ci_r, ci_g, ci_b, ci_a);
 			evas_object_size_hint_weight_set(cs, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 			evas_object_size_hint_align_set(cs, EVAS_HINT_FILL, EVAS_HINT_FILL);
 			
