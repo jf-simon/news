@@ -169,7 +169,7 @@ _save_eet()
         }
 
 		  my_conf->configlist_eet = configlist;
-		  
+
 // 		  my_conf->name = ci_name;
  
         eet_data_write(ef, _my_conf_descriptor, MY_CONF_FILE_ENTRY, my_conf, EINA_TRUE);
@@ -191,16 +191,25 @@ _my_conf_descriptor_shutdown(void)
 static Eina_Bool 
 _gadget_exit(void *data, int type, void *event_data) 
 {
-   char buf[4096];
+   char buf[4096], cache_dir[4096];
 	Ecore_Event_Signal_User *user = event_data;
 	
-	if ( user->number == 2) 
+	if (user->number == 2) 
 	{
 		const char *profile;
+
 		profile = elm_config_profile_get();
 		  
 		snprintf(buf, sizeof(buf), "%s/news/news_gadget_%d_%s.cfg", efreet_config_home_get(), id_num, profile);
 		ecore_file_unlink(buf);	
+		
+		snprintf(cache_dir, sizeof(cache_dir), "%s/news/cache/%i/", efreet_config_home_get(), id_num);
+
+	
+// 		if(ecore_file_is_dir(cache_dir))
+// 		{
+			ecore_file_recursive_rm(cache_dir);
+// 		}
 	} 
 	return EINA_TRUE;
 }

@@ -162,6 +162,7 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 _save_eet();
 
 _timer_reset();
+_set_feed_icon();
 //  refresh feed if url has changed
 // _get_data();
 }
@@ -307,6 +308,7 @@ completion_cb(void *data, const char *file, int status)
 	}else
 	{
 		elm_object_text_set(en_icon, file);
+		_set_feed_icon();
 	}
 	
 	printf("CODE %i\n", status);
@@ -344,7 +346,11 @@ _download_image_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 		
 		rt = ecore_file_download(icon_url, buf1, completion_cb, NULL, en_icon, NULL);
 
-		}
+	}
+	else
+	{
+		_set_feed_icon();
+	}
 }
 
 
@@ -447,12 +453,10 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			evas_object_data_set(tb, "en_icon", en_icon);
 			
 			button = elm_button_add(popup);
-			elm_object_text_set(button, "download");
+			elm_object_text_set(button, "download/set");
 			evas_object_size_hint_weight_set(button, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 			evas_object_size_hint_align_set(button, 0, 0);
 			elm_object_tooltip_text_set(button, "download to local");
-
-			evas_object_smart_callback_add(button, "clicked", _download_image_cb, en_icon); 
 			elm_table_pack(tb_feed, button, 3, 1, 1, 1);
 			evas_object_show(button);
 			
@@ -683,7 +687,11 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    elm_object_content_set(popup, tb);
 	_config_show_feed(tb, NULL, NULL);
 	
-	evas_object_smart_callback_add(cs, "changed", _colorselector_changed_cb, tb); 
+	evas_object_smart_callback_add(cs, "changed", _colorselector_changed_cb, tb);
+	
+// 	evas_object_smart_callback_add(button, "clicked", _config_save, tb); 
+	evas_object_smart_callback_add(button, "clicked", _download_image_cb, en_icon); 
+	evas_object_event_callback_add(en_icon, EVAS_CALLBACK_MOUSE_OUT, _config_save, tb);
 	evas_object_event_callback_add(popup, EVAS_CALLBACK_MOUSE_OUT, _config_save, tb);
 	evas_object_event_callback_add(popup, EVAS_CALLBACK_HIDE, _popup_del, NULL);
    evas_object_show(popup);
