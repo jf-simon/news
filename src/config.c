@@ -34,7 +34,7 @@ _config_load(void *data)
 
    if(found == 0)
 	{
-		ci_url = eina_stringshare_add("http://www.tagesschau.de/xml/rss2");
+		ci_url = eina_stringshare_add("https://github.com/jf-simon/news/commits/master.atom");
 		ci_icon = eina_stringshare_add("");
 		ci_icons = 0;
 		ci_bigicons = 0;
@@ -294,10 +294,64 @@ _step_size_calculate_1(double min, double max)
    return step;
 }
 
+
+static void
+completion_cb(void *data, const char *file, int status)
+{
+	Evas_Object *en_icon = data;
+	char buf[4096];
+	if(status != 200)
+	{
+		ecore_file_unlink(file);
+		// Fehlermeldung als Popup
+	}else
+	{
+		elm_object_text_set(en_icon, file);
+	}
+	
+	printf("CODE %i\n", status);
+	
+	
+	// dateiname dann nehmen um die neute datei damit anlegen und link dann zurück in en_icon
+}
+
+static void
+_download_image_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{	
+	Evas_Object *en_icon = data;
+	Eina_Bool *rt;
+	const char *icon_url = elm_object_text_get(en_icon);
+	char buf[4096], buf1[4096], buf2[4096], cache_dir[4096];
+	const char *filename;
+
+	snprintf(cache_dir, sizeof(cache_dir), "%s/news/cache/%i/", efreet_config_home_get(), id_num);
+
+	if(ecore_file_download_protocol_available(icon_url))
+	{
+		ecore_file_recursive_rm(cache_dir);
+		if(!ecore_file_is_dir(cache_dir))
+		{
+// 		snprintf(buf2, sizeof(buf2), "%s/news/cache/%i", efreet_config_home_get(), id_num);
+			ecore_file_mkpath(cache_dir);
+			printf("MKDIR: %s\n", cache_dir);
+		}
+		
+		filename = ecore_file_file_get(icon_url);
+	
+		snprintf(buf1, sizeof(buf1), "%s/news/cache/%i/%s", efreet_config_home_get(), id_num, filename);
+			
+		// Button disable bis completion_cb fertig
+		
+		rt = ecore_file_download(icon_url, buf1, completion_cb, NULL, en_icon, NULL);
+
+		}
+}
+
+
 void
 _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {	
-	Evas_Object *en_url, *en_keyword, *en_icon, *popup, *fr, *cs, *mainfr, *tb, *list, *it, *popup_frame, *tb_feed, *tb_popup, *tb_sizes, *tb_advanced, *feed_frame, *advanced_frame, *advanced_popup;
+	Evas_Object *en_url, *button, *en_keyword, *en_icon, *popup, *fr, *cs, *mainfr, *tb, *list, *it, *popup_frame, *tb_feed, *tb_popup, *tb_sizes, *tb_advanced, *feed_frame, *advanced_frame, *advanced_popup;
    Evas_Object *o, *box_settings, *box_url, *box_icon, *lbl, *check_icons, *check_bigicons, *check_popupnew, *check_popupkeyword, *check_indicator, *sl_refresh, *sl_fontsize, *sl_x_value, *sl_y_value;
 	
 	Evas_Object *ly = obj;
@@ -318,7 +372,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_style_set(lbl, "marker");
-	snprintf(buf, sizeof(buf), "News Configuration - [%s]", feedname);
+	snprintf(buf, sizeof(buf), "News Configuration <br> [%s]", feedname);
    elm_object_text_set(lbl, buf);
    elm_table_pack(tb, lbl, 0, 0, 2, 1);
    evas_object_show(lbl);
@@ -355,7 +409,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			lbl = elm_label_add(popup);
 			elm_object_text_set(lbl, "URL: ");
 			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-			evas_object_size_hint_align_set(lbl, 0, 0);
+			evas_object_size_hint_align_set(lbl, 0, 0.5);
 			elm_table_pack(tb_feed, lbl, 0, 0, 1, 1);
 			evas_object_show(lbl);
 			
@@ -367,37 +421,45 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			elm_entry_single_line_set(en_url, EINA_TRUE);
 			evas_object_size_hint_weight_set(en_url, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 			evas_object_size_hint_align_set(en_url, EVAS_HINT_FILL, EVAS_HINT_FILL);
-			elm_table_pack(tb_feed, en_url, 1, 0, 1, 1);
+			elm_table_pack(tb_feed, en_url, 1, 0, 2, 1);
 			evas_object_show(en_url);
 			evas_object_data_set(tb, "en_url", en_url);
 	
 			lbl = elm_label_add(popup);
 			elm_object_text_set(lbl, "Image: ");
 			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-			evas_object_size_hint_align_set(lbl, 0, 0);
-			elm_object_tooltip_text_set(lbl, "local location or online link<br>[blank for standard]");
+			evas_object_size_hint_align_set(lbl, 0, 0.5);
+			elm_object_tooltip_text_set(lbl, "local location or online link [http://]<br>[blank for standard]");
 			elm_table_pack(tb_feed, lbl, 0, 1, 1, 1);
 			evas_object_show(lbl);
 						
 			en_icon = elm_entry_add(popup);
 			elm_config_context_menu_disabled_set(EINA_FALSE);
 			elm_object_text_set(en_icon, ci_icon);
-			elm_object_part_text_set(en_icon, "elm.guide", "Enter Feed Image");
+			elm_object_part_text_set(en_icon, "elm.guide", "Enter Feed Image - local or [http://]");
 			elm_entry_editable_set(en_icon, EINA_TRUE);
 			elm_entry_single_line_set(en_icon, EINA_TRUE);
 			evas_object_size_hint_weight_set(en_icon, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 			evas_object_size_hint_align_set(en_icon, EVAS_HINT_FILL, EVAS_HINT_FILL);
-			elm_object_tooltip_text_set(en_icon, "local location or online link<br>[blank for standard]");
-			elm_table_pack(tb_feed, en_icon, 1, 1, 1, 1);
+			elm_object_tooltip_text_set(en_icon, "local location or online link [http://]<br>[blank for standard]");
+			elm_table_pack(tb_feed, en_icon, 1, 1, 2, 1);
 			evas_object_show(en_icon);
 			evas_object_data_set(tb, "en_icon", en_icon);
 			
+			button = elm_button_add(popup);
+			elm_object_text_set(button, "download");
+			evas_object_size_hint_weight_set(button, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			evas_object_size_hint_align_set(button, 0, 0);
+			elm_object_tooltip_text_set(button, "download to local");
+
+			evas_object_smart_callback_add(button, "clicked", _download_image_cb, en_icon); 
+			elm_table_pack(tb_feed, button, 3, 1, 1, 1);
+			evas_object_show(button);
 			
 			lbl = elm_label_add(popup);
 			elm_object_text_set(lbl, "Refresh Intervall: ");
 			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 			evas_object_size_hint_align_set(lbl, 0, 0);
-			elm_object_tooltip_text_set(lbl, "local location or online link<br>[blank for standard]");
 			elm_table_pack(tb_feed, lbl, 0, 2, 1, 1);
 			evas_object_show(lbl);
 
@@ -410,7 +472,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			elm_slider_value_set(sl_refresh, ci_refresh);
 			step = _step_size_calculate_1(1, 60);
 			elm_slider_step_set(sl_refresh, step );
-			elm_table_pack(tb_feed, sl_refresh, 1, 2, 1, 1);
+			elm_table_pack(tb_feed, sl_refresh, 1, 2, 2, 1);
 			evas_object_show(sl_refresh);
 			evas_object_data_set(tb, "sl_refresh", sl_refresh);
 
@@ -569,6 +631,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			
 			
 			o = elm_separator_add(popup);
+			evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 			elm_separator_horizontal_set(o, EINA_TRUE);
 			elm_table_pack(tb_advanced, o, 0, 1, 1, 1);
 			evas_object_show(o);

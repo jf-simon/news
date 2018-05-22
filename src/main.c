@@ -222,7 +222,7 @@ void
 _set_feed_icon()
 {
 // 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
-	
+
 	Evas_Object *ic = elm_icon_add(win);
 		
 	if(strcmp(ci_icon, "") == 0 || ci_icon == NULL)
@@ -234,6 +234,7 @@ _set_feed_icon()
 	else
 	{
 		elm_image_file_set(ic, ci_icon, NULL);
+		
 		elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
 		elm_object_part_content_set(ly, "image", ic);
 		edje_object_signal_emit(ly, "image_feed", "off");
