@@ -10,11 +10,10 @@ Ecore_Con_Url *ec_url = NULL;
 Eina_Strbuf *feeddata = NULL;
 const char* lastcheck;
 int firststart = 0;
-Eina_List *feed_data_list = NULL;
-Eina_List *feed_data_list_tmp = NULL;
 
 typedef struct {
         Eina_List   *configlist_eet;
+//         Eina_List   *feedlist_eet;
 } News_List_Eet;
 
 
@@ -92,6 +91,9 @@ _my_conf_descriptor_init(void)
     // And add the sub descriptor as a linked list at 'subs' in the main struct
     EET_DATA_DESCRIPTOR_ADD_LIST
      (_my_conf_descriptor, News_List_Eet, "configlist_eet", configlist_eet, _my_conf_sub_descriptor);
+	  
+//     EET_DATA_DESCRIPTOR_ADD_LIST
+//      (_my_conf_descriptor, News_List_Eet, "feedlist_eet", feedlist_eet, _my_conf_sub_descriptor);
 
      
     #undef MY_CONF_ADD_BASIC
@@ -127,6 +129,7 @@ _read_eet()
     my_conf = eet_data_read(ef, _my_conf_descriptor, MY_CONF_FILE_ENTRY);
         
     configlist =  my_conf->configlist_eet;
+//     feed_data_list =  my_conf->feedlist_eet;
 // 	 name = my_conf->name;
   
     eet_close(ef);
@@ -169,6 +172,7 @@ _save_eet()
         }
 
 		  my_conf->configlist_eet = configlist;
+// 		  my_conf->feedlist_eet = feed_data_list;
 
 // 		  my_conf->name = ci_name;
  

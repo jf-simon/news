@@ -59,7 +59,8 @@ int         ci_b;
 int         ci_a;
 
 Eina_List *configlist;
-
+Eina_List *feed_data_list;
+Eina_List *feed_data_list_tmp;
 
 typedef struct {
         int         	id;
