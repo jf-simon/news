@@ -221,15 +221,15 @@ delete_popup_edje(void *data, Evas_Object *obj EINA_UNUSED, const char *emission
 void
 _set_feed_icon()
 {
-// 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
-
 	Evas_Object *ic = elm_icon_add(win);
+	printf(" set feed icon: %s\n", ci_icon);
 		
 	if(strcmp(ci_icon, "") == 0 || ci_icon == NULL)
 	{
 		edje_object_signal_emit(ly, "image_feed", "on");
 		elm_object_part_content_unset(ly, "image");
 		evas_object_del(ic);
+		printf("news.png ON\n");
 	}
 	else
 	{
@@ -238,6 +238,9 @@ _set_feed_icon()
 		elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
 		elm_object_part_content_set(ly, "image", ic);
 		edje_object_signal_emit(ly, "image_feed", "off");
+		
+		
+		printf("news.png OFF\n");
 	}
 }
 
