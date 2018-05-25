@@ -1,5 +1,5 @@
 project('news', 'c',
-        version        : '0.1',
+        version        : '0.2',
         license        : 'BSD 2 clause',
         default_options: [ 'c_std=gnu99' ],
         meson_version  : '>= 0.40.0')
