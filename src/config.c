@@ -3,62 +3,62 @@
 void
 _config_load(void *data)
 {
-   int found = 0;
-	Eina_List *l;
-	Config_Item *list_data;
-
-   printf("LIST COUNT %i\n", eina_list_count(configlist));
-
-   EINA_LIST_FOREACH(configlist, l, list_data)
-   {
-	   if(list_data->id == id_num)
-		{
-			ci_url = eina_stringshare_add(list_data->url);
-			ci_icon = eina_stringshare_add(list_data->icon);
-			saved_title = eina_stringshare_add(list_data->saved_title);
-			ci_icons = list_data->icons;
-			ci_bigicons = list_data->bigicons;
-			ci_popupnew = list_data->popupnew;
-			ci_refresh = list_data->refresh;
-			ci_fontsize = list_data->fontsize;
-			ci_indicator = list_data->indicator;
-			ci_x_value = list_data->x_value;
-			ci_y_value = list_data->y_value;
-			ci_r = list_data->r;
-			ci_g = list_data->g;
-			ci_b = list_data->b;
-			ci_a = list_data->a;
-			found = 1;
-		}
-   }
-
-   if(found == 0)
-	{
-		ci_url = eina_stringshare_add("https://github.com/jf-simon/news/commits/master.atom");
-		ci_icon = eina_stringshare_add("");
-		ci_icons = 0;
-		ci_bigicons = 0;
-		ci_popupnew = 0;
-		ci_popupnew = 0;
-		ci_refresh = 10;
-		ci_fontsize = 10;
-		ci_x_value = 480;
-		ci_y_value = 600;
-		ci_r = 11;
-		ci_g = 54;
-		ci_b = 71;
-		ci_a = 255;
-	}
+//    int found = 0;
+// 	Eina_List *l;
+// 	Config_Item *list_data;
+// 
+//    printf("LIST COUNT %i\n", eina_list_count(configlist));
+// 
+//    EINA_LIST_FOREACH(configlist, l, list_data)
+//    {
+// 	   if(list_data->id == id_num)
+// 		{
+// 			ci_url = eina_stringshare_add(list_data->url);
+// 			ci_icon = eina_stringshare_add(list_data->icon);
+// 			saved_title = eina_stringshare_add(list_data->saved_title);
+// 			ci_icons = list_data->icons;
+// 			ci_popupnew = list_data->popupnew;
+// 			ci_refresh = list_data->refresh;
+// 			ci_fontsize = list_data->fontsize;
+// 			ci_indicator = list_data->indicator;
+// 			ci_x_value = list_data->x_value;
+// 			ci_y_value = list_data->y_value;
+// 			ci_r = list_data->r;
+// 			ci_g = list_data->g;
+// 			ci_b = list_data->b;
+// 			ci_a = list_data->a;
+// 			found = 1;
+// 		}
+//    }
+// 
+//    if(found == 0)
+// 	{
+// 		ci_url = eina_stringshare_add("https://github.com/jf-simon/news/commits/master.atom");
+// 		ci_icon = eina_stringshare_add("");
+// 		ci_icons = 0;
+// 		ci_popupnew = 0;
+// 		ci_popupnew = 0;
+// 		ci_refresh = 10;
+// 		ci_fontsize = 10;
+// 		ci_x_value = 480;
+// 		ci_y_value = 600;
+// 		ci_r = 11;
+// 		ci_g = 54;
+// 		ci_b = 71;
+// 		ci_a = 255;
+// 	}
+// 	
+// 	printf("COLOR LOAD: %i %i %i %i\n", ci_r, ci_g, ci_b, ci_a);
+// 	printf("LOAD FOUND: %i\n", found);
+// 	printf("LOAD FONTSIZE: %f\n", ci_fontsize);
 	
-	printf("COLOR LOAD: %i %i %i %i\n", ci_r, ci_g, ci_b, ci_a);
-	printf("LOAD FOUND: %i\n", found);
-	printf("LOAD FONTSIZE: %f\n", ci_fontsize);
+	
 }
 
 
 void
 _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
+{/*
 	Eina_List *l;
 	Config_Item *list_data;
 	Config_Item *list_data1;
@@ -74,7 +74,6 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    Evas_Object *en_url = evas_object_data_get(tb, "en_url");
    Evas_Object *en_icon = evas_object_data_get(tb, "en_icon");
    Evas_Object *check_icons = evas_object_data_get(tb, "check_icons");
-   Evas_Object *check_bigicons = evas_object_data_get(tb, "check_bigicons");
    Evas_Object *check_indicator = evas_object_data_get(tb, "check_indicator");
    Evas_Object *check_popupnew = evas_object_data_get(tb, "check_popupnew");
    Evas_Object *sl_refresh = evas_object_data_get(tb, "sl_refresh");
@@ -105,7 +104,6 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 	ci_url = elm_object_text_get(en_url);
 	ci_icon = elm_object_text_get(en_icon);
    ci_icons = elm_check_state_get(check_icons);
-   ci_bigicons = elm_check_state_get(check_bigicons);
    ci_popupnew = elm_check_state_get(check_popupnew);
    ci_indicator = elm_check_state_get(check_indicator);
 	ci_refresh = elm_slider_value_get(sl_refresh);
@@ -122,7 +120,6 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 			list_data->icon = ci_icon;
 			list_data->icons = ci_icons;
 			list_data->saved_title = saved_title;
-			list_data->bigicons = ci_bigicons;
 			list_data->indicator = ci_indicator;
 			list_data->popupnew = ci_popupnew;
 			list_data->refresh = ci_refresh;
@@ -143,7 +140,6 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 		list_data1->url = ci_url;
 		list_data1->icon = ci_icon;
 		list_data1->icons = ci_icons;
-		list_data1->bigicons = ci_bigicons;
 		list_data1->popupnew = ci_popupnew;
 		list_data1->refresh = ci_refresh;
 		list_data1->fontsize = ci_fontsize;
@@ -156,13 +152,35 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 		list_data1->a = ci_a;
 
 		configlist = eina_list_append(configlist, list_data1);
-	}
+	}*/
+   Evas_Object *en_url = evas_object_data_get(tb, "en_url");
+   Evas_Object *en_icon = evas_object_data_get(tb, "en_icon");
+   Evas_Object *check_icons = evas_object_data_get(tb, "check_icons");
+   Evas_Object *check_indicator = evas_object_data_get(tb, "check_indicator");
+   Evas_Object *check_popupnew = evas_object_data_get(tb, "check_popupnew");
+   Evas_Object *sl_refresh = evas_object_data_get(tb, "sl_refresh");
+   Evas_Object *sl_fontsize = evas_object_data_get(tb, "sl_fontsize");
+   Evas_Object *sl_x_value = evas_object_data_get(tb, "sl_x_value");
+   Evas_Object *sl_y_value = evas_object_data_get(tb, "sl_y_value");
+   Evas_Object *cs = evas_object_data_get(tb, "cs");
+	
+	ci_url = elm_object_text_get(en_url);
+	ci_icon = elm_object_text_get(en_icon);
+   ci_icons = elm_check_state_get(check_icons);
+   ci_popupnew = elm_check_state_get(check_popupnew);
+   ci_indicator = elm_check_state_get(check_indicator);
+	ci_refresh = elm_slider_value_get(sl_refresh);
+	ci_fontsize = elm_slider_value_get(sl_fontsize);
+	ci_x_value = elm_slider_value_get(sl_x_value);
+	ci_y_value = elm_slider_value_get(sl_y_value);
+	
+	
+	
+	printf("SAVE FOUND ICON: %s\n", ci_icon);
+	_save_eet();
 
-	printf("SAVE FOUND: %0.lf\n", ci_fontsize);
-_save_eet();
-
-_timer_reset();
-_set_feed_icon();
+	_timer_reset();
+	_set_feed_icon();
 //  refresh feed if url has changed
 // _get_data();
 }
@@ -230,10 +248,12 @@ _config_show_feed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
    Evas_Object *popup_frame = evas_object_data_get(tb, "popup_frame");
 	Evas_Object *feed_frame = evas_object_data_get(tb, "feed_frame");
 	Evas_Object *advanced_frame = evas_object_data_get(tb, "advanced_frame");
+	Evas_Object *help_frame = evas_object_data_get(tb, "help_frame");
 
 //    evas_object_hide();
    evas_object_hide(popup_frame);
    evas_object_hide(advanced_frame);
+   evas_object_hide(help_frame);
    evas_object_show(feed_frame);
 	printf("SHOW FEED\n");
 }
@@ -247,9 +267,11 @@ _config_show_popup(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EI
    Evas_Object *popup_frame = evas_object_data_get(tb, "popup_frame");
 	Evas_Object *feed_frame = evas_object_data_get(tb, "feed_frame");
 	Evas_Object *advanced_frame = evas_object_data_get(tb, "advanced_frame");
+	Evas_Object *help_frame = evas_object_data_get(tb, "help_frame");
 //    evas_object_hide();
    evas_object_hide(feed_frame);
    evas_object_hide(advanced_frame);
+   evas_object_hide(help_frame);
    evas_object_show(popup_frame);
 	printf("SHOW POPUP\n");
 }
@@ -263,12 +285,33 @@ _config_show_advanced(void *data, Evas_Object *obj EINA_UNUSED, void *event_info
    Evas_Object *popup_frame = evas_object_data_get(tb, "popup_frame");
 	Evas_Object *feed_frame = evas_object_data_get(tb, "feed_frame");
 	Evas_Object *advanced_frame = evas_object_data_get(tb, "advanced_frame");
+	Evas_Object *help_frame = evas_object_data_get(tb, "help_frame");
 	
 	
 //    evas_object_hide();
    evas_object_hide(feed_frame);
    evas_object_hide(popup_frame);
+   evas_object_hide(help_frame);
    evas_object_show(advanced_frame);
+	
+	printf("SHOW ADVANCED\n");
+}
+
+
+static void
+_config_show_help(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+	Evas_Object *tb = data;
+	
+   Evas_Object *popup_frame = evas_object_data_get(tb, "popup_frame");
+	Evas_Object *feed_frame = evas_object_data_get(tb, "feed_frame");
+	Evas_Object *advanced_frame = evas_object_data_get(tb, "advanced_frame");
+	Evas_Object *help_frame = evas_object_data_get(tb, "help_frame");
+	
+   evas_object_hide(feed_frame);
+   evas_object_hide(popup_frame);
+   evas_object_hide(advanced_frame);
+	evas_object_show(help_frame);
 	
 	printf("SHOW ADVANCED\n");
 }
@@ -328,9 +371,16 @@ _download_image_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 
 	snprintf(cache_dir, sizeof(cache_dir), "%s/news/cache/%i/", efreet_config_home_get(), id_num);
 
+	if(!strcmp(icon_url, ""))
+	{
+		ecore_file_recursive_rm(cache_dir);
+		return;
+	}
+	
 	if(ecore_file_download_protocol_available(icon_url))
 	{
 		ecore_file_recursive_rm(cache_dir);
+		
 		if(!ecore_file_is_dir(cache_dir))
 		{
 // 		snprintf(buf2, sizeof(buf2), "%s/news/cache/%i", efreet_config_home_get(), id_num);
@@ -357,8 +407,8 @@ _download_image_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 void
 _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {	
-	Evas_Object *en_url, *button, *en_keyword, *en_icon, *popup, *fr, *cs, *mainfr, *tb, *list, *it, *popup_frame, *tb_feed, *tb_popup, *tb_sizes, *tb_advanced, *feed_frame, *advanced_frame, *advanced_popup;
-   Evas_Object *o, *box_settings, *box_url, *box_icon, *lbl, *check_icons, *check_bigicons, *check_popupnew, *check_popupkeyword, *check_indicator, *sl_refresh, *sl_fontsize, *sl_x_value, *sl_y_value;
+	Evas_Object *en_url, *button, *en_keyword, *en_icon, *popup, *fr, *cs, *mainfr, *list, *it, *popup_frame, *tb_feed, *tb_popup, *tb_sizes, *tb_advanced, *feed_frame, *advanced_frame, *advanced_popup, *help_frame, *help_popup, *tb_help;
+   Evas_Object *o, *box_settings, *box_url, *box_icon, *lbl, *check_icons, *check_popupnew, *check_popupkeyword, *check_indicator, *sl_refresh, *sl_fontsize, *sl_x_value, *sl_y_value;
 	
 	Evas_Object *ly = obj;
 	Evas_Object *win = data;
@@ -396,6 +446,8 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
                              _config_show_popup, tb);
    it = elm_list_item_append(list, "Advanced", NULL, NULL,
                              _config_show_advanced, tb);
+	it = elm_list_item_append(list, "Help", NULL, NULL,
+                             _config_show_help, tb);
    elm_list_go(list);
    evas_object_show(list);
 	
@@ -680,6 +732,57 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    elm_object_content_set(advanced_frame, tb_advanced );
 	evas_object_data_set(tb, "advanced_frame", advanced_frame);
 /// ADVANCED FRAME END ///
+	
+/// HELP FRAME ///
+	help_frame = elm_frame_add(popup);
+   elm_object_text_set(help_frame, "Help");
+	evas_object_size_hint_weight_set(help_frame, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_size_hint_align_set(help_frame, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(tb, help_frame, 1, 1, 1, 1);
+	
+			tb_help = elm_table_add(popup);
+			evas_object_show(tb_help);
+
+			lbl = elm_label_add(popup);
+			elm_object_text_set(lbl, 	"<custom align=left>"
+												"<b>Mouse Bindings:</b><br>"
+												"Left Mouse Button: open/close popup<br>"
+												"Middle Mouse Button: check for new articles<br>"
+												"Right Mouse Button: open settings dialog<br>"
+												"<br><br>"
+												"<b>Color indicator:</b><br>"
+												"<color=#64ff00ff>Green bar:</color> the green bar on top indicates new articles<br>"
+												"<color=#ffffffff>White bar:</color> the white bar at the button indicates ongoing check for new articles<br>"
+												"<color=#ff0000ff>Red bar:</color> the red bar at the button indicates a failur check for new articles, check internet connection and feed url<br>"
+												"</custom>"
+												"<br><br>"
+												"Bugs, Feedback, Help on https://github.com/jf-simon/news/issues/news");		
+			
+			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			evas_object_size_hint_align_set(lbl, 0, 0);
+			elm_table_pack(tb_help, lbl, 0, 0, 1, 1);
+			evas_object_show(lbl);
+			
+/*			
+			o = elm_separator_add(popup);
+			evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			elm_separator_horizontal_set(o, EINA_TRUE);
+			elm_table_pack(tb_help, o, 0, 1, 1, 1);
+			evas_object_show(o);
+			
+			lbl = elm_label_add(popup);
+			elm_object_text_set(lbl, "Set background color for standard feed image if no custom is set: ");
+			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			evas_object_size_hint_align_set(lbl, 0, 0);
+			elm_table_pack(tb_help, lbl, 0, 2, 1, 1);
+			evas_object_show(lbl);
+*/
+
+	
+   elm_object_content_set(help_frame, tb_help );
+	evas_object_data_set(tb, "help_frame", help_frame);	
+		
+/// HELP FRAME END///
 	
 	  evas_object_data_set(tb, "win", win);
    evas_object_data_set(tb, "ly", ly);

@@ -12,18 +12,20 @@ const char* lastcheck;
 int firststart = 0;
 
 typedef struct {
-        Eina_List   *configlist_eet;
-//         Eina_List   *feedlist_eet;
+			const char *title;
+			const char *link;
+			const char *description;
+			const char *content;
+			const char *pubdate;
+			const char *imagelink;
+			const char *name;
 } News_List_Eet;
 
 
 typedef struct {
-        int         id;
         const char *url;
         const char *icon;
-        const char *saved_title;
 		  Eina_Bool   icons;
-		  Eina_Bool   bigicons;
 		  Eina_Bool   popupnew;
 		  Eina_Bool   indicator;
 		  double      refresh;
@@ -34,6 +36,9 @@ typedef struct {
 	     int         g;
         int         b;
         int         a;
+		  const char *saved_title;
+
+		  Eina_List   *feedlist_eet;
 } My_Conf_Type;
 
 
@@ -57,47 +62,50 @@ static void
 _my_conf_descriptor_init(void)
 {
     Eet_Data_Descriptor_Class eddc;
-    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, News_List_Eet);
+    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, My_Conf_Type);
     _my_conf_descriptor = eet_data_descriptor_stream_new(&eddc);
    
-    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, My_Conf_Type);
+    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, News_List_Eet);
     _my_conf_sub_descriptor = eet_data_descriptor_stream_new(&eddc);
    
     #define MY_CONF_ADD_BASIC(member, eet_type) \
         EET_DATA_DESCRIPTOR_ADD_BASIC             \
-        (_my_conf_descriptor, News_List_Eet, # member, member, eet_type)
+        (_my_conf_descriptor, My_Conf_Type, # member, member, eet_type)
 		  
     #define MY_CONF_SUB_ADD_BASIC(member, eet_type) \
         EET_DATA_DESCRIPTOR_ADD_BASIC                 \
-        (_my_conf_sub_descriptor, My_Conf_Type, # member, member, eet_type)
+        (_my_conf_sub_descriptor, News_List_Eet, # member, member, eet_type)
 
-    MY_CONF_SUB_ADD_BASIC(id, EET_T_INT);
-    MY_CONF_SUB_ADD_BASIC(url, EET_T_STRING);
-    MY_CONF_SUB_ADD_BASIC(icon, EET_T_STRING);
-    MY_CONF_SUB_ADD_BASIC(saved_title, EET_T_STRING);
-    MY_CONF_SUB_ADD_BASIC(icons, EET_T_UCHAR);
-    MY_CONF_SUB_ADD_BASIC(bigicons, EET_T_UCHAR);
-    MY_CONF_SUB_ADD_BASIC(popupnew, EET_T_UCHAR);
-    MY_CONF_SUB_ADD_BASIC(indicator, EET_T_UCHAR);
-    MY_CONF_SUB_ADD_BASIC(refresh, EET_T_DOUBLE);
-    MY_CONF_SUB_ADD_BASIC(fontsize, EET_T_DOUBLE);
-    MY_CONF_SUB_ADD_BASIC(x_value, EET_T_DOUBLE);
-    MY_CONF_SUB_ADD_BASIC(y_value, EET_T_DOUBLE);
-	 MY_CONF_SUB_ADD_BASIC(r, EET_T_INT);
-    MY_CONF_SUB_ADD_BASIC(g, EET_T_INT);
-    MY_CONF_SUB_ADD_BASIC(b, EET_T_INT);
-    MY_CONF_SUB_ADD_BASIC(a, EET_T_INT);
-
+    MY_CONF_ADD_BASIC(url, EET_T_STRING);
+    MY_CONF_ADD_BASIC(icon, EET_T_STRING);
+    MY_CONF_ADD_BASIC(icons, EET_T_UCHAR);
+    MY_CONF_ADD_BASIC(popupnew, EET_T_UCHAR);
+    MY_CONF_ADD_BASIC(indicator, EET_T_UCHAR);
+    MY_CONF_ADD_BASIC(refresh, EET_T_DOUBLE);
+    MY_CONF_ADD_BASIC(fontsize, EET_T_DOUBLE);
+    MY_CONF_ADD_BASIC(x_value, EET_T_DOUBLE);
+    MY_CONF_ADD_BASIC(y_value, EET_T_DOUBLE);
+	 MY_CONF_ADD_BASIC(r, EET_T_INT);
+    MY_CONF_ADD_BASIC(g, EET_T_INT);
+    MY_CONF_ADD_BASIC(b, EET_T_INT);
+    MY_CONF_ADD_BASIC(a, EET_T_INT);
+    MY_CONF_ADD_BASIC(saved_title, EET_T_STRING);
+	 
+    MY_CONF_SUB_ADD_BASIC(title, EET_T_STRING);
+    MY_CONF_SUB_ADD_BASIC(link, EET_T_STRING);
+    MY_CONF_SUB_ADD_BASIC(description, EET_T_STRING);
+    MY_CONF_SUB_ADD_BASIC(content, EET_T_STRING);
+    MY_CONF_SUB_ADD_BASIC(pubdate, EET_T_STRING);
+    MY_CONF_SUB_ADD_BASIC(imagelink, EET_T_STRING);
+	 
+	 
     // And add the sub descriptor as a linked list at 'subs' in the main struct
     EET_DATA_DESCRIPTOR_ADD_LIST
-     (_my_conf_descriptor, News_List_Eet, "configlist_eet", configlist_eet, _my_conf_sub_descriptor);
-	  
-//     EET_DATA_DESCRIPTOR_ADD_LIST
-//      (_my_conf_descriptor, News_List_Eet, "feedlist_eet", feedlist_eet, _my_conf_sub_descriptor);
+     (_my_conf_descriptor, My_Conf_Type, "feedlist_eet", feedlist_eet, _my_conf_sub_descriptor);
 
-     
-    #undef MY_CONF_ADD_BASIC
+
     #undef MY_CONF_SUB_ADD_BASIC
+    #undef MY_CONF_ADD_BASIC
 }
 
 
@@ -105,9 +113,9 @@ void
 _read_eet()
 {
     Eet_File *ef;
-    
-    News_List_Eet *my_conf;
-        
+
+    My_Conf_Type *my_conf;
+
     eet_init();
 	const char *profile;
 	profile = elm_config_profile_get();
@@ -120,20 +128,48 @@ _read_eet()
    snprintf(buf, sizeof(buf), "%s/news/news_gadget_%d_%s.cfg", efreet_config_home_get(), id_num, profile);
 	
     ef = eet_open(buf, EET_FILE_MODE_READ);
-    if (!ef)
+    if(!ef)
     {
-//         printf("ERROR: could not open '%s' for read\n", home_file);
-        return;
-    }
-    
-    my_conf = eet_data_read(ef, _my_conf_descriptor, MY_CONF_FILE_ENTRY);
-        
-    configlist =  my_conf->configlist_eet;
-//     feed_data_list =  my_conf->feedlist_eet;
-// 	 name = my_conf->name;
-  
-    eet_close(ef);
+			printf("TEST TEST TEST\n");
+			ci_url = eina_stringshare_add("https://github.com/jf-simon/news/commits/master.atom");
+			ci_icon = eina_stringshare_add("");
+			ci_icons = 0;
+			ci_popupnew = 0;
+			ci_refresh = 10;
+			ci_fontsize = 10;
+			ci_x_value = 480;
+			ci_y_value = 600;
+			ci_r = 11;
+			ci_g = 54;
+			ci_b = 71;
+			ci_a = 255;
+    }else
+	 {
+
+			my_conf = eet_data_read(ef, _my_conf_descriptor, MY_CONF_FILE_ENTRY);
+
+			feed_data_list =  my_conf->feedlist_eet;
+			
+			ci_url = my_conf->url;
+			ci_icon = my_conf->icon;
+			ci_icons = my_conf->icons;
+			ci_popupnew = my_conf->popupnew;
+			ci_indicator = my_conf->indicator;
+			ci_refresh = my_conf->refresh;
+			ci_fontsize = my_conf->fontsize;
+			ci_x_value = my_conf->x_value;
+			ci_y_value = my_conf->y_value;
+			ci_r = my_conf->r;
+			ci_g = my_conf->g;
+			ci_b = my_conf->b;
+			ci_a = my_conf->a;
+			saved_title = my_conf->saved_title;
+			
+			eet_close(ef);
+	 }
     eet_shutdown();
+	 
+printf("LIST COUNT READ EED: %i\n", eina_list_count(feed_data_list));
 }
 
 
@@ -144,37 +180,49 @@ _save_eet()
 	if(id_num < 0)
 		return;
 		
-    Eet_File *ef;
-    eet_init();
+	Eet_File *ef;
+   eet_init();
 	 
    char buf[4096];
 	const char *profile;
 	profile = elm_config_profile_get();
 		  
    snprintf(buf, sizeof(buf), "%s/news/news_gadget_%d_%s.cfg", efreet_config_home_get(), id_num, profile);
-   
+ 
 	ef = eet_open(buf, EET_FILE_MODE_WRITE);
-       
-    if(!ef)
-    {
-        printf("ERROR\n");
+
+   if(!ef)
+   {
+		printf("ERROR\n");
 //         fprintf(stderr, "ERROR: could not open '%s' for write\n", home_file);
-//            return EINA_FALSE;   //TODO got elm_main -> END
-    }else
-    {
+//            return EINA_FALSE;   //TODO got elm_main -> END		
+	}else
+   {
 
-        News_List_Eet *my_conf = calloc(1, sizeof(News_List_Eet));
+		My_Conf_Type *my_conf = calloc(1, sizeof(My_Conf_Type));
 
-        if (!my_conf)
-        {
-            fprintf(stderr, "ERROR: could not calloc My_Conf_Type\n");
+		if (!my_conf)
+      {
+			fprintf(stderr, "ERROR: could not calloc My_Conf_Type\n");
 //                 return NULL;   //TODO got elm_main -> END
-        }
+		}
 
-		  my_conf->configlist_eet = configlist;
-// 		  my_conf->feedlist_eet = feed_data_list;
+		my_conf->feedlist_eet = feed_data_list;
 
-// 		  my_conf->name = ci_name;
+		my_conf->url = ci_url;
+		my_conf->icon = ci_icon;
+		my_conf->icons = ci_icons;
+		my_conf->popupnew = ci_popupnew;
+		my_conf->indicator = ci_indicator;
+	 	my_conf->refresh = ci_refresh;
+	 	my_conf->fontsize = ci_fontsize;
+	 	my_conf->x_value = ci_x_value;
+	 	my_conf->y_value= ci_y_value;
+	 	my_conf->r = ci_r;
+	 	my_conf->g = ci_g;
+	 	my_conf->b = ci_b;
+		my_conf->a = ci_a;
+		my_conf->saved_title = saved_title;
  
         eet_data_write(ef, _my_conf_descriptor, MY_CONF_FILE_ENTRY, my_conf, EINA_TRUE);
     }
@@ -237,7 +285,7 @@ _set_feed_icon()
 	Evas_Object *ic = elm_icon_add(win);
 	printf(" set feed icon: %s\n", ci_icon);
 		
-	if(strcmp(ci_icon, "") == 0 || ci_icon == NULL)
+	if(ci_icon == NULL || strcmp(ci_icon, "") == 0)
 	{
 		edje_object_signal_emit(ly, "image_feed", "on");
 		elm_object_part_content_unset(ly, "image");
@@ -329,125 +377,23 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	
 	Feed_Data *list_data;
 	Eina_List *l;
+		printf("LIST COUNT POPUP: %i\n", eina_list_count(feed_data_list));
+
 		
-	if(eina_list_count(feed_data_list) == 0)
-		return;
-	
+		
+		
+		
    if(popup)
-     {
+   {
         evas_object_del(popup);
         popup = NULL;
         return;
-     }
-
-	_config_save(mainbox, NULL, NULL, NULL);
+	}
 	
 	edje_object_signal_emit(ly, "item_new", "default");
 		
    popup = elm_win_add(win, "Popup",  ELM_WIN_POPUP_MENU);
    elm_win_alpha_set(popup, 1);
-
-/*	
-	
-   box = elm_box_add(popup);
-   elm_box_horizontal_set(box, EINA_FALSE);
-	elm_box_padding_set(box, 10, 0);
-   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, 0);
-   evas_object_show(box);
-		
-	Evas_Object *o, *boxh, *ic;
-	char buf1[PATH_MAX];
-	char buf[PATH_MAX];
-	
-	EINA_LIST_FOREACH(feed_data_list, l, list_data)
-   {
-		
-					
-			if(i == 0)
-			{					
-					lbl = elm_label_add(box);
-					if(list_data->description == NULL)
-							snprintf(buf1, sizeof(buf1), "<bigger>%s</bigger><br><br><small>Last check: %s</small>", list_data->title, lastcheck);
-					else
-						snprintf(buf1, sizeof(buf1), "<bigger>%s</bigger><br><br><big>%s</big><br><br><small>Last check: %s</small>", list_data->title, list_data->description, lastcheck);
-					
-					elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
-// 					elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(400));
-					elm_object_text_set(lbl, buf1);
-					evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
-					evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-					elm_box_pack_end(box, lbl);
-					evas_object_show(lbl);
-
-					o = elm_separator_add(box);
-					elm_separator_horizontal_set(o, EINA_TRUE);
-					elm_box_pack_end(box, o);
-					evas_object_show(o);
-			}
-			else
-			{
-				if(i == 1)
-					saved_title = eina_stringshare_add(list_data->title);
-
-			boxh = elm_box_add(box);
-			elm_box_horizontal_set(boxh, EINA_TRUE);
-					evas_object_size_hint_align_set(boxh, EVAS_HINT_FILL, EVAS_HINT_FILL);
-			
-			if(!ci_icons)
-			{
-				elm_box_padding_set(boxh, 10, 0);
-			}
-				evas_object_show(boxh);
-			
-					if(!ci_icons)
-					{
-						ic = elm_icon_add(boxh);
-						
-						if(list_data->imagelink == NULL)
-							snprintf(buf, sizeof(buf), "%s/images/news.png", PACKAGE_DATA_DIR);
-						else
-							snprintf(buf, sizeof(buf), "%s.jpg", list_data->imagelink);
-															
-						elm_image_file_set(ic, buf, NULL);
-						evas_object_size_hint_min_set(ic, 150, 56);
-						evas_object_size_hint_weight_set(ic, 0, EVAS_HINT_EXPAND);
-						evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
-						elm_box_pack_end(boxh, ic);
-						evas_object_show(ic);
-					
-						if(!ci_bigicons && list_data->imagelink != NULL)
-						{
-							elm_object_tooltip_content_cb_set(ic, _content_image, list_data->imagelink, NULL);
-						}
-						
-						evas_object_smart_callback_add(ic, "clicked", _it_clicked, list_data->link);
-					}
-					
-				   lbl = elm_label_add(boxh);
-					snprintf(buf1, sizeof(buf1), "<b><font_size=%f>%s</font_size></b><br><font_size=%f>%s</font_size></a><br><br><custom align=right><small>%s</small></custom>", ci_fontsize, list_data->title, ci_fontsize, elm_entry_markup_to_utf8(list_data->description), list_data->pubdate);
-// 					snprintf(buf1, sizeof(buf1), "<b>%s</b><br>%s</a><br><br><custom align=right><small>%s</small></custom>", list_data->title, ci_fontsize, elm_entry_markup_to_utf8(list_data->description), list_data->pubdate);
-					elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
-// 					elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(300));
-					elm_object_text_set(lbl, buf1);
-					evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
-					evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-					elm_box_pack_end(boxh, lbl);
-					evas_object_show(lbl);
-					
-								
-			elm_box_pack_end(box, boxh);
-			evas_object_show(boxh);
-			
-			o = elm_separator_add(box);
-			elm_separator_horizontal_set(o, EINA_TRUE);
-			elm_box_pack_end(box, o);
-			evas_object_show(o);
-
-			}
-		
-			i++;
-	}*/
-
 
 	
 ////////////////// TABLE ///////////////////
@@ -458,6 +404,30 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
    evas_object_size_hint_align_set(tb, 0, 0);
 	
 	evas_object_show(tb);
+	
+	if(eina_list_count(feed_data_list) == 0)
+	{
+		printf("RETUND\n");
+			
+		lbl = elm_label_add(popup);
+			
+			elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
+			elm_object_text_set(lbl, "<b>No feeds found</b><br>please check if you have a active internet connection or/and if the URL is correct<br><br> If both is correct please add a but report at https://github.com/jf-simon/news/issues/new");
+			evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			
+			elm_table_pack(tb, lbl, 0, 0, 1, 1);
+			
+			
+			evas_object_show(lbl);
+	}else
+	{
+	
+
+     
+// 	_config_save(tb, NULL, NULL, NULL);
+	
+
 			
 	
 
@@ -512,8 +482,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 				elm_table_pack(tb, ic, 0, y+1, 1, 1);
 				evas_object_show(ic);
 					
-				if(!ci_bigicons && list_data->imagelink != NULL)
-					elm_object_tooltip_content_cb_set(ic, _content_image, list_data->imagelink, NULL);
+				
 						
 // 						evas_object_smart_callback_add(ic, "clicked", _it_clicked, list_data->link);
 			}
@@ -561,7 +530,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 		}
 	}
 
-
+	}
 ////////////////// TABLE END ///////////////////
 
 	scroller = elm_scroller_add(popup);
@@ -964,13 +933,15 @@ _data_complete(void *data, int type, void *event_info)
 	
 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
 	
+	Feed_Data *p;
+	EINA_LIST_FREE(feed_data_list, p)
+	{ 
+		free(p);
+	}
+		
 	if(url_complete->status >= 200 && url_complete->status <= 226)
 	{	
-		Feed_Data *p;
-		EINA_LIST_FREE(feed_data_list, p)
-		{ 
-			free(p); 
-		}
+
 
 		printf("LIST COUNT AFTER: %i\n", eina_list_count(feed_data_list));
 		
@@ -1147,7 +1118,7 @@ int elm_main(int argc, char *argv[])
 	ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER, _gadget_exit, NULL);
 	
 	
-	_config_load(edje_obj);							// load config data from eet to tmp vars
+// 	_config_load(edje_obj);							// load config data from eet to tmp vars
 	
 // 	set_color(ly);
 	

@@ -1,5 +1,5 @@
-#ifndef TAGESLOSUNG_H
-#define TAGESLOSUNG_H
+#ifndef NEWS_H
+#define NEWS_H
 
 #endif
 #include "config.h"
@@ -40,13 +40,12 @@ const char *feedname;
 
 Evas_Object *win;
 Evas_Object *ly;
-Evas_Object *mainbox;
+Evas_Object *tb;
 
-int         ci_id;
 const char *ci_url;
 const char *ci_icon;
+const char *saved_title;
 Eina_Bool   ci_icons;
-Eina_Bool   ci_bigicons;
 Eina_Bool   ci_popupnew;
 Eina_Bool   ci_indicator;
 double   	ci_refresh;
@@ -63,12 +62,9 @@ Eina_List *feed_data_list;
 Eina_List *feed_data_list_tmp;
 
 typedef struct {
-        int         	id;
         const char 	*url;
         const char 	*icon;
-        const char 	*saved_title;
 		  Eina_Bool   	icons;
-		  Eina_Bool   	bigicons;
 		  Eina_Bool   	popupnew;
 		  Eina_Bool   	indicator;
 		  double   	  	refresh;
@@ -79,5 +75,5 @@ typedef struct {
 	     int         	g;
         int         	b;
         int         	a;
+		  const char   *saved_title;
 } Config_Item;
-
