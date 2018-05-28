@@ -1,0 +1,11 @@
+to install do:
+
+
+meson build && cd build
+
+//if you what to use /opt/efl as prefix dir
+meson configure -Dprefix=/opt/efl 
+
+ninja
+
+sudo ninja install
