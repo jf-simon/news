@@ -112,11 +112,10 @@ _my_conf_descriptor_init(void)
 void
 _read_eet()
 {
-    Eet_File *ef;
+   Eet_File *ef;
+   My_Conf_Type *my_conf;
 
-    My_Conf_Type *my_conf;
-
-    eet_init();
+	eet_init();
 	const char *profile;
 	profile = elm_config_profile_get();
    char buf[4096], buf2[4096];
@@ -127,49 +126,46 @@ _read_eet()
 	
    snprintf(buf, sizeof(buf), "%s/news/news_gadget_%d_%s.cfg", efreet_config_home_get(), id_num, profile);
 	
-    ef = eet_open(buf, EET_FILE_MODE_READ);
-    if(!ef)
-    {
-			printf("TEST TEST TEST\n");
-			ci_url = eina_stringshare_add("https://github.com/jf-simon/news/commits/master.atom");
-			ci_icon = eina_stringshare_add("");
-			ci_icons = 0;
-			ci_popupnew = 0;
-			ci_refresh = 10;
-			ci_fontsize = 10;
-			ci_x_value = 480;
-			ci_y_value = 600;
-			ci_r = 11;
-			ci_g = 54;
-			ci_b = 71;
-			ci_a = 255;
-    }else
-	 {
+	ef = eet_open(buf, EET_FILE_MODE_READ);
+   if(!ef)
+   {
+		printf("TEST TEST TEST\n");
+		ci_url = eina_stringshare_add("https://github.com/jf-simon/news/commits/master.atom");
+		ci_icon = eina_stringshare_add("");
+		ci_icons = 0;
+		ci_popupnew = 0;
+		ci_refresh = 10;
+		ci_fontsize = 10;
+		ci_x_value = 480;
+		ci_y_value = 600;
+		ci_r = 11;
+		ci_g = 54;
+		ci_b = 71;
+		ci_a = 255;
+	}else
+	{
+		my_conf = eet_data_read(ef, _my_conf_descriptor, MY_CONF_FILE_ENTRY);
 
-			my_conf = eet_data_read(ef, _my_conf_descriptor, MY_CONF_FILE_ENTRY);
-
-			feed_data_list =  my_conf->feedlist_eet;
+		feed_data_list =  my_conf->feedlist_eet;
 			
-			ci_url = my_conf->url;
-			ci_icon = my_conf->icon;
-			ci_icons = my_conf->icons;
-			ci_popupnew = my_conf->popupnew;
-			ci_indicator = my_conf->indicator;
-			ci_refresh = my_conf->refresh;
-			ci_fontsize = my_conf->fontsize;
-			ci_x_value = my_conf->x_value;
-			ci_y_value = my_conf->y_value;
-			ci_r = my_conf->r;
-			ci_g = my_conf->g;
-			ci_b = my_conf->b;
-			ci_a = my_conf->a;
-			saved_title = my_conf->saved_title;
+		ci_url = my_conf->url;
+		ci_icon = my_conf->icon;
+		ci_icons = my_conf->icons;
+		ci_popupnew = my_conf->popupnew;
+		ci_indicator = my_conf->indicator;
+		ci_refresh = my_conf->refresh;
+		ci_fontsize = my_conf->fontsize;
+		ci_x_value = my_conf->x_value;
+		ci_y_value = my_conf->y_value;
+		ci_r = my_conf->r;
+		ci_g = my_conf->g;
+		ci_b = my_conf->b;
+		ci_a = my_conf->a;
+		saved_title = my_conf->saved_title;
 			
-			eet_close(ef);
+		eet_close(ef);
 	 }
     eet_shutdown();
-	 
-printf("LIST COUNT READ EED: %i\n", eina_list_count(feed_data_list));
 }
 
 
@@ -412,7 +408,9 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 		lbl = elm_label_add(popup);
 			
 			elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
-			elm_object_text_set(lbl, "<b>No feeds found</b><br>please check if you have a active internet connection or/and if the URL is correct<br><br> If both is correct please add a but report at https://github.com/jf-simon/news/issues/new");
+			elm_object_text_set(lbl, "<b>No feeds found</b><br>"
+											"please check if you have an active internet connection or/and if the URL is correct<br><br> "
+											"If both is correct please add a bug report at https://github.com/jf-simon/news/issues/new");
 			evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
 			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 			
@@ -422,16 +420,8 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 			evas_object_show(lbl);
 	}else
 	{
-	
-
-     
 // 	_config_save(tb, NULL, NULL, NULL);
 	
-
-			
-	
-
-			
 	EINA_LIST_FOREACH(feed_data_list, l, list_data)
    {
 		Evas_Object *rect;
@@ -481,10 +471,6 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 				evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
 				elm_table_pack(tb, ic, 0, y+1, 1, 1);
 				evas_object_show(ic);
-					
-				
-						
-// 						evas_object_smart_callback_add(ic, "clicked", _it_clicked, list_data->link);
 			}
 		
 			lbl = elm_label_add(popup);
@@ -506,10 +492,6 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 			evas_object_smart_callback_add(bt, "pressed", _it_clicked_pressed, list_data->link);
 			evas_object_smart_callback_add(bt, "unpressed", _it_clicked_unpressed, list_data->link);
 				
-
-			
-			
-			
 			if(!ci_icons)
 			{
 				elm_table_pack(tb, lbl, 1, y+1, 1, 1);
