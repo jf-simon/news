@@ -342,22 +342,22 @@ _reload_start(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *
 }
 
 
-static Evas_Object *
-_content_image(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *tt)
-{
-   Evas_Object *ic = elm_icon_add(tt);
-   char buf[PATH_MAX];
-	
-   snprintf(buf, sizeof(buf), "%s.jpg", (const char*)data);
-	int h, w;
-   elm_image_file_set(ic, buf, NULL);
-	elm_image_object_size_get(ic, &w, &h);
-//    elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
-   evas_object_resize(ic, 300, 169);
-	evas_object_size_hint_min_set(ic, 300, 169);
-	printf("POPUP IMAGE: %i %i\n", w, h);
-	return ic;
-}
+// static Evas_Object *
+// _content_image(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *tt)
+// {
+//    Evas_Object *ic = elm_icon_add(tt);
+//    char buf[PATH_MAX];
+// 	
+//    snprintf(buf, sizeof(buf), "%s.jpg", (const char*)data);
+// 	int h, w;
+//    elm_image_file_set(ic, buf, NULL);
+// 	elm_image_object_size_get(ic, &w, &h);
+// //    elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
+//    evas_object_resize(ic, 300, 169);
+// 	evas_object_size_hint_min_set(ic, 300, 169);
+// 	printf("POPUP IMAGE: %i %i\n", w, h);
+// 	return ic;
+// }
 
 
 static void
@@ -421,6 +421,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	}else
 	{
 // 	_config_save(tb, NULL, NULL, NULL);
+		_save_eet();
 	
 	EINA_LIST_FOREACH(feed_data_list, l, list_data)
    {
