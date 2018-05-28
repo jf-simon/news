@@ -162,7 +162,8 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    Evas_Object *sl_fontsize = evas_object_data_get(tb, "sl_fontsize");
    Evas_Object *sl_x_value = evas_object_data_get(tb, "sl_x_value");
    Evas_Object *sl_y_value = evas_object_data_get(tb, "sl_y_value");
-   Evas_Object *cs = evas_object_data_get(tb, "cs");
+//    Evas_Object *cs = evas_object_data_get(tb, "cs");
+	
 	
 	ci_url = elm_object_text_get(en_url);
 	ci_icon = elm_object_text_get(en_icon);
@@ -196,7 +197,7 @@ static void
 _colorselector_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {	
 	Evas_Object *tb = data;
-   Evas_Object *ic = evas_object_data_get(tb, "ic");
+//    Evas_Object *ic = evas_object_data_get(tb, "ic");
    Evas_Object *ly = evas_object_data_get(tb, "ly");
 
    elm_colorselector_color_get(obj, &ci_r, &ci_g, &ci_b, &ci_a);
@@ -345,7 +346,6 @@ static void
 completion_cb(void *data, const char *file, int status)
 {
 	Evas_Object *en_icon = data;
-	char buf[4096];
 	if(status != 200)
 	{
 		ecore_file_unlink(file);
@@ -355,20 +355,15 @@ completion_cb(void *data, const char *file, int status)
 		elm_object_text_set(en_icon, file);
 		_set_feed_icon();
 	}
-	
 	printf("CODE %i\n", status);
-	
-	
-	// dateiname dann nehmen um die neute datei damit anlegen und link dann zurück in en_icon
 }
 
 static void
 _download_image_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {	
 	Evas_Object *en_icon = data;
-	Eina_Bool *rt;
 	const char *icon_url = elm_object_text_get(en_icon);
-	char buf[4096], buf1[4096], buf2[4096], cache_dir[4096];
+	char buf1[4096], cache_dir[4096];
 	const char *filename;
 
 	snprintf(cache_dir, sizeof(cache_dir), "%s/news/cache/%i/", efreet_config_home_get(), id_num);
@@ -396,7 +391,7 @@ _download_image_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			
 		// Button disable bis completion_cb fertig
 		
-		rt = ecore_file_download(icon_url, buf1, completion_cb, NULL, en_icon, NULL);
+		ecore_file_download(icon_url, buf1, completion_cb, NULL, en_icon, NULL);
 
 	}
 	else
@@ -409,8 +404,8 @@ _download_image_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 void
 _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {	
-	Evas_Object *en_url, *button, *en_keyword, *en_icon, *popup, *fr, *cs, *mainfr, *list, *it, *popup_frame, *tb_feed, *tb_popup, *tb_sizes, *tb_advanced, *feed_frame, *advanced_frame, *advanced_popup, *help_frame, *help_popup, *tb_help, *en_help;
-   Evas_Object *o, *box_settings, *box_url, *box_icon, *lbl, *check_icons, *check_popupnew, *check_popupkeyword, *check_indicator, *sl_refresh, *sl_fontsize, *sl_x_value, *sl_y_value;
+	Evas_Object *en_url, *button, *en_icon, *popup, *cs, *list, *it, *popup_frame, *tb_feed, *tb_popup, *tb_sizes, *tb_advanced, *feed_frame, *advanced_frame, *help_frame, *tb_help, *en_help;
+   Evas_Object *o, *lbl, *check_icons, *check_popupnew, *check_indicator, *sl_refresh, *sl_fontsize, *sl_x_value, *sl_y_value;
 	
 	Evas_Object *ly = obj;
 	Evas_Object *win = data;
