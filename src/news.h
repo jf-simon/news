@@ -41,10 +41,12 @@ const char *feedname;
 Evas_Object *win;
 Evas_Object *ly;
 Evas_Object *tb;
+Evas_Object *popup;
 
 const char *ci_url;
 const char *ci_icon;
 const char *saved_title;
+const char *ci_title;
 Eina_Bool   ci_icons;
 Eina_Bool   ci_popupnew;
 Eina_Bool   ci_indicator;
@@ -64,6 +66,7 @@ Eina_List *feed_data_list_tmp;
 typedef struct {
         const char 	*url;
         const char 	*icon;
+        const char 	*title;
 		  Eina_Bool   	icons;
 		  Eina_Bool   	popupnew;
 		  Eina_Bool   	indicator;

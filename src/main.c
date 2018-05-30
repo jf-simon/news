@@ -2,7 +2,7 @@
 
 Evas_Object *win = NULL;
 Evas_Object *ly = NULL;
-static Evas_Object *popup = NULL;
+// static Evas_Object *popup = NULL;
 static Ecore_Timer *timer = NULL;
 
 Ecore_Con_Url *ec_url = NULL;
@@ -25,6 +25,7 @@ typedef struct {
 typedef struct {
         const char *url;
         const char *icon;
+        const char *title;
 		  Eina_Bool   icons;
 		  Eina_Bool   popupnew;
 		  Eina_Bool   indicator;
@@ -78,6 +79,7 @@ _my_conf_descriptor_init(void)
 
     MY_CONF_ADD_BASIC(url, EET_T_STRING);
     MY_CONF_ADD_BASIC(icon, EET_T_STRING);
+    MY_CONF_ADD_BASIC(title, EET_T_STRING);
     MY_CONF_ADD_BASIC(icons, EET_T_UCHAR);
     MY_CONF_ADD_BASIC(popupnew, EET_T_UCHAR);
     MY_CONF_ADD_BASIC(indicator, EET_T_UCHAR);
@@ -132,6 +134,7 @@ _read_eet()
 		printf("TEST TEST TEST\n");
 		ci_url = eina_stringshare_add("https://github.com/jf-simon/news/commits/master.atom");
 		ci_icon = eina_stringshare_add("");
+		ci_title = eina_stringshare_add("");
 		ci_icons = 0;
 		ci_popupnew = 0;
 		ci_refresh = 10;
@@ -150,6 +153,7 @@ _read_eet()
 			
 		ci_url = my_conf->url;
 		ci_icon = my_conf->icon;
+		ci_title = my_conf->title;
 		ci_icons = my_conf->icons;
 		ci_popupnew = my_conf->popupnew;
 		ci_indicator = my_conf->indicator;
@@ -207,6 +211,7 @@ _save_eet()
 
 		my_conf->url = ci_url;
 		my_conf->icon = ci_icon;
+		my_conf->title = ci_title;
 		my_conf->icons = ci_icons;
 		my_conf->popupnew = ci_popupnew;
 		my_conf->indicator = ci_indicator;
@@ -299,6 +304,11 @@ _set_feed_icon()
 		
 		printf("news.png OFF\n");
 	}
+	
+	printf(" TITLE: %s\n", ci_title);
+	Evas_Object *edje_obj = elm_layout_edje_get(ly);
+	edje_object_part_text_set(edje_obj, "title", ci_title);
+	
 }
 
 
@@ -410,7 +420,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 			elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
 			elm_object_text_set(lbl, "<b>No feeds found</b><br>"
 											"please check if you have an active internet connection or/and if the URL is correct<br><br> "
-											"If both is correct please add a bug report at https://github.com/jf-simon/news/issues/new");
+											"If both is correct, please add a bug report at https://github.com/jf-simon/news/issues/new");
 			evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
 			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 			

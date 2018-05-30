@@ -155,6 +155,7 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 	}*/
    Evas_Object *en_url = evas_object_data_get(tb, "en_url");
    Evas_Object *en_icon = evas_object_data_get(tb, "en_icon");
+   Evas_Object *en_title = evas_object_data_get(tb, "en_title");
    Evas_Object *check_icons = evas_object_data_get(tb, "check_icons");
    Evas_Object *check_indicator = evas_object_data_get(tb, "check_indicator");
    Evas_Object *check_popupnew = evas_object_data_get(tb, "check_popupnew");
@@ -167,6 +168,7 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 	
 	ci_url = elm_object_text_get(en_url);
 	ci_icon = elm_object_text_get(en_icon);
+	ci_title = elm_object_text_get(en_title);
    ci_icons = elm_check_state_get(check_icons);
    ci_popupnew = elm_check_state_get(check_popupnew);
    ci_indicator = elm_check_state_get(check_indicator);
@@ -349,11 +351,20 @@ completion_cb(void *data, const char *file, int status)
 	if(status != 200)
 	{
 		ecore_file_unlink(file);
+		/*
+		   Evas_Object *notify = elm_notify_add(popup);
+			elm_notify_allow_events_set(notify, EINA_FALSE);
+			evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			elm_notify_align_set(notify, 0.5, 1.0);
+
+			elm_notify_timeout_set(notify, 3.0);
+			printf("I = FALSE\n");*/
 		// Fehlermeldung als Popup
 	}else
 	{
 		elm_object_text_set(en_icon, file);
 		_set_feed_icon();
+			printf("I = TRUE\n");
 	}
 	printf("CODE %i\n", status);
 }
@@ -380,7 +391,6 @@ _download_image_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 		
 		if(!ecore_file_is_dir(cache_dir))
 		{
-// 		snprintf(buf2, sizeof(buf2), "%s/news/cache/%i", efreet_config_home_get(), id_num);
 			ecore_file_mkpath(cache_dir);
 			printf("MKDIR: %s\n", cache_dir);
 		}
@@ -389,7 +399,7 @@ _download_image_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 	
 		snprintf(buf1, sizeof(buf1), "%s/news/cache/%i/%s", efreet_config_home_get(), id_num, filename);
 			
-		// Button disable bis completion_cb fertig
+		// TODO: Button disable bis completion_cb fertig
 		
 		ecore_file_download(icon_url, buf1, completion_cb, NULL, en_icon, NULL);
 
@@ -404,7 +414,7 @@ _download_image_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 void
 _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {	
-	Evas_Object *en_url, *button, *en_icon, *popup, *cs, *list, *it, *popup_frame, *tb_feed, *tb_popup, *tb_sizes, *tb_advanced, *feed_frame, *advanced_frame, *help_frame, *tb_help, *en_help;
+	Evas_Object *en_url, *button, *en_icon, *cs, *list, *it, *popup_frame, *tb_feed, *tb_popup, *tb_sizes, *tb_advanced, *feed_frame, *advanced_frame, *help_frame, *tb_help, *en_help, *en_title;
    Evas_Object *o, *lbl, *check_icons, *check_popupnew, *check_indicator, *sl_refresh, *sl_fontsize, *sl_x_value, *sl_y_value;
 	
 	Evas_Object *ly = obj;
@@ -425,7 +435,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_style_set(lbl, "marker");
-	snprintf(buf, sizeof(buf), "News Configuration <br> [%s]", feedname);
+	snprintf(buf, sizeof(buf), "<b>News Configuration<br>[%s]", feedname);
    elm_object_text_set(lbl, buf);
    elm_table_pack(tb, lbl, 0, 0, 2, 1);
    evas_object_show(lbl);
@@ -510,10 +520,29 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			evas_object_show(button);
 			
 			lbl = elm_label_add(popup);
-			elm_object_text_set(lbl, "Refresh Intervall: ");
+			elm_object_text_set(lbl, "Title: ");
 			evas_object_size_hint_weight_set(lbl, 0, EVAS_HINT_EXPAND);
 			evas_object_size_hint_align_set(lbl, 0, 0);
 			elm_table_pack(tb_feed, lbl, 0, 2, 1, 1);
+			evas_object_show(lbl);
+			
+			en_title = elm_entry_add(popup);
+			elm_config_context_menu_disabled_set(EINA_FALSE);
+			elm_object_text_set(en_title, ci_title);
+			elm_object_part_text_set(en_title, "elm.guide", "Enter Title");
+			elm_entry_editable_set(en_title, EINA_TRUE);
+			elm_entry_single_line_set(en_title, EINA_TRUE);
+			evas_object_size_hint_weight_set(en_title, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+			evas_object_size_hint_align_set(en_title, EVAS_HINT_FILL, EVAS_HINT_FILL);
+			elm_table_pack(tb_feed, en_title, 1, 2, 2, 1);
+			evas_object_show(en_title);
+			evas_object_data_set(tb, "en_title", en_title);
+			
+			lbl = elm_label_add(popup);
+			elm_object_text_set(lbl, "Refresh Intervall: ");
+			evas_object_size_hint_weight_set(lbl, 0, EVAS_HINT_EXPAND);
+			evas_object_size_hint_align_set(lbl, 0, 0);
+			elm_table_pack(tb_feed, lbl, 0, 3, 1, 1);
 			evas_object_show(lbl);
 
 			sl_refresh = elm_slider_add(popup);
@@ -525,7 +554,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			elm_slider_value_set(sl_refresh, ci_refresh);
 			step = _step_size_calculate_1(1, 60);
 			elm_slider_step_set(sl_refresh, step );
-			elm_table_pack(tb_feed, sl_refresh, 1, 2, 2, 1);
+			elm_table_pack(tb_feed, sl_refresh, 1, 3, 2, 1);
 			evas_object_show(sl_refresh);
 			evas_object_data_set(tb, "sl_refresh", sl_refresh);
 
@@ -866,7 +895,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			evas_object_size_hint_weight_set(en_help, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 			evas_object_size_hint_align_set(en_help, 0.5, 0.5);
 			elm_entry_single_line_set(en_help, EINA_TRUE);
-			elm_entry_editable_set(en_help, EINA_TRUE);
+			elm_entry_editable_set(en_help, EINA_FALSE);
 			elm_object_text_set(en_help, "<b>Bugs, Feedback, Help on https://github.com/jf-simon/news/issues/new</b>");
 			elm_table_pack(tb_help, en_help, 0, 11, 2, 1);
 			evas_object_show(en_help);	
