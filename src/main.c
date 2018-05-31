@@ -446,10 +446,10 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 		{
 			lbl = elm_label_add(popup);
 			
-			if(list_data->description == NULL)
-				snprintf(buf1, sizeof(buf1), "<bigger>%s</bigger><br><br><small>Last check: %s</small>", list_data->title, lastcheck);
+			if(list_data->description == NULL || !strcmp(list_data->description, ""))
+				snprintf(buf1, sizeof(buf1), "<font_size=%f>%s</font><br><br><font_size=%f>Last check: %s</font>", ci_fontsize+2, list_data->title, ci_fontsize-1, lastcheck);
 			else
-				snprintf(buf1, sizeof(buf1), "<bigger>%s</bigger><br><br><big>%s</big><br><br><small>Last check: %s</small>", list_data->title, list_data->description, lastcheck);
+				snprintf(buf1, sizeof(buf1), "<font_size=%f>%s</font_size><br><br><font_size=%f>%s</font_size><br><br><font_size=%f>Last check: %s</font_size>", ci_fontsize+2, list_data->title, ci_fontsize+1, list_data->description, ci_fontsize-1, lastcheck);
 					
 			elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
 			elm_object_text_set(lbl, buf1);
@@ -485,7 +485,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 			}
 		
 			lbl = elm_label_add(popup);
-			snprintf(buf1, sizeof(buf1), "<b><font_size=%f>%s</font_size></b><br><font_size=%f>%s</font_size></a><br><br><custom align=right><small>%s</small></custom>", ci_fontsize, list_data->title, ci_fontsize, elm_entry_markup_to_utf8(list_data->description), list_data->pubdate);
+			snprintf(buf1, sizeof(buf1), "<b><font_size=%f>%s</font_size></b><br><font_size=%f>%s</font_size></a><br><br><custom align=right><font_size=%f>%s</font_size></custom>", ci_fontsize, list_data->title, ci_fontsize, elm_entry_markup_to_utf8(list_data->description), ci_fontsize-2, list_data->pubdate);
 // 			snprintf(buf1, sizeof(buf1), "<b>%s</b><br>%s</a><br><br><custom align=right><small>%s</small></custom>", list_data->title, ci_fontsize, elm_entry_markup_to_utf8(list_data->description), list_data->pubdate);
 			elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
 // 			elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(300));
