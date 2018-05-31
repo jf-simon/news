@@ -281,7 +281,7 @@ delete_popup_edje(void *data, Evas_Object *obj EINA_UNUSED, const char *emission
 }*/
 
 void
-_set_feed_icon()
+_set_feed_settings()
 {
 	Evas_Object *ic = elm_icon_add(win);
 	printf(" set feed icon: %s\n", ci_icon);
@@ -1116,7 +1116,7 @@ int elm_main(int argc, char *argv[])
 // 	set_color(ly);
 	
 	edje_object_color_class_set(edje_obj, "colorclass", ci_r, ci_g, ci_b, ci_a, 255, 255, 255, 0, 39, 90, 187, 255);
-	_set_feed_icon();
+	_set_feed_settings();
 	_get_data();
 	_save_eet();
 	

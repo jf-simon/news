@@ -27,7 +27,7 @@ unsigned int  createHEX(int r, int g, int b, int a);
 void         _config_load();
 void         _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 void         _set_content(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED);
-void 			_set_feed_icon();
+void 			_set_feed_settings();
 void 			_get_data();
 void 			_timer_reset();
 void 			stringReplace(char *search, char *replace, char *string);
