@@ -364,9 +364,7 @@ completion_cb(void *data, const char *file, int status)
 	{
 		elm_object_text_set(en_icon, file);
 		_set_feed_settings();
-			printf("I = TRUE\n");
 	}
-	printf("CODE %i\n", status);
 }
 
 static void
@@ -456,7 +454,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 	// Rect background for Entries
 	Evas_Object *rect;
 	
-	// List Obejects
+	// List Objects
 	Elm_Object_Item *list;
 	Evas_Object *it;
 	
@@ -607,11 +605,17 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			evas_object_show(en_title);
 			evas_object_data_set(tb, "en_title", en_title);
 			
+			o = elm_separator_add(popup);
+			evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0);
+			elm_separator_horizontal_set(o, EINA_TRUE);
+			elm_table_pack(tb_feed, o, 0, 3, 4, 1);
+			evas_object_show(o);
+			
 			lbl = elm_label_add(popup);
 			elm_object_text_set(lbl, "Refresh Intervall: ");
 			evas_object_size_hint_weight_set(lbl, 0, EVAS_HINT_EXPAND);
 			evas_object_size_hint_align_set(lbl, 0, 0);
-			elm_table_pack(tb_feed, lbl, 0, 3, 1, 1);
+			elm_table_pack(tb_feed, lbl, 0, 4, 1, 1);
 			evas_object_show(lbl);
 
 			sl_refresh = elm_slider_add(popup);
@@ -623,7 +627,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			elm_slider_value_set(sl_refresh, ci_refresh);
 			step = _step_size_calculate_1(1, 60);
 			elm_slider_step_set(sl_refresh, step );
-			elm_table_pack(tb_feed, sl_refresh, 1, 3, 2, 1);
+			elm_table_pack(tb_feed, sl_refresh, 1, 4, 2, 1);
 			evas_object_show(sl_refresh);
 			evas_object_data_set(tb, "sl_refresh", sl_refresh);
 
@@ -901,7 +905,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			evas_object_size_hint_weight_set(o, 0, 0);
 			evas_object_size_hint_align_set(o, 0, 0);
 			elm_separator_horizontal_set(o, EINA_TRUE);
-			elm_table_pack(tb_help, o, 0, 5, 2, 1);
+			elm_table_pack(tb_help, o, 0, 5, 3, 1);
 			evas_object_show(o);
 			
 			lbl = elm_label_add(popup);
@@ -957,7 +961,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			evas_object_size_hint_weight_set(o, 0, 0);
 			evas_object_size_hint_align_set(o, 0, 0);
 			elm_separator_horizontal_set(o, EINA_TRUE);
-			elm_table_pack(tb_help, o, 0, 10, 2, 1);
+			elm_table_pack(tb_help, o, 0, 10, 3, 1);
 			evas_object_show(o);
 			
 			en_help = elm_entry_add(popup);
@@ -966,7 +970,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			elm_entry_single_line_set(en_help, EINA_TRUE);
 			elm_entry_editable_set(en_help, EINA_FALSE);
 			elm_object_text_set(en_help, "<b>Bugs, Feedback, Help on https://github.com/jf-simon/news/issues/new</b>");
-			elm_table_pack(tb_help, en_help, 0, 11, 2, 1);
+			elm_table_pack(tb_help, en_help, 0, 11, 3, 1);
 			evas_object_show(en_help);	
 	
 	
