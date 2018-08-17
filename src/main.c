@@ -328,14 +328,18 @@ static void
 _it_clicked_pressed(void *data, Evas_Object *obj,
                  void *event_info EINA_UNUSED)
 {
-	evas_object_color_set(obj, 0, 0, 0, 30);
+	int a = 30, r = 0, g = 0, b = 0; 
+	evas_color_argb_premul(a, &r, &g, &b);
+	evas_object_color_set(obj, r, g, b, a);
 }
 
 static void
 _it_clicked_unpressed(void *data, Evas_Object *obj,
                  void *event_info EINA_UNUSED)
 {	
-	evas_object_color_set(obj, 0, 0, 0, 0);
+	int a = 0, r = 0, g = 0, b = 0; 
+	evas_color_argb_premul(a, &r, &g, &b);
+	evas_object_color_set(obj, r, g, b, a);
 }
 
 
@@ -440,7 +444,9 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 		evas_object_size_hint_min_set(rect, 150, 1);
 		evas_object_size_hint_align_set(rect, EVAS_HINT_FILL, EVAS_HINT_FILL);
 		evas_object_size_hint_weight_set(rect, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-		evas_object_color_set(rect, 128, 128, 128, 64);
+		int a = 64, r = 128, g = 128, b = 128; 
+		evas_color_argb_premul(a, &r, &g, &b);
+		evas_object_color_set(rect, r, g, b, a);
 		
 		if(y == 0)
 		{
@@ -462,8 +468,8 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 			
 			evas_object_show(lbl);
 			evas_object_show(rect);
+			
 			y++;
-
 		}
 		else
 		{
@@ -486,9 +492,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 		
 			lbl = elm_label_add(popup);
 			snprintf(buf1, sizeof(buf1), "<b><font_size=%f>%s</font_size></b><br><font_size=%f>%s</font_size></a><br><br><custom align=right><font_size=%f>%s</font_size></custom>", ci_fontsize, list_data->title, ci_fontsize, elm_entry_markup_to_utf8(list_data->description), ci_fontsize-2, list_data->pubdate);
-// 			snprintf(buf1, sizeof(buf1), "<b>%s</b><br>%s</a><br><br><custom align=right><small>%s</small></custom>", list_data->title, ci_fontsize, elm_entry_markup_to_utf8(list_data->description), list_data->pubdate);
 			elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
-// 			elm_label_wrap_width_set(lbl, ELM_SCALE_SIZE(300));
 			elm_object_text_set(lbl, buf1);
 			evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
 			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -496,7 +500,11 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 			bt = elm_button_add(popup);
 			evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
 			evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-			evas_object_color_set(bt, 0, 0, 0, 0);
+			
+			
+	int a = 0, r = 0, g = 0, b = 0; 
+	evas_color_argb_premul(a, &r, &g, &b);
+			evas_object_color_set(bt, r, g, b, a);
 			evas_object_show(bt);
 					
 			evas_object_smart_callback_add(bt, "clicked", _it_clicked, list_data->link);
