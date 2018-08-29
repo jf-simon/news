@@ -390,9 +390,6 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 		printf("LIST COUNT POPUP: %i\n", eina_list_count(feed_data_list));
 
 		
-		
-		
-		
    if(popup)
    {
         evas_object_del(popup);
@@ -440,7 +437,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	EINA_LIST_FOREACH(feed_data_list, l, list_data)
    {
 		Evas_Object *rect;
-		rect = evas_object_rectangle_add(popup);
+		rect = evas_object_rectangle_add(evas_object_evas_get(popup));
 		evas_object_size_hint_min_set(rect, 150, 1);
 		evas_object_size_hint_align_set(rect, EVAS_HINT_FILL, EVAS_HINT_FILL);
 		evas_object_size_hint_weight_set(rect, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
