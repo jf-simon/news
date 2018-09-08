@@ -1086,7 +1086,6 @@ int elm_main(int argc, char *argv[])
    win = elm_win_add(NULL, "news", ELM_WIN_BASIC);
    elm_win_title_set(win, "News");
    elm_win_autodel_set(win, EINA_TRUE);
-	
 	elm_win_alpha_set(win, EINA_TRUE);	
 
 	evas_object_size_hint_aspect_set(win, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
