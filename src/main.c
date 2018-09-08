@@ -10,6 +10,7 @@ Ecore_Con_Url *ec_url = NULL;
 Eina_Strbuf *feeddata = NULL;
 const char* lastcheck;
 int firststart = 0;
+int gadget = 0;
 
 typedef struct {
 			const char *title;
@@ -400,7 +401,9 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	edje_object_signal_emit(ly, "item_new", "default");
 		
    popup = elm_win_add(win, "Popup",  ELM_WIN_POPUP_MENU);
-   elm_win_alpha_set(popup, 1);
+	
+	if(gadget == 1)
+		elm_win_alpha_set(popup, 1);
 
 	
 ////////////////// TABLE ///////////////////
@@ -1062,7 +1065,6 @@ int elm_main(int argc, char *argv[])
 	
    char buf[PATH_MAX];
 //    char buf2[PATH_MAX];
-//    int gadget = 0;
    char buf1[16];
 	
 	Config_Item *config;
@@ -1072,7 +1074,7 @@ int elm_main(int argc, char *argv[])
  
    if (getenv("E_GADGET_ID"))
      {
-//         gadget = 1;
+        gadget = 1;
         snprintf(buf1, sizeof(buf1), "%s", getenv("E_GADGET_ID"));
         id_num = atoi(buf1);
      }
@@ -1084,7 +1086,8 @@ int elm_main(int argc, char *argv[])
    win = elm_win_add(NULL, "news", ELM_WIN_BASIC);
    elm_win_title_set(win, "News");
    elm_win_autodel_set(win, EINA_TRUE);
-   elm_win_alpha_set(win, EINA_TRUE);	
+	
+	elm_win_alpha_set(win, EINA_TRUE);	
 
 	evas_object_size_hint_aspect_set(win, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
 	
