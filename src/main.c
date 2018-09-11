@@ -478,12 +478,17 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 				ic = elm_icon_add(popup);
 					
 				if(list_data->imagelink == NULL)
+				{
 					snprintf(buf, sizeof(buf), "%s/images/news.png", PACKAGE_DATA_DIR);
+					evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(56), ELM_SCALE_SIZE(56));
+				}
 				else
+				{	
 					snprintf(buf, sizeof(buf), "%s.jpg", list_data->imagelink);
+					evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(150), ELM_SCALE_SIZE(56));
+				}
 															
 				elm_image_file_set(ic, buf, NULL);
-				evas_object_size_hint_min_set(ic, ELM_SCALE_SIZE(150), ELM_SCALE_SIZE(56));
 				evas_object_size_hint_weight_set(ic, 0, EVAS_HINT_EXPAND);
 				evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
 				elm_table_pack(tb, ic, 0, y+1, 1, 1);
