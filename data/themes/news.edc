@@ -167,15 +167,15 @@ collections {
          }
 
       programs {
-         program {
-            name: "click_settings";
-            signal: "mouse,down,3";
-            source: "over";
-            action: SIGNAL_EMIT "settings" "settings";
-         }
+//          program {
+//             name: "click_settings";
+//             signal: "mouse,up,3";
+//             source: "over";
+//             action: SIGNAL_EMIT "settings" "settings";
+//          }
          program {
             name: "mouse_in_popup";
-            signal: "mouse,down,1";
+            signal: "mouse,up,1";
             source: "over";
 //             in:     0.5 0.0;
             action: SIGNAL_EMIT "show_popup" "show_popup";
