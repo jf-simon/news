@@ -973,6 +973,11 @@ _data_complete(void *data, int type, void *event_info)
 				printf("RSS1 FEED\n");
 				parse_rss(data);
 			}
+			else if(strstr((char *)eina_strbuf_string_get(data), "<rss xmlns") != 0)
+			{
+				printf("RSS1 FEED\n");
+				parse_rss(data);
+			}
 			else if(strstr((char *)eina_strbuf_string_get(data), "<rss xmlns:atom") != 0)
 			{
 				printf("ATOM1 FEED\n");
@@ -1121,7 +1126,7 @@ int elm_main(int argc, char *argv[])
 	
 //    edje_object_signal_callback_add(ly, "delete_popup", "delete_popup", delete_popup_edje, win);
 	ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER, _gadget_exit, NULL);
-	
+
 	
 // 	_config_load(edje_obj);							// load config data from eet to tmp vars
 	
