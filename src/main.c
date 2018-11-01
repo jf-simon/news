@@ -1,4 +1,3 @@
-#include <e.h> 
 #include "news.h"
 
 Evas_Object *win = NULL;
@@ -974,6 +973,11 @@ _data_complete(void *data, int type, void *event_info)
 				printf("RSS1 FEED\n");
 				parse_rss(data);
 			}
+			else if(strstr((char *)eina_strbuf_string_get(data), "<rss xmlns") != 0)
+			{
+				printf("RSS1 FEED\n");
+				parse_rss(data);
+			}
 			else if(strstr((char *)eina_strbuf_string_get(data), "<rss xmlns:atom") != 0)
 			{
 				printf("ATOM1 FEED\n");
@@ -1122,19 +1126,6 @@ int elm_main(int argc, char *argv[])
 	
 //    edje_object_signal_callback_add(ly, "delete_popup", "delete_popup", delete_popup_edje, win);
 	ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER, _gadget_exit, NULL);
-
-	
-	E_Menu *m;
-	   E_Menu_Item *mi;
-
-   mi = e_menu_item_new(m);
-   e_menu_item_separator_set(mi, 1);
-
-   mi = e_menu_item_new(m);
-   e_menu_item_label_set(mi, _("Refresh feed"));
-   e_util_menu_item_theme_icon_set(mi, "view-refresh");
-//    e_menu_item_callback_set(mi, _gadget_menu2_cb, inst->ctxt);
-	
 
 	
 // 	_config_load(edje_obj);							// load config data from eet to tmp vars
