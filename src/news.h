@@ -37,7 +37,6 @@ int        id_num;
 const char *saved_title;
 const char *feedname;
 
-
 Evas_Object *win;
 Evas_Object *ly;
 Evas_Object *tb;
@@ -47,8 +46,10 @@ const char *ci_url;
 const char *ci_icon;
 const char *saved_title;
 const char *ci_title;
+const char *ci_keywords;
 Eina_Bool   ci_icons;
 Eina_Bool   ci_popupnew;
+Eina_Bool   ci_popupkeywords;
 Eina_Bool   ci_indicator;
 double   	ci_refresh;
 double   	ci_fontsize;
@@ -61,14 +62,18 @@ int         ci_a;
 
 Eina_List *configlist;
 Eina_List *feed_data_list;
+Eina_List *keywords_data_list;
 Eina_List *feed_data_list_tmp;
+
 
 typedef struct {
         const char 	*url;
         const char 	*icon;
         const char 	*title;
+		  const char   *keywords;
 		  Eina_Bool   	icons;
 		  Eina_Bool   	popupnew;
+		  Eina_Bool   	popupkeywords;
 		  Eina_Bool   	indicator;
 		  double   	  	refresh;
 		  double   	  	fontsize;
