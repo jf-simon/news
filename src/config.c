@@ -188,8 +188,8 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 
 	_timer_reset();
 	_set_feed_settings();
-//  refresh feed if url has changed
-// _get_data();
+// TODO  refresh feed if url has changed
+	_get_data(); // TODO is needed for new highting keywords, but must on a better place
 }
 
 
@@ -216,10 +216,10 @@ _colorselector_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UN
 
 static void
 _popup_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_data EINA_UNUSED)
-{
+{	
+	_get_data(); //TODO Tut nicht
    evas_object_del(obj);
 	printf("GET DATA POPUP DEL\n");
-	_get_data();
 }
 
 

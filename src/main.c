@@ -632,14 +632,14 @@ void remove_space(char *src)
 }
 
 
-const char*
+char*
 find_data(char *string, char *start1, char *end1)
 {
 	char *string1 = calloc(strlen(string)+1, sizeof(char));
 		
 	if((strstr(string, start1) == NULL) || (strstr(string, end1) == NULL))
 	{
-		return NULL;
+		return "";
 	}
 	else
 	{
@@ -647,13 +647,13 @@ find_data(char *string, char *start1, char *end1)
 		
 		strncpy(string1, strstr(string, start1)+start_len, strstr(string, end1)-strstr(string, start1)-strlen(start1));
 	
-		string1[strlen(string1)] = '\0';
+// 		string1[strlen(string1)] = '\0';
 
 		char **arr;
 		
 		if(!strcmp(end1, ".jpg\" "))
 		{
-			return (const char*)string1;
+			return (char*)string1;
 		}
 		else if(!strcmp(end1, "/>"))
 		{
@@ -661,7 +661,7 @@ find_data(char *string, char *start1, char *end1)
 		
 			stringReplace("\"", "", arr[1]);
 
-			return (const char *)arr[1];
+			return (char *)arr[1];
 			free(arr[0]);
 			free(arr);
 		}
@@ -669,12 +669,36 @@ find_data(char *string, char *start1, char *end1)
 		{
 			arr = eina_str_split(string1, ">", 2);
 			
-			return (const char *)arr[1];
+			return (char *)arr[1];
 			free(arr[0]);
 			free(arr);
 		}
 	}
 	free(string1);
+}
+
+const char *
+highlight_words(Eina_Strbuf* tmp)
+{
+	
+	char keywords_buf[PATH_MAX];
+	char **arr;
+	int i;
+	
+	arr = eina_str_split(ci_keywords, ";", 0);
+	
+	if(arr == NULL)
+		return eina_strbuf_string_get(tmp);
+	
+   for (i = 0; arr[i]; i++)
+	{
+		remove_space((char*)arr[i]);
+		snprintf(keywords_buf, sizeof(keywords_buf), "<color=#ff3e3e>%s</color>", arr[i]);
+		if(strcmp(arr[i], ""))
+			eina_strbuf_replace_all(tmp, arr[i], (const char*)keywords_buf);
+	}
+	
+	return eina_strbuf_string_get(tmp);
 }
 
 
@@ -683,6 +707,8 @@ parse_rss(Eina_Strbuf *mybuffer)
 {	
 	char **arr;
 	int i;
+	Eina_Strbuf *tmp;
+	tmp = eina_strbuf_new();
 	
 	arr = eina_str_split(eina_strbuf_string_get(mybuffer), "<item>", 0);
 	
@@ -693,35 +719,36 @@ parse_rss(Eina_Strbuf *mybuffer)
 	{
 		stringReplace("<![CDATA[", "", arr[i]);
 		stringReplace("]]>", "", arr[i]);
-		
-////////////
-// 			char **arr1;
-// 	int i1;
-// 	
-// 	arr = eina_str_split(eina_strbuf_string_get(mybuffer), "<item>", 0);
-// 	
-// 	if(arr1 == NULL)
-// 		return;
-// 	
-//    for (i1 = 0; arr[i1]; i1++)
-// 	{
-// 		stringReplace("<![CDATA[", "", arr[i]);
-// 	}
-//////////////
 
 		Feed_Data *data_add = calloc(1, sizeof(Feed_Data));
 		
 		data_add->title = eina_stringshare_add(find_data(arr[i], "<title", "</title>"));
-		
+				// Highlight words for title
+				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->title));
+				
+				if(strcmp(ci_keywords, "") != 0 && ci_popupkeywords == EINA_TRUE)
+					data_add->title = eina_stringshare_add(highlight_words(tmp));
+				else
+					data_add->title = eina_stringshare_add(eina_strbuf_string_get(tmp));
+				
+				eina_strbuf_reset(tmp);
 		
 		if(i == 0)
 			feedname = eina_stringshare_add(data_add->title);
 		
 		data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "</link>"));
-
-// 		data_add->description = eina_stringshare_add(find_data(arr[i], "<description", "</description>"));
 		
 		data_add->description = eina_stringshare_add(find_data(arr[i], "<content:encoded>", "</content:encoded>"));
+		
+				// Highlight words for description
+				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->description));
+				
+				if(strcmp(ci_keywords, "") != 0 && ci_popupkeywords == EINA_TRUE)
+					data_add->description = eina_stringshare_add(highlight_words(tmp));
+				else
+					data_add->description = eina_stringshare_add(eina_strbuf_string_get(tmp));
+				
+				eina_strbuf_reset(tmp);		
 
 		data_add->imagelink = eina_stringshare_add(find_data(arr[i], "<img src=\"", ".jpg\" "));
 
@@ -734,7 +761,7 @@ parse_rss(Eina_Strbuf *mybuffer)
 	
 	free(arr[0]);
    free(arr);
-	
+	eina_strbuf_free(tmp);	
 	eina_strbuf_reset(mybuffer);
 	
 	Feed_Data *list_values = NULL;
@@ -773,9 +800,7 @@ parse_atom(Eina_Strbuf *mybuffer)
 	int i = 0;
 	Eina_Strbuf *tmp;
 	tmp = eina_strbuf_new();
-	
-// 	eina_strbuf_replace_all(mybuffer, "news", "<bigger>news</bigger>"); // does not work, cause the url becomes broken
-	
+		
    arr = eina_str_split(eina_strbuf_string_get(mybuffer), "<entry>", 0);
 	
    for (i = 0; arr[i]; i++)
@@ -785,6 +810,16 @@ parse_atom(Eina_Strbuf *mybuffer)
 		// find title
 		data_add->title = eina_stringshare_add(find_data(arr[i], "<title", "</title>"));
 
+				// Highlight words for title
+				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->title));
+				
+				if(strcmp(ci_keywords, "") != 0 && ci_popupkeywords == EINA_TRUE)
+					data_add->title = eina_stringshare_add(highlight_words(tmp));
+				else
+					data_add->title = eina_stringshare_add(eina_strbuf_string_get(tmp));
+				
+				eina_strbuf_reset(tmp);
+		
 		// save first title for later checks
 		if(i == 0)
 			feedname = eina_stringshare_add(data_add->title);
@@ -793,20 +828,22 @@ parse_atom(Eina_Strbuf *mybuffer)
 		data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "/>"));
 
 		// find summery
-// 		data_add->description = eina_stringshare_add(find_data(arr[i], "<summary", "</summary>"));
+		data_add->description = eina_stringshare_add(find_data(arr[i], "<summary", "</summary>"));
 
 		// some atom feed uses <content> tag instead as <summary>
-// 		if(data_add->description == NULL)
-// 			data_add->description = eina_stringshare_add(find_data(arr[i], "<content", "</content>"));
+		if(!strcmp(data_add->description, ""))
+			data_add->description = eina_stringshare_add(find_data(arr[i], "<content", "</content>"));
 
-
-// 	elm_entry_markup_to_utf8(data_add->description);
-		
-		eina_strbuf_append(tmp, find_data(arr[i], "<summary", "</summary>"));
-			eina_strbuf_replace_all(tmp, "news", "<color=#ff0000ff>news</color>");
-
-				data_add->description = eina_stringshare_add(eina_strbuf_string_get(tmp));
+				// Highlight words for description
+				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->description));
 				
+				if(strcmp(ci_keywords, "") != 0 && ci_popupkeywords == EINA_TRUE)
+					data_add->description = eina_stringshare_add(highlight_words(tmp));
+				else
+					data_add->description = eina_stringshare_add(eina_strbuf_string_get(tmp));
+
+				eina_strbuf_reset(tmp);
+		
 		// find puplication date
 		data_add->pubdate = eina_stringshare_add(find_data(arr[i], "<updated", "</updated>"));
 
@@ -815,14 +852,11 @@ parse_atom(Eina_Strbuf *mybuffer)
 		feed_data_list = eina_list_append(feed_data_list, data_add);
 // 		printf("ARRAY = YES %s\n", data_add->link);
 
-		eina_strbuf_reset(tmp);
 	}
 	
 	free(arr[0]);
    free(arr);
-	
-		eina_strbuf_free(tmp);
-		
+	eina_strbuf_free(tmp);
 	eina_strbuf_reset(mybuffer);
 	
    Feed_Data *list_values = NULL;
@@ -863,6 +897,8 @@ parse_atom1(Eina_Strbuf *mybuffer)
 {
 	char **arr;
 	int i;
+	Eina_Strbuf *tmp;
+	tmp = eina_strbuf_new();
 
    arr = eina_str_split(eina_strbuf_string_get(mybuffer), "<item", 0);
 	
@@ -871,6 +907,16 @@ parse_atom1(Eina_Strbuf *mybuffer)
 		Feed_Data *data_add = calloc(1, sizeof(Feed_Data));
 		
 		data_add->title = eina_stringshare_add(find_data(arr[i], "<title", "</title>"));
+		
+				// Highlight words for title
+				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->title));
+				
+				if(strcmp(ci_keywords, "") != 0 && ci_popupkeywords == EINA_TRUE)
+					data_add->title = eina_stringshare_add(highlight_words(tmp));
+				else
+					data_add->title = eina_stringshare_add(eina_strbuf_string_get(tmp));
+				
+				eina_strbuf_reset(tmp);		
 
 		if(i == 0)
 			feedname = eina_stringshare_add(data_add->title);
@@ -878,6 +924,16 @@ parse_atom1(Eina_Strbuf *mybuffer)
 		data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "/>"));
 				
 		data_add->description = eina_stringshare_add(find_data(arr[i], "<description", "</description>"));
+		
+				// Highlight words for description
+				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->description));
+				
+				if(strcmp(ci_keywords, "") != 0 && ci_popupkeywords == EINA_TRUE)
+					data_add->description = eina_stringshare_add(highlight_words(tmp));
+				else
+					data_add->description = eina_stringshare_add(eina_strbuf_string_get(tmp));
+				
+				eina_strbuf_reset(tmp);
 				
 		data_add->pubdate = eina_stringshare_add(find_data(arr[i], "<pubDate", "</pubDate>"));
 				
@@ -889,7 +945,7 @@ parse_atom1(Eina_Strbuf *mybuffer)
 	
 	free(arr[0]);
    free(arr);
-	
+	eina_strbuf_free(tmp);
 	eina_strbuf_reset(mybuffer);
 	
    Feed_Data *list_values = NULL;
@@ -928,6 +984,8 @@ parse_rdf(Eina_Strbuf *mybuffer)
 {
 	char **arr;
 	int i=0;
+	Eina_Strbuf *tmp;
+	tmp = eina_strbuf_new();
 
    arr = eina_str_split(eina_strbuf_string_get(mybuffer), "<item>", 0);
 	
@@ -938,6 +996,16 @@ parse_rdf(Eina_Strbuf *mybuffer)
 		
 		data_add->title = eina_stringshare_add(find_data(arr[i], "<title>", "</title>"));
 		
+				// Highlight words for description
+				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->title));
+				
+				if(strcmp(ci_keywords, "") != 0 && ci_popupkeywords == EINA_TRUE)
+					data_add->title = eina_stringshare_add(highlight_words(tmp));
+				else
+					data_add->title = eina_stringshare_add(eina_strbuf_string_get(tmp));
+				
+				eina_strbuf_reset(tmp);
+		
 		if(i == 0)
 			feedname = eina_stringshare_add(data_add->title);
 		
@@ -945,11 +1013,23 @@ parse_rdf(Eina_Strbuf *mybuffer)
 				
 		data_add->description = eina_stringshare_add(find_data(arr[i], "<description>", "</description>"));
 		
+				// Highlight words for description
+				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->description));
+				
+				if(strcmp(ci_keywords, "") != 0 && ci_popupkeywords == EINA_TRUE)
+					data_add->description = eina_stringshare_add(highlight_words(tmp));
+				else
+					data_add->description = eina_stringshare_add(eina_strbuf_string_get(tmp));
+				
+				eina_strbuf_reset(tmp);
+		
 		feed_data_list = eina_list_append(feed_data_list, data_add);
 	}
 	
 	free(arr[0]);
    free(arr);
+	eina_strbuf_free(tmp);
+	eina_strbuf_reset(mybuffer);
 	
 	eina_strbuf_reset(mybuffer);
 }
