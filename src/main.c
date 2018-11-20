@@ -673,8 +673,6 @@ find_data(char *string, char *start1, char *end1)
 const char *
 highlight_words(Eina_Strbuf* tmp)
 {
-	printf("HIGHLIGHT\n");
-	
 	char keywords_buf[PATH_MAX];
 	char **arr;
 	int i;
@@ -687,7 +685,7 @@ highlight_words(Eina_Strbuf* tmp)
    for (i = 0; arr[i]; i++)
 	{
 		remove_space((char*)arr[i]);
-		snprintf(keywords_buf, sizeof(keywords_buf), "<color=#ff3e3e1>%s</color>", arr[i]);
+		snprintf(keywords_buf, sizeof(keywords_buf), "<color=#ff0000ff>%s</color>", arr[i]);
 		if(strcmp(arr[i], ""))
 			eina_strbuf_replace_all(tmp, arr[i], (const char*)keywords_buf);
 	}
@@ -720,7 +718,7 @@ parse_rss(Eina_Strbuf *mybuffer)
 				// Highlight words for title
 				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->title));
 				
-				if(strcmp(ci_keywords, "") != 0 && ci_popupkeywords == EINA_TRUE)
+				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_TRUE)
 					data_add->title = eina_stringshare_add(highlight_words(tmp));
 				else
 					data_add->title = eina_stringshare_add(eina_strbuf_string_get(tmp));
@@ -800,7 +798,7 @@ parse_atom(Eina_Strbuf *mybuffer)
 				// Highlight words for title
 				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->title));
 				
-				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_FALSE)
+				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_TRUE)
 					data_add->title = eina_stringshare_add(highlight_words(tmp));
 				else
 					data_add->title = eina_stringshare_add(eina_strbuf_string_get(tmp));
@@ -824,7 +822,7 @@ parse_atom(Eina_Strbuf *mybuffer)
 				// Highlight words for description
 				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->description));
 				
-				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_FALSE)
+				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_TRUE)
 					data_add->description = eina_stringshare_add(highlight_words(tmp));
 				else
 					data_add->description = eina_stringshare_add(eina_strbuf_string_get(tmp));
@@ -886,7 +884,7 @@ parse_atom1(Eina_Strbuf *mybuffer)
 				// Highlight words for title
 				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->title));
 				
-				if(strcmp(ci_keywords, "") != 0 && ci_popupkeywords == EINA_TRUE)
+				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_TRUE)
 					data_add->title = eina_stringshare_add(highlight_words(tmp));
 				else
 					data_add->title = eina_stringshare_add(eina_strbuf_string_get(tmp));
@@ -903,7 +901,7 @@ parse_atom1(Eina_Strbuf *mybuffer)
 				// Highlight words for description
 				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->description));
 				
-				if(strcmp(ci_keywords, "") != 0 && ci_popupkeywords == EINA_TRUE)
+				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_TRUE)
 					data_add->description = eina_stringshare_add(highlight_words(tmp));
 				else
 					data_add->description = eina_stringshare_add(eina_strbuf_string_get(tmp));
@@ -964,7 +962,7 @@ parse_rdf(Eina_Strbuf *mybuffer)
 				// Highlight words for description
 				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->title));
 				
-				if(strcmp(ci_keywords, "") != 0 && ci_popupkeywords == EINA_TRUE)
+				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_TRUE)
 					data_add->title = eina_stringshare_add(highlight_words(tmp));
 				else
 					data_add->title = eina_stringshare_add(eina_strbuf_string_get(tmp));
@@ -981,7 +979,7 @@ parse_rdf(Eina_Strbuf *mybuffer)
 				// Highlight words for description
 				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->description));
 				
-				if(strcmp(ci_keywords, "") != 0 && ci_popupkeywords == EINA_TRUE)
+				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_TRUE)
 					data_add->description = eina_stringshare_add(highlight_words(tmp));
 				else
 					data_add->description = eina_stringshare_add(eina_strbuf_string_get(tmp));
