@@ -720,7 +720,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			lbl = elm_label_add(popup_settings);
 			elm_object_text_set(lbl, "Keywords: ");
 			evas_object_size_hint_weight_set(lbl, 0, EVAS_HINT_EXPAND);
-			evas_object_size_hint_align_set(lbl, 1, 0);
+			evas_object_size_hint_align_set(lbl, 0, 0);
 			elm_table_pack(tb_popup, lbl, 0, 7, 2, 1);
 			evas_object_show(lbl);
 			

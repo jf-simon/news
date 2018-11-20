@@ -291,14 +291,12 @@ void
 _set_feed_settings()
 {
 	Evas_Object *ic = elm_icon_add(win);
-	printf(" set feed icon: %s\n", ci_icon);
 		
 	if(ci_icon == NULL || strcmp(ci_icon, "") == 0)
 	{
 		edje_object_signal_emit(ly, "image_feed", "on");
 		elm_object_part_content_unset(ly, "image");
 		evas_object_del(ic);
-		printf("news.png ON\n");
 	}
 	else
 	{
@@ -307,12 +305,8 @@ _set_feed_settings()
 		elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
 		elm_object_part_content_set(ly, "image", ic);
 		edje_object_signal_emit(ly, "image_feed", "off");
-		
-		
-		printf("news.png OFF\n");
 	}
 	
-	printf(" TITLE: %s\n", ci_title);
 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
 	edje_object_part_text_set(edje_obj, "title", ci_title);
 	
@@ -323,7 +317,6 @@ static void
 _it_clicked(void *data, Evas_Object *obj,
                  void *event_info EINA_UNUSED)
 {
-   printf("item was clicked: %s\n", (char *)data);
    if (!data) return;
 	
    char buf[PATH_MAX];
@@ -394,8 +387,6 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	
 	Feed_Data *list_data;
 	Eina_List *l;
-		printf("LIST COUNT POPUP: %i\n", eina_list_count(feed_data_list));
-
 		
    if(popup)
    {
@@ -423,8 +414,6 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	
 	if(eina_list_count(feed_data_list) == 0)
 	{
-		printf("RETUND\n");
-			
 		lbl = elm_label_add(popup);
 			
 			elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
@@ -573,12 +562,10 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 void
 set_color(Evas_Object *ly)
 {
-	printf("COLOR CLASS: %i %i %i %i\n", ci_r, ci_g, ci_b, ci_a);
 	edje_object_color_class_set(ly, "colorclass",
                                ci_r, ci_g, ci_b, ci_a,
                                255, 255, 255, 0,
                                39, 90, 187, 255);
-	printf("SET COLOR: %i %i %i %i,\n", ci_r,ci_g,ci_b,ci_a);
 }
 
 
@@ -693,7 +680,7 @@ highlight_words(Eina_Strbuf* tmp)
    for (i = 0; arr[i]; i++)
 	{
 		remove_space((char*)arr[i]);
-		snprintf(keywords_buf, sizeof(keywords_buf), "<color=#ff3e3e>%s</color>", arr[i]);
+		snprintf(keywords_buf, sizeof(keywords_buf), "<color=#ff3e3e1>%s</color>", arr[i]);
 		if(strcmp(arr[i], ""))
 			eina_strbuf_replace_all(tmp, arr[i], (const char*)keywords_buf);
 	}
@@ -755,8 +742,6 @@ parse_rss(Eina_Strbuf *mybuffer)
 		data_add->pubdate = eina_stringshare_add(find_data(arr[i], "<pubDate", "</pubDate>"));
 		
 		feed_data_list = eina_list_append(feed_data_list, data_add);
-		
-// 		printf("TITLE: %s\n", data_add->title);
 	}
 	
 	free(arr[0]);
@@ -784,11 +769,6 @@ parse_rss(Eina_Strbuf *mybuffer)
 // 		else 
 			if(ci_popupnew == 1 && firststart != 0)
 			show_popup(NULL, NULL, NULL, NULL);
-	}
-	else
-	{
-		printf("TITLE GLEICH\n");
-// 		edje_object_signal_emit(ly, "item_new", "default");
 	}
 }
 
@@ -850,7 +830,6 @@ parse_atom(Eina_Strbuf *mybuffer)
 // 				data_add->subtitle = eina_stringshare_add(find_data(arr[i], "<subtitle", "</subtitle>"));
 		// put data to the feed list
 		feed_data_list = eina_list_append(feed_data_list, data_add);
-// 		printf("ARRAY = YES %s\n", data_add->link);
 
 	}
 	
@@ -864,10 +843,6 @@ parse_atom(Eina_Strbuf *mybuffer)
 	 
 	if(saved_title == NULL || strcmp(list_values->title, saved_title) != 0)
 	{
-		printf("TITLE UNGLEICH\n");
-		printf("TITLE ORG:\t%s\n", list_values->title);
-		printf("TITLE SAVED:\t%s\n", saved_title);
-		
 		edje_object_signal_emit(ly, "item_new", "new");
 		saved_title = eina_stringshare_add(list_values->title);
 		
@@ -881,13 +856,6 @@ parse_atom(Eina_Strbuf *mybuffer)
 // 		else 
 			if(ci_popupnew == 1 && firststart != 0)
 			show_popup(NULL, NULL, NULL, NULL);
-	}
-	else
-	{
-		printf("TITLE GLEICH\n");
-		printf("TITLE ORG1:\t%s\n", list_values->title);
-		printf("TITLE SAVED1:\t%s\n", saved_title);
-// 		edje_object_signal_emit(ly, "item_new", "default");
 	}
 }
 
@@ -940,7 +908,6 @@ parse_atom1(Eina_Strbuf *mybuffer)
 // 				data_add->subtitle = eina_stringshare_add(find_data(arr[i], "<subtitle", "</subtitle>"));
 				
 		feed_data_list = eina_list_append(feed_data_list, data_add);
-// 		printf("ARRAY = YES %s\n", data_add->title);
 	}
 	
 	free(arr[0]);
@@ -952,11 +919,7 @@ parse_atom1(Eina_Strbuf *mybuffer)
 	list_values = eina_list_nth(feed_data_list, 1);
 	 
 	if(saved_title == NULL || strcmp(list_values->title, saved_title) != 0)
-	{
-		printf("TITLE UNGLEICH\n");
-		printf("TITLE ORG:\t%s\n", list_values->title);
-		printf("TITLE SAVED:\t%s\n", saved_title);
-		
+	{		
 		edje_object_signal_emit(ly, "item_new", "new");
 		saved_title = eina_stringshare_add(list_values->title);
 		
@@ -970,11 +933,6 @@ parse_atom1(Eina_Strbuf *mybuffer)
 // 		else 
 			if(ci_popupnew == 1 && firststart != 0)
 			show_popup(NULL, NULL, NULL, NULL);
-	}
-	else
-	{
-		printf("TITLE GLEICH\n");
-// 		edje_object_signal_emit(ly, "item_new", "default");
 	}
 }
 
@@ -1054,11 +1012,6 @@ static Eina_Bool
 _data_complete(void *data, int type, void *event_info)
 {
 	Ecore_Con_Event_Url_Complete *url_complete = event_info;
-
-	printf("COMPLETE\n");
-	
-   printf("download completed with status code: %d\n", url_complete->status);
-	
 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
 	
 	Feed_Data *p;
@@ -1143,9 +1096,6 @@ _get_data()
 	test = eina_strbuf_new();
 		
 	Eina_Bool r;
-	
-	printf("GET DATA\n");
-			
 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
 	
 	if(!ci_indicator)
@@ -1164,7 +1114,6 @@ _get_data()
 	
 	if (!r)
    {
-		printf("could not realize request.\n");
       ecore_con_url_free(ec_url);
 	}
 }
@@ -1260,7 +1209,6 @@ int elm_main(int argc, char *argv[])
 	_get_data();
 	_save_eet();
 	
-	printf("REFRESH: %0.2lf\n", ci_refresh*60);
 	if(ci_refresh <= 0){ci_refresh = 10;};
 	timer = ecore_timer_add(ci_refresh*60, _get_data_timer, NULL);
 	
