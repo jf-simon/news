@@ -161,6 +161,7 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    Evas_Object *check_indicator = evas_object_data_get(tb, "check_indicator");
    Evas_Object *check_popupnew = evas_object_data_get(tb, "check_popupnew");
    Evas_Object *check_popupkeywords = evas_object_data_get(tb, "check_popupkeywords");
+   Evas_Object *check_keywords = evas_object_data_get(tb, "check_keywords");
    Evas_Object *sl_refresh = evas_object_data_get(tb, "sl_refresh");
    Evas_Object *sl_fontsize = evas_object_data_get(tb, "sl_fontsize");
    Evas_Object *sl_x_value = evas_object_data_get(tb, "sl_x_value");
@@ -175,6 +176,7 @@ _config_save(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    ci_icons = elm_check_state_get(check_icons);
    ci_popupnew = elm_check_state_get(check_popupnew);
    ci_popupkeywords = elm_check_state_get(check_popupkeywords);
+   ci_checkkeywords = elm_check_state_get(check_keywords);
    ci_indicator = elm_check_state_get(check_indicator);
 	ci_refresh = elm_slider_value_get(sl_refresh);
 	ci_fontsize = elm_slider_value_get(sl_fontsize);
@@ -412,6 +414,16 @@ _download_image_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 	}
 }
 
+static void 
+check_keywords_clicked(void *data, Evas_Object *obj, void *event_info)
+{
+	Eina_Bool state = elm_check_state_get(obj);
+	if(state == EINA_TRUE)
+		elm_object_disabled_set(data, EINA_FALSE);
+	else
+		elm_object_disabled_set(data, EINA_TRUE);
+}
+
 
 void
 _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
@@ -442,6 +454,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 	Evas_Object *check_icons;
 	Evas_Object *check_popupnew;
 	Evas_Object *check_popupkeywords;
+	Evas_Object *check_keywords;
 	Evas_Object *tb_sizes;
 	Evas_Object *sl_fontsize;
 	Evas_Object *sl_x_value;
@@ -693,7 +706,6 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			check_popupnew = elm_check_add(popup_settings);
 			evas_object_size_hint_weight_set(check_popupnew, EVAS_HINT_EXPAND, 0);
 			evas_object_size_hint_align_set(check_popupnew, 0, 0);
-		// 	elm_object_disabled_set(check_popupnew, 1);
 			elm_object_text_set(check_popupnew, "Popup on News");
 			elm_check_state_set(check_popupnew, ci_popupnew);
 			elm_table_pack(tb_popup, check_popupnew, 0, 4, 2, 1);
@@ -709,20 +721,21 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			check_popupkeywords = elm_check_add(popup_settings);
 			evas_object_size_hint_weight_set(check_popupkeywords, EVAS_HINT_EXPAND, 0);
 			evas_object_size_hint_align_set(check_popupkeywords, 0, 0);
-		// 	elm_object_disabled_set(check_popupkeywords, 1);
 			elm_object_text_set(check_popupkeywords, "Popup on Keyword");
 			elm_check_state_set(check_popupkeywords, ci_popupkeywords);
 			elm_table_pack(tb_popup, check_popupkeywords, 0, 6, 2, 1);
 			evas_object_show(check_popupkeywords);
 			evas_object_data_set(tb, "check_popupkeywords", check_popupkeywords);
 			
-			//////////////
-			lbl = elm_label_add(popup_settings);
-			elm_object_text_set(lbl, "Keywords: ");
-			evas_object_size_hint_weight_set(lbl, 0, EVAS_HINT_EXPAND);
-			evas_object_size_hint_align_set(lbl, 0, 0);
-			elm_table_pack(tb_popup, lbl, 0, 7, 2, 1);
-			evas_object_show(lbl);
+			check_keywords = elm_check_add(popup_settings);
+			evas_object_size_hint_weight_set(check_keywords, EVAS_HINT_EXPAND, 0);
+			evas_object_size_hint_align_set(check_keywords, 0, 0);
+		// 	elm_object_disabled_set(check_keywords, 1);
+			elm_object_text_set(check_keywords, "Highlight Keywords");
+			elm_check_state_set(check_keywords, ci_checkkeywords);
+			elm_table_pack(tb_popup, check_keywords, 0, 7, 2, 1);
+			evas_object_show(check_keywords);
+			evas_object_data_set(tb, "check_keywords", check_keywords);			
 			
 			rect = evas_object_rectangle_add(popup_settings);
 			evas_object_size_hint_align_set(rect, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -733,8 +746,6 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			
 			en_keywords = elm_entry_add(popup_settings);
 			elm_config_context_menu_disabled_set(EINA_FALSE);
-				
-	
 			elm_object_part_text_set(en_keywords, "elm.guide", "Enter Keywords");
 			elm_entry_editable_set(en_keywords, EINA_TRUE);
 			elm_object_text_set(en_keywords, ci_keywords);
@@ -744,6 +755,8 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			elm_table_pack(tb_popup, en_keywords, 1, 7, 2, 1);
 			evas_object_show(en_keywords);
 			evas_object_data_set(tb, "en_keywords", en_keywords);
+			
+			evas_object_smart_callback_add(check_keywords, "clicked", check_keywords_clicked, en_keywords); 
 			
 			lbl = elm_label_add(popup_settings);
 			elm_object_text_set(lbl, "Keywords must be ; seperated");

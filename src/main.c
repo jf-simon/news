@@ -31,6 +31,7 @@ typedef struct {
 		  Eina_Bool   icons;
 		  Eina_Bool   popupnew;
 		  Eina_Bool   popupkeywords;
+		  Eina_Bool   checkkeywords;
 		  Eina_Bool   indicator;
 		  double      refresh;
 		  double      fontsize;
@@ -89,6 +90,7 @@ _my_conf_descriptor_init(void)
     MY_CONF_ADD_BASIC(icons, EET_T_UCHAR);
     MY_CONF_ADD_BASIC(popupnew, EET_T_UCHAR);
     MY_CONF_ADD_BASIC(popupkeywords, EET_T_UCHAR);
+    MY_CONF_ADD_BASIC(checkkeywords, EET_T_UCHAR);
     MY_CONF_ADD_BASIC(indicator, EET_T_UCHAR);
     MY_CONF_ADD_BASIC(refresh, EET_T_DOUBLE);
     MY_CONF_ADD_BASIC(fontsize, EET_T_DOUBLE);
@@ -143,9 +145,11 @@ _read_eet()
 		ci_url = eina_stringshare_add("https://github.com/jf-simon/news/commits/master.atom");
 		ci_icon = eina_stringshare_add("");
 		ci_title = eina_stringshare_add("");
+		ci_keywords = eina_stringshare_add("");
 		ci_icons = 0;
 		ci_popupnew = 0;
 		ci_popupkeywords = 0;
+		ci_checkkeywords = 0;
 		ci_refresh = 10;
 		ci_fontsize = 10;
 		ci_x_value = 480;
@@ -167,6 +171,7 @@ _read_eet()
 		ci_icons = my_conf->icons;
 		ci_popupnew = my_conf->popupnew;
 		ci_popupkeywords = my_conf->popupkeywords;
+		ci_checkkeywords = my_conf->checkkeywords;
 		ci_indicator = my_conf->indicator;
 		ci_refresh = my_conf->refresh;
 		ci_fontsize = my_conf->fontsize;
@@ -224,6 +229,7 @@ _save_eet()
 		my_conf->icons = ci_icons;
 		my_conf->popupnew = ci_popupnew;
 		my_conf->popupkeywords = ci_popupkeywords;
+		my_conf->checkkeywords = ci_checkkeywords;
 		my_conf->indicator = ci_indicator;
 	 	my_conf->refresh = ci_refresh;
 	 	my_conf->fontsize = ci_fontsize;
@@ -730,7 +736,7 @@ parse_rss(Eina_Strbuf *mybuffer)
 				// Highlight words for description
 				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->description));
 				
-				if(strcmp(ci_keywords, "") != 0 && ci_popupkeywords == EINA_TRUE)
+				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_TRUE)
 					data_add->description = eina_stringshare_add(highlight_words(tmp));
 				else
 					data_add->description = eina_stringshare_add(eina_strbuf_string_get(tmp));
@@ -793,7 +799,7 @@ parse_atom(Eina_Strbuf *mybuffer)
 				// Highlight words for title
 				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->title));
 				
-				if(strcmp(ci_keywords, "") != 0 && ci_popupkeywords == EINA_TRUE)
+				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_TRUE)
 					data_add->title = eina_stringshare_add(highlight_words(tmp));
 				else
 					data_add->title = eina_stringshare_add(eina_strbuf_string_get(tmp));
@@ -817,7 +823,7 @@ parse_atom(Eina_Strbuf *mybuffer)
 				// Highlight words for description
 				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->description));
 				
-				if(strcmp(ci_keywords, "") != 0 && ci_popupkeywords == EINA_TRUE)
+				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_TRUE)
 					data_add->description = eina_stringshare_add(highlight_words(tmp));
 				else
 					data_add->description = eina_stringshare_add(eina_strbuf_string_get(tmp));

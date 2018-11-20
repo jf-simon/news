@@ -50,6 +50,7 @@ const char *ci_keywords;
 Eina_Bool   ci_icons;
 Eina_Bool   ci_popupnew;
 Eina_Bool   ci_popupkeywords;
+Eina_Bool   ci_checkkeywords;
 Eina_Bool   ci_indicator;
 double   	ci_refresh;
 double   	ci_fontsize;
@@ -74,6 +75,7 @@ typedef struct {
 		  Eina_Bool   	icons;
 		  Eina_Bool   	popupnew;
 		  Eina_Bool   	popupkeywords;
+		  Eina_Bool   	checkkeywords;
 		  Eina_Bool   	indicator;
 		  double   	  	refresh;
 		  double   	  	fontsize;
