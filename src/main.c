@@ -673,6 +673,7 @@ find_data(char *string, char *start1, char *end1)
 const char *
 highlight_words(Eina_Strbuf* tmp)
 {
+	printf("HIGHLIGHT\n");
 	
 	char keywords_buf[PATH_MAX];
 	char **arr;
@@ -799,7 +800,7 @@ parse_atom(Eina_Strbuf *mybuffer)
 				// Highlight words for title
 				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->title));
 				
-				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_TRUE)
+				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_FALSE)
 					data_add->title = eina_stringshare_add(highlight_words(tmp));
 				else
 					data_add->title = eina_stringshare_add(eina_strbuf_string_get(tmp));
@@ -823,7 +824,7 @@ parse_atom(Eina_Strbuf *mybuffer)
 				// Highlight words for description
 				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->description));
 				
-				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_TRUE)
+				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_FALSE)
 					data_add->description = eina_stringshare_add(highlight_words(tmp));
 				else
 					data_add->description = eina_stringshare_add(eina_strbuf_string_get(tmp));
