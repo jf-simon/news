@@ -685,7 +685,8 @@ highlight_words(Eina_Strbuf* tmp)
    for (i = 0; arr[i]; i++)
 	{
 		remove_space((char*)arr[i]);
-		snprintf(keywords_buf, sizeof(keywords_buf), "<color=#ff0000ff>%s</color>", arr[i]);
+// 		snprintf(keywords_buf, sizeof(keywords_buf), "<color=#ff0000ff>%s</color>", arr[i]);
+		snprintf(keywords_buf, sizeof(keywords_buf), "<custom backing=on backing_color=#cfcf00ff color=#000000ff> %s </custom>", arr[i]);
 		if(strcmp(arr[i], ""))
 			eina_strbuf_replace_all(tmp, arr[i], (const char*)keywords_buf);
 	}
