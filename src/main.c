@@ -386,6 +386,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	Evas_Object *lbl, *bt, *scroller;
 	Evas_Object *tb, *ic;
 		   
+	char buf2[PATH_MAX];
 	char buf1[PATH_MAX];
 	char buf[PATH_MAX];
 	
@@ -423,9 +424,11 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 		lbl = elm_label_add(popup);
 			
 			elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
-			elm_object_text_set(lbl, "<b>No feeds found</b><br>"
+
+				snprintf(buf2, sizeof(buf2), "<b>No feeds found</b><br>for <b>%s</b><br>"
 											"please check if you have an active internet connection or/and if the URL is correct<br><br> "
-											"If both is correct, please add a bug report at https://github.com/jf-simon/news/issues/new");
+											"If both is correct, please add a bug report at https://github.com/jf-simon/news/issues/new", ci_url);
+			elm_object_text_set(lbl, buf2);
 			evas_object_size_hint_align_set(lbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
 			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 			
