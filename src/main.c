@@ -11,6 +11,7 @@ Eina_Strbuf *feeddata = NULL;
 const char* lastcheck;
 int firststart = 0;
 int gadget = 0;
+int no_internet = 0;
 
 typedef struct {
 			const char *title;
@@ -421,7 +422,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	
 	if(eina_list_count(feed_data_list) == 0)
 	{
-		lbl = elm_label_add(popup);
+			lbl = elm_label_add(popup);
 			
 			elm_label_line_wrap_set(lbl, ELM_WRAP_WORD);
 
@@ -438,7 +439,6 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 			evas_object_show(lbl);
 	}else
 	{
-// 	_config_save(tb, NULL, NULL, NULL);
 		_save_eet();
 	
 	EINA_LIST_FOREACH(feed_data_list, l, list_data)
@@ -838,6 +838,7 @@ parse_atom(Eina_Strbuf *mybuffer)
 // 				data_add->subtitle = eina_stringshare_add(find_data(arr[i], "<subtitle", "</subtitle>"));
 		// put data to the feed list
 		feed_data_list = eina_list_append(feed_data_list, data_add);
+		no_internet = 0;
 
 	}
 	
@@ -1022,15 +1023,27 @@ _data_complete(void *data, int type, void *event_info)
 	Ecore_Con_Event_Url_Complete *url_complete = event_info;
 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
 	
-	Feed_Data *p;
-	EINA_LIST_FREE(feed_data_list, p)
-	{ 
-		free(p);
-	}
+	
+	struct tm *newtime;
+	time_t long_time;
+
+	time( &long_time );
+	newtime = localtime( &long_time );
+	
+	char buf[PATH_MAX];
+
+	snprintf(buf, sizeof(buf), "%d.%d.%d | %02d:%02d:%02d",newtime->tm_mday, newtime->tm_mon+1, newtime->tm_year+1900, newtime->tm_hour, newtime->tm_min, newtime->tm_sec);
+	lastcheck = eina_stringshare_add(buf);
 		
 	if(url_complete->status >= 200 && url_complete->status <= 226)
 	{
-		edje_object_signal_emit(edje_obj, "reload", "default");
+			Feed_Data *p;
+			EINA_LIST_FREE(feed_data_list, p)
+			{ 
+				free(p);
+			}
+	
+			edje_object_signal_emit(edje_obj, "reload", "default");
 		
 			if(strstr((char *)eina_strbuf_string_get(data), "<rss vers") != 0)
 			{
@@ -1072,26 +1085,36 @@ _data_complete(void *data, int type, void *event_info)
 			{
 				printf("NOT SUPPORTED\n");
 			}
+			no_internet = 0;
 	}
 	else
 	{
 		edje_object_signal_emit(edje_obj, "reload", "failed");
+		
+		if(no_internet != 1 && firststart != 0)
+		{
+			Feed_Data *data_add = calloc(1, sizeof(Feed_Data));
+
+			// set title
+			data_add->title = eina_stringshare_add("NO active Internet connection");
+
+			// set summery
+			data_add->description = eina_stringshare_add("NO active Internet connection");
+			
+			// set date
+			data_add->pubdate = eina_stringshare_add(buf);
+			
+			// set data to 2nd position in list
+			feed_data_list = eina_list_prepend_relative(feed_data_list, data_add, eina_list_nth(feed_data_list, 1));
+			
+			no_internet = 1;
+			
+		}
 	}
 	
-		
-		firststart = 1;
-// 	create_content(NULL, NULL, NULL,  NULL);
-	
-	struct tm *newtime;
-	time_t long_time;
+	firststart = 1;
 
-	time( &long_time );
-	newtime = localtime( &long_time );
-	
-	char buf[PATH_MAX];
 
-	snprintf(buf, sizeof(buf), "%d.%d.%d | %02d:%02d:%02d",newtime->tm_mday, newtime->tm_mon+1, newtime->tm_year+1900, newtime->tm_hour, newtime->tm_min, newtime->tm_sec);
-	lastcheck = eina_stringshare_add(buf);
 
 // 	ecore_con_url_free(ec_url);
    return ECORE_CALLBACK_DONE;
@@ -1101,8 +1124,8 @@ _data_complete(void *data, int type, void *event_info)
 void
 _get_data()
 {
-	Eina_Strbuf *test;
-	test = eina_strbuf_new();
+	Eina_Strbuf *downloaded_data;
+	downloaded_data = eina_strbuf_new();
 		
 	Eina_Bool r;
 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
@@ -1115,8 +1138,8 @@ _get_data()
 	
 	ec_url = ecore_con_url_custom_new(ci_url, "GET");
 	
-	ecore_event_handler_add(ECORE_CON_EVENT_URL_DATA, _url_data_cb, test);
-   ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _data_complete, test);
+	ecore_event_handler_add(ECORE_CON_EVENT_URL_DATA, _url_data_cb, downloaded_data);
+   ecore_event_handler_add(ECORE_CON_EVENT_URL_COMPLETE, _data_complete, downloaded_data);
 	ecore_con_url_additional_header_add(ec_url, "User-Agent", "Enlightenment News Gadget");
 
 	r = ecore_con_url_get(ec_url);
