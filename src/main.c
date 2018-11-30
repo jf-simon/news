@@ -2,7 +2,6 @@
 
 Evas_Object *win = NULL;
 Evas_Object *ly = NULL;
-// static Evas_Object *popup = NULL;
 static Ecore_Timer *timer = NULL;
 
 Ecore_Con_Url *ec_url = NULL;
@@ -386,7 +385,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 {
 	Evas_Object *lbl, *bt, *scroller;
 	Evas_Object *tb, *ic;
-		   
+
 	char buf2[PATH_MAX];
 	char buf1[PATH_MAX];
 	char buf[PATH_MAX];
@@ -701,7 +700,7 @@ static void
 parse_rss(Eina_Strbuf *mybuffer)
 {	
 	char **arr;
-	int i;
+	int i = 0, y = 0;
 	Eina_Strbuf *tmp;
 	tmp = eina_strbuf_new();
 	
@@ -733,12 +732,20 @@ parse_rss(Eina_Strbuf *mybuffer)
 		
 		data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "</link>"));
 		
-		data_add->description = eina_stringshare_add(find_data(arr[i], "<content:encoded>", "</content:encoded>"));
+		// find description for title description
+		data_add->description = eina_stringshare_add(find_data(arr[i], "<description", "</description>"));
+
+		// find news content for the items
+		if(!strcmp(data_add->description, ""))
+		{
+			data_add->description = eina_stringshare_add(find_data(arr[i], "<content:encoded>", "</content:encoded>"));
+			y = 1;
+		}
 		
 				// Highlight words for description
 				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->description));
 				
-				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_TRUE)
+				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_TRUE && y == 1) // y is checked for not highlight title descriptions content
 					data_add->description = eina_stringshare_add(highlight_words(tmp));
 				else
 					data_add->description = eina_stringshare_add(eina_strbuf_string_get(tmp));
@@ -785,7 +792,7 @@ static void
 parse_atom(Eina_Strbuf *mybuffer)
 {
 	char **arr;
-	int i = 0;
+	int i = 0, y = 0;
 	Eina_Strbuf *tmp;
 	tmp = eina_strbuf_new();
 		
@@ -815,17 +822,25 @@ parse_atom(Eina_Strbuf *mybuffer)
 		// find link
 		data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "/>"));
 
+		// find subtitle for title
+		data_add->description = eina_stringshare_add(find_data(arr[i], "<subtitle", "</subtitle>"));
+		
 		// find summery
-		data_add->description = eina_stringshare_add(find_data(arr[i], "<summary", "</summary>"));
-
+		if(!strcmp(data_add->description, ""))
+		{
+			data_add->description = eina_stringshare_add(find_data(arr[i], "<summary", "</summary>"));
+			y =1;			
+		}
 		// some atom feed uses <content> tag instead as <summary>
 		if(!strcmp(data_add->description, ""))
+		{
 			data_add->description = eina_stringshare_add(find_data(arr[i], "<content", "</content>"));
-
+			y = 1;
+		}
 				// Highlight words for description
 				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->description));
 				
-				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_TRUE)
+				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_TRUE && y == 1) // y is checked for not highlight title descriptions content
 					data_add->description = eina_stringshare_add(highlight_words(tmp));
 				else
 					data_add->description = eina_stringshare_add(eina_strbuf_string_get(tmp));
@@ -834,12 +849,9 @@ parse_atom(Eina_Strbuf *mybuffer)
 		
 		// find puplication date
 		data_add->pubdate = eina_stringshare_add(find_data(arr[i], "<updated", "</updated>"));
-
-// 				data_add->subtitle = eina_stringshare_add(find_data(arr[i], "<subtitle", "</subtitle>"));
+		
 		// put data to the feed list
 		feed_data_list = eina_list_append(feed_data_list, data_add);
-		no_internet = 0;
-
 	}
 	
 	free(arr[0]);
@@ -873,7 +885,7 @@ static void
 parse_atom1(Eina_Strbuf *mybuffer)
 {
 	char **arr;
-	int i;
+	int i = 0, y = 0;
 	Eina_Strbuf *tmp;
 	tmp = eina_strbuf_new();
 
@@ -893,23 +905,38 @@ parse_atom1(Eina_Strbuf *mybuffer)
 				else
 					data_add->title = eina_stringshare_add(eina_strbuf_string_get(tmp));
 				
-				eina_strbuf_reset(tmp);		
+				eina_strbuf_reset(tmp);
 
+		// save first title for later checks
 		if(i == 0)
 			feedname = eina_stringshare_add(data_add->title);
-		
+
+		// find link
 		data_add->link = eina_stringshare_add(find_data(arr[i], "<link", "/>"));
-				
-		data_add->description = eina_stringshare_add(find_data(arr[i], "<description", "</description>"));
+
+		// find subtitle for title
+		data_add->description = eina_stringshare_add(find_data(arr[i], "<subtitle", "</subtitle>"));
 		
+		// find summery
+		if(!strcmp(data_add->description, ""))
+		{
+			data_add->description = eina_stringshare_add(find_data(arr[i], "<summary", "</summary>"));
+			y =1;			
+		}
+		// some atom feed uses <content> tag instead as <summary>
+		if(!strcmp(data_add->description, ""))
+		{
+			data_add->description = eina_stringshare_add(find_data(arr[i], "<content", "</content>"));
+			y = 1;
+		}
 				// Highlight words for description
 				eina_strbuf_append(tmp, elm_entry_markup_to_utf8(data_add->description));
 				
-				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_TRUE)
+				if(strcmp(ci_keywords, "") != 0 && ci_checkkeywords == EINA_TRUE && y == 1) // y is checked for not highlight title descriptions content
 					data_add->description = eina_stringshare_add(highlight_words(tmp));
 				else
 					data_add->description = eina_stringshare_add(eina_strbuf_string_get(tmp));
-				
+
 				eina_strbuf_reset(tmp);
 				
 		data_add->pubdate = eina_stringshare_add(find_data(arr[i], "<pubDate", "</pubDate>"));
@@ -1164,9 +1191,7 @@ _timer_reset()
 {
 	
 	if(timer)
-	{
 		ecore_timer_del(timer);
-	}
 	
 	timer = ecore_timer_add(ci_refresh*60, _get_data_timer, NULL);
 }
@@ -1230,11 +1255,6 @@ int elm_main(int argc, char *argv[])
 	
 //    edje_object_signal_callback_add(ly, "delete_popup", "delete_popup", delete_popup_edje, win);
 	ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER, _gadget_exit, NULL);
-
-	
-// 	_config_load(edje_obj);							// load config data from eet to tmp vars
-	
-// 	set_color(ly);
 	
 	edje_object_color_class_set(edje_obj, "colorclass", ci_r, ci_g, ci_b, ci_a, 255, 255, 255, 0, 39, 90, 187, 255);
 	_set_feed_settings();
