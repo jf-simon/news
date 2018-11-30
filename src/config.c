@@ -673,14 +673,6 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			evas_object_size_hint_align_set(tb_popup, EVAS_HINT_FILL, 0);
 			evas_object_show(tb_popup);
 			
-
-			lbl = elm_label_add(popup_settings);
-			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0);
-			evas_object_size_hint_align_set(lbl, 0, 0);
-			elm_object_text_set(lbl, "Images: ");
-			elm_table_pack(tb_popup, lbl, 0, 0, 2, 1);
-			evas_object_show(lbl);
-			
 			check_icons = elm_check_add(popup_settings);
 			evas_object_size_hint_weight_set(check_icons, EVAS_HINT_EXPAND, 0);
 			evas_object_size_hint_align_set(check_icons, 0, 0);
@@ -695,27 +687,20 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			elm_separator_horizontal_set(o, EINA_TRUE);
 			elm_table_pack(tb_popup, o, 0, 2, 3, 1);
 			evas_object_show(o);
-
-			lbl = elm_label_add(popup_settings);
-			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0);
-			evas_object_size_hint_align_set(lbl, 0, 0);
-			elm_object_text_set(lbl, "Handling on news updates: ");
-			elm_table_pack(tb_popup, lbl, 0, 3, 2, 1);
-			evas_object_show(lbl);
 			
 			check_popupnew = elm_check_add(popup_settings);
 			evas_object_size_hint_weight_set(check_popupnew, EVAS_HINT_EXPAND, 0);
 			evas_object_size_hint_align_set(check_popupnew, 0, 0);
 			elm_object_text_set(check_popupnew, "Popup on News");
 			elm_check_state_set(check_popupnew, ci_popupnew);
-			elm_table_pack(tb_popup, check_popupnew, 0, 4, 2, 1);
+			elm_table_pack(tb_popup, check_popupnew, 0, 3, 2, 1);
 			evas_object_show(check_popupnew);
 			evas_object_data_set(tb, "check_popupnew", check_popupnew);
 			
 			o = elm_separator_add(popup_settings);
 			evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0);
 			elm_separator_horizontal_set(o, EINA_TRUE);
-			elm_table_pack(tb_popup, o, 0, 5, 3, 1);
+			elm_table_pack(tb_popup, o, 0, 4, 3, 1);
 			evas_object_show(o);
 			
 			check_popupkeywords = elm_check_add(popup_settings);
@@ -723,25 +708,24 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			evas_object_size_hint_align_set(check_popupkeywords, 0, 0);
 			elm_object_text_set(check_popupkeywords, "Popup on Keyword");
 			elm_check_state_set(check_popupkeywords, ci_popupkeywords);
-			elm_table_pack(tb_popup, check_popupkeywords, 0, 6, 2, 1);
+			elm_table_pack(tb_popup, check_popupkeywords, 0, 5, 2, 1);
 			evas_object_show(check_popupkeywords);
 			evas_object_data_set(tb, "check_popupkeywords", check_popupkeywords);
 			
 			check_keywords = elm_check_add(popup_settings);
 			evas_object_size_hint_weight_set(check_keywords, EVAS_HINT_EXPAND, 0);
 			evas_object_size_hint_align_set(check_keywords, 0, 0);
-		// 	elm_object_disabled_set(check_keywords, 1);
 			elm_object_text_set(check_keywords, "Highlight Keywords");
 			elm_check_state_set(check_keywords, ci_checkkeywords);
-			elm_table_pack(tb_popup, check_keywords, 0, 7, 2, 1);
+			elm_table_pack(tb_popup, check_keywords, 0, 6, 1, 1);
 			evas_object_show(check_keywords);
-			evas_object_data_set(tb, "check_keywords", check_keywords);			
+			evas_object_data_set(tb, "check_keywords", check_keywords);
 			
 			rect = evas_object_rectangle_add(popup_settings);
 			evas_object_size_hint_align_set(rect, EVAS_HINT_FILL, EVAS_HINT_FILL);
 			evas_object_size_hint_weight_set(rect, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 			evas_object_color_set(rect, 56, 56, 53, 255);
-			elm_table_pack(tb_popup, rect, 1, 7, 2, 1);
+			elm_table_pack(tb_popup, rect, 1, 6, 2, 1);
 			evas_object_show(rect);
 			
 			en_keywords = elm_entry_add(popup_settings);
@@ -752,7 +736,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			elm_entry_single_line_set(en_keywords, EINA_TRUE);
 			evas_object_size_hint_weight_set(en_keywords, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 			evas_object_size_hint_align_set(en_keywords, EVAS_HINT_FILL, EVAS_HINT_FILL);
-			elm_table_pack(tb_popup, en_keywords, 1, 7, 2, 1);
+			elm_table_pack(tb_popup, en_keywords, 1, 6, 2, 1);
 			evas_object_show(en_keywords);
 			evas_object_data_set(tb, "en_keywords", en_keywords);
 			
@@ -762,27 +746,26 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			elm_object_text_set(lbl, "Keywords must be ; seperated");
 			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 			evas_object_size_hint_align_set(lbl, 0, 0);
-			elm_table_pack(tb_popup, lbl, 1, 8, 2, 1);
+			elm_table_pack(tb_popup, lbl, 1, 7, 2, 1);
 			evas_object_show(lbl);
-///////////////
 			
 			o = elm_separator_add(popup_settings);
 			evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, 0);
 			elm_separator_horizontal_set(o, EINA_TRUE);
-			elm_table_pack(tb_popup, o, 0, 9, 3, 1);
+			elm_table_pack(tb_popup, o, 0, 8, 3, 1);
 			evas_object_show(o);
 			
 			lbl = elm_label_add(popup_settings);
 			evas_object_size_hint_weight_set(lbl, EVAS_HINT_EXPAND, 0);
 			evas_object_size_hint_align_set(lbl, 0, 0);
 			elm_object_text_set(lbl, "Sizes: ");
-			elm_table_pack(tb_popup, lbl, 0, 10, 2, 1);
+			elm_table_pack(tb_popup, lbl, 0, 9, 2, 1);
 			evas_object_show(lbl);
 
 					tb_sizes = elm_table_add(popup_settings);
 					evas_object_size_hint_weight_set(tb_sizes, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 					evas_object_size_hint_align_set(tb_sizes, EVAS_HINT_FILL, 0);
-					elm_table_pack(tb_popup, tb_sizes, 0, 11, 3, 2);
+					elm_table_pack(tb_popup, tb_sizes, 0, 10, 3, 2);
 					evas_object_show(tb_sizes);
 					
 					lbl = elm_label_add(popup_settings);
