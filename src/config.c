@@ -957,7 +957,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			evas_object_show(lbl);
 			
 			lbl = elm_label_add(popup_settings);
-			elm_object_text_set(lbl, "open settings dialog");
+			elm_object_text_set(lbl, "open gadget bar menu");
 			evas_object_size_hint_weight_set(lbl, 0, 0);
 			evas_object_size_hint_align_set(lbl, 0, 0);
 			elm_table_pack(tb_help, lbl, 1, 3, 1, 1);
