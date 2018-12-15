@@ -31,6 +31,7 @@ void 			_set_feed_settings();
 void 			_get_data();
 void 			_timer_reset();
 void 			stringReplace(char *search, char *replace, char *string);
+void			_it_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED);
 
 int        id_num;
 

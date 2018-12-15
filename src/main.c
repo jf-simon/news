@@ -11,6 +11,7 @@ const char* lastcheck;
 int firststart = 0;
 int gadget = 0;
 int no_internet = 0;
+Eina_List *feed_data_list_tmp = NULL;
 
 typedef struct {
 			const char *title;
@@ -319,7 +320,7 @@ _set_feed_settings()
 }
 
 
-static void
+void
 _it_clicked(void *data, Evas_Object *obj,
                  void *event_info EINA_UNUSED)
 {
@@ -826,6 +827,8 @@ parse_atom(Eina_Strbuf *mybuffer)
 	tmp = eina_strbuf_new();
 		
    arr = eina_str_split(eina_strbuf_string_get(mybuffer), "<entry>", 0);
+
+	feed_data_list_tmp = NULL;
 	
    for (i = 0; arr[i]; i++)
 	{
@@ -881,6 +884,11 @@ parse_atom(Eina_Strbuf *mybuffer)
 		
 		// put data to the feed list
 		feed_data_list = eina_list_append(feed_data_list, data_add);
+	
+		if(saved_title == NULL || strcmp(data_add->title, saved_title) != 0)
+		{
+			feed_data_list_tmp = eina_list_append(feed_data_list_tmp, data_add);
+		}
 	}
 	
 	free(arr[0]);
@@ -907,6 +915,8 @@ parse_atom(Eina_Strbuf *mybuffer)
 			if(ci_popupnew == 1 && firststart != 0)
 			show_popup(NULL, NULL, NULL, NULL);
 	}
+	
+	printf("LIST COUNT %i\n", eina_list_count(feed_data_list_tmp));
 }
 
 
@@ -950,6 +960,11 @@ parse_atom1(Eina_Strbuf *mybuffer)
 		if(!strcmp(data_add->description, ""))
 		{
 			data_add->description = eina_stringshare_add(find_data(arr[i], "<summary", "</summary>"));
+			y =1;			
+		}
+		if(!strcmp(data_add->description, ""))
+		{
+			data_add->description = eina_stringshare_add(find_data(arr[i], "<description", "</description>"));
 			y =1;			
 		}
 		// some atom feed uses <content> tag instead as <summary>
@@ -1098,7 +1113,7 @@ _data_complete(void *data, int type, void *event_info)
 			{ 
 				free(p);
 			}
-	
+				
 			edje_object_signal_emit(edje_obj, "reload", "default");
 		
 			if(strstr((char *)eina_strbuf_string_get(data), "<rss vers") != 0)
