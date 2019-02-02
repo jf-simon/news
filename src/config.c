@@ -1013,7 +1013,7 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			evas_object_show(lbl);
 			
 			lbl = elm_label_add(popup_settings);
-			elm_object_text_set(lbl, "<custom align=left>the red bar at the button indicates a failur checking for new articles.<br>Please check internet connection and feed url</custom>");
+			elm_object_text_set(lbl, "<custom align=left>the red bar at the button indicates a failure while checking for new articles.<br>Please check you internet connection and feed url</custom>");
 			evas_object_size_hint_weight_set(lbl, 0, 0);
 			evas_object_size_hint_align_set(lbl, 0, 0);
 			elm_table_pack(tb_help, lbl, 1, 9, 2, 1);
@@ -1031,8 +1031,8 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 			evas_object_size_hint_align_set(en_help, 0.5, 0.5);
 			elm_entry_single_line_set(en_help, EINA_TRUE);
 			elm_entry_editable_set(en_help, EINA_FALSE);
-			evas_object_smart_callback_add(en_help, "clicked", _it_clicked, "https://github.com/jf-simon/news/issues/new");
-			elm_object_text_set(en_help, "<b>Bugs, Feedback, Help on <a href=anc-02>https://github.com/jf-simon/news/issues/new</a></b>");
+			evas_object_smart_callback_add(en_help, "clicked", _it_clicked, "https://github.com/jf-simon/news/");
+			elm_object_text_set(en_help, "<b>Bugs, Feedback, Help on <a href=anc-02>https://github.com/jf-simon/news/</a></b>");
 			elm_table_pack(tb_help, en_help, 0, 11, 3, 1);
 			evas_object_show(en_help);	
 	
