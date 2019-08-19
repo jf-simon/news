@@ -392,7 +392,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	char buf[PATH_MAX];
 	
 	int y = 0;
-	
+	printf("ERROR POPUP\n");
 	Feed_Data *list_data;
 	Eina_List *l;
 		
@@ -1288,14 +1288,14 @@ int elm_main(int argc, char *argv[])
    evas_object_show(win);
 	elm_layout_file_set(ly, buf, "news");
 	
-   edje_object_signal_callback_add(ly, "settings", "settings", _settings_2, win);
+   elm_layout_signal_callback_add(ly, "settings", "settings", _settings_2, win);
 	
 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
 	
    evas_object_smart_callback_add(win, "gadget_configure", _settings_1, edje_obj);
 	
-   edje_object_signal_callback_add(ly, "show_popup", "show_popup", show_popup, win);
-   edje_object_signal_callback_add(ly, "reload", "reload", _reload_start, win);
+   elm_layout_signal_callback_add(ly, "show_popup", "show_popup", show_popup, win);
+   elm_layout_signal_callback_add(ly, "reload", "reload", _reload_start, win);
 	
 //    edje_object_signal_callback_add(ly, "delete_popup", "delete_popup", delete_popup_edje, win);
 	ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER, _gadget_exit, NULL);
