@@ -42,6 +42,7 @@ Evas_Object *win;
 Evas_Object *ly;
 Evas_Object *tb;
 Evas_Object *popup;
+Evas_Object *popup_settings;
 
 const char *ci_url;
 const char *ci_icon;

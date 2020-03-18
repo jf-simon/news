@@ -392,7 +392,7 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	char buf[PATH_MAX];
 	
 	int y = 0;
-	printf("ERROR POPUP\n");
+   
 	Feed_Data *list_data;
 	Eina_List *l;
 		
@@ -404,7 +404,6 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	}
 	
 	edje_object_signal_emit(ly, "item_new", "default");
-		
    popup = elm_win_add(win, "Popup",  ELM_WIN_POPUP_MENU);
 	
 	if(gadget == 1)
@@ -1288,7 +1287,8 @@ int elm_main(int argc, char *argv[])
    evas_object_show(win);
 	elm_layout_file_set(ly, buf, "news");
 	
-   elm_layout_signal_callback_add(ly, "settings", "settings", _settings_2, win);
+   if(id_num == 0)
+      elm_layout_signal_callback_add(ly, "settings", "settings", _settings_2, win);
 	
 	Evas_Object *edje_obj = elm_layout_edje_get(ly);
 	

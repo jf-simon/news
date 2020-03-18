@@ -428,15 +428,25 @@ check_keywords_clicked(void *data, Evas_Object *obj, void *event_info)
 void
 _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
+   
+   
+   
 	if(popup)
      {
         evas_object_del(popup);
         popup = NULL;
      }
+     
+	if(popup_settings)
+     {
+        evas_object_del(popup_settings);
+        popup_settings = NULL;
+     }
+     else
+     {
 
 	char buf[PATH_MAX];
 	double step;
-	Evas_Object *popup_settings;
 	
 	// Feed frame Objects
 	Evas_Object *feed_frame;
@@ -1056,4 +1066,5 @@ _settings(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 	evas_object_event_callback_add(popup_settings, EVAS_CALLBACK_MOUSE_OUT, _config_save, tb);
 	evas_object_event_callback_add(popup_settings, EVAS_CALLBACK_HIDE, _popup_del, NULL);
    evas_object_show(popup_settings);
+     }
 }
