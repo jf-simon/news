@@ -58,6 +58,7 @@ typedef struct {
    const char *imagelink;
 } Feed_Data;
 
+Evas_Object *tb = NULL;
 
 static const char MY_CONF_FILE_ENTRY[] = "config";
 
@@ -350,7 +351,7 @@ _it_clicked_unpressed(void *data, Evas_Object *obj,
 }
 
 
-
+/*
 static void
 _reload_start(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
@@ -360,8 +361,7 @@ _reload_start(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *
         popup = NULL;
      }
    _get_data();
-}
-
+}*/
 
 // static Evas_Object *
 // _content_image(void *data, Evas_Object *obj EINA_UNUSED, Evas_Object *tt)
@@ -380,37 +380,22 @@ _reload_start(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *
 // 	return ic;
 // }
 
-
-static void
-show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+static Evas_Object*
+fill_new_tb()
 {
-	Evas_Object *lbl, *bt, *scroller;
-	Evas_Object *tb, *ic;
+   Evas_Object *scroller;
+	Evas_Object *ic, *bt, *lbl;
 
-	char buf2[PATH_MAX];
+   char buf2[PATH_MAX];
 	char buf1[PATH_MAX];
 	char buf[PATH_MAX];
-	
+
 	int y = 0;
+   
+   evas_object_del(tb);
    
 	Feed_Data *list_data;
 	Eina_List *l;
-		
-   if(popup)
-   {
-        evas_object_del(popup);
-        popup = NULL;
-        return;
-	}
-	
-	edje_object_signal_emit(ly, "item_new", "default");
-   popup = elm_win_add(win, "Popup",  ELM_WIN_POPUP_MENU);
-	
-	if(gadget == 1)
-		elm_win_alpha_set(popup, 1);
-
-	
-////////////////// TABLE ///////////////////
 
 	tb = elm_table_add(popup);
 	elm_table_padding_set(tb, 5,10);
@@ -569,13 +554,11 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 	}
 
 	}
-////////////////// TABLE END ///////////////////
-
-	scroller = elm_scroller_add(popup);
+	
+		scroller = elm_scroller_add(popup);
    evas_object_size_hint_weight_set(scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(popup, scroller);
    evas_object_show(scroller);
-//    elm_object_content_set(scroller, box);
    elm_object_content_set(scroller, tb);
    elm_scroller_bounce_set(scroller, EINA_TRUE, EINA_FALSE);
    elm_scroller_policy_set(scroller, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_AUTO);
@@ -591,6 +574,34 @@ show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_U
 		else
 			evas_object_resize(popup, ci_x_value-30, ci_y_value);
 	}	
+
+	return tb;
+}
+static void
+update_content(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+{
+   _get_data();
+
+   fill_new_tb();
+}
+
+static void
+show_popup(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+{
+   if(popup)
+   {
+        evas_object_del(popup);
+        popup = NULL;
+        return;
+	}
+	
+	edje_object_signal_emit(ly, "item_new", "default");
+   popup = elm_win_add(win, "Popup",  ELM_WIN_POPUP_MENU);
+	
+	if(gadget == 1)
+		elm_win_alpha_set(popup, 1);
+
+   fill_new_tb();
 
    evas_object_show(popup);
 }
@@ -803,15 +814,7 @@ parse_rss(Eina_Strbuf *mybuffer)
 		edje_object_signal_emit(ly, "item_new", "new");
 		saved_title = eina_stringshare_add(list_values->title);
 		
-// 		if(popup)
-//       {
-// 			evas_object_del(popup);
-// 			popup = NULL;
-// 			show_popup(NULL, NULL, NULL, NULL);
-// 			printf("POPUP\n");
-// 		}
-// 		else 
-			if(ci_popupnew == 1 && firststart != 0)
+		if(ci_popupnew == 1 && firststart != 0)
 			show_popup(NULL, NULL, NULL, NULL);
 	}
 }
@@ -903,15 +906,7 @@ parse_atom(Eina_Strbuf *mybuffer)
 		edje_object_signal_emit(ly, "item_new", "new");
 		saved_title = eina_stringshare_add(list_values->title);
 		
-// 		if(popup)
-//       {
-// 			evas_object_del(popup);
-// 			popup = NULL;
-// 			show_popup(NULL, NULL, NULL, NULL);
-// 			printf("POPUP\n");
-// 		}
-// 		else 
-			if(ci_popupnew == 1 && firststart != 0)
+		if(ci_popupnew == 1 && firststart != 0)
 			show_popup(NULL, NULL, NULL, NULL);
 	}
 	
@@ -1002,15 +997,7 @@ parse_atom1(Eina_Strbuf *mybuffer)
 		edje_object_signal_emit(ly, "item_new", "new");
 		saved_title = eina_stringshare_add(list_values->title);
 		
-// 		if(popup)
-//       {
-// 			evas_object_del(popup);
-// 			popup = NULL;
-// 			show_popup(NULL, NULL, NULL, NULL);
-// 			printf("POPUP\n");
-// 		}
-// 		else 
-			if(ci_popupnew == 1 && firststart != 0)
+		if(ci_popupnew == 1 && firststart != 0)
 			show_popup(NULL, NULL, NULL, NULL);
 	}
 }
@@ -1294,8 +1281,8 @@ int elm_main(int argc, char *argv[])
 	
    evas_object_smart_callback_add(win, "gadget_configure", _settings_1, edje_obj);
 	
-   elm_layout_signal_callback_add(ly, "show_popup", "show_popup", show_popup, win);
-   elm_layout_signal_callback_add(ly, "reload", "reload", _reload_start, win);
+   elm_layout_signal_callback_add(ly, "show_popup", "show_popup", show_popup, NULL);
+   elm_layout_signal_callback_add(ly, "reload", "reload", update_content, NULL);
 	
 //    edje_object_signal_callback_add(ly, "delete_popup", "delete_popup", delete_popup_edje, win);
 	ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER, _gadget_exit, NULL);
