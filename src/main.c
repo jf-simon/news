@@ -581,7 +581,6 @@ static void
 update_content(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    _get_data();
-
    fill_new_tb();
 }
 
@@ -615,7 +614,6 @@ set_color(Evas_Object *ly)
                                255, 255, 255, 0,
                                39, 90, 187, 255);
 }
-
 
 
 void stringReplace(char *search, char *replace, char *string)
@@ -1084,8 +1082,8 @@ _data_complete(void *data, int type, void *event_info)
 	struct tm *newtime;
 	time_t long_time;
 
-	time( &long_time );
-	newtime = localtime( &long_time );
+	time(&long_time);
+	newtime = localtime(&long_time);
 	
 	char buf[PATH_MAX];
 
@@ -1210,8 +1208,9 @@ _get_data()
 static Eina_Bool
 _get_data_timer(void *data)
 {
-	_get_data();
-	
+// 	_get_data();
+   update_content(NULL, NULL, NULL, NULL);
+
 	return ECORE_CALLBACK_RENEW;
 }
 
