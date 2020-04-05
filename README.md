@@ -30,14 +30,16 @@ working:
 - set font size
 - keyword support
 - click to open the articel in webbrowser
+- refresh content of popup with visible popup
+
 
 not working:
 
 - rdf feeds
 - no html support (wont come)
-- refresh content of popup with visible popup
 - better notification of new infos
 - entry bug to set feed url (e bug)
+
 
 install:
 
