@@ -31,40 +31,39 @@ void           _timer_reset();
 void           stringReplace(char *search, char *replace, char *string);
 void           _it_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED);
 
-int id_num;
+extern int id_num;
 
-const char *saved_title;
-const char *feedname;
+extern const char *feedname;
 
-Evas_Object *win;
-Evas_Object *ly;
-Evas_Object *tb;
-Evas_Object *popup;
-Evas_Object *popup_settings;
+extern Evas_Object *win;
+extern Evas_Object *ly;
+extern Evas_Object *tb;
+extern Evas_Object *popup;
+extern Evas_Object *popup_settings;
 
-const char *ci_url;
-const char *ci_icon;
-const char *saved_title;
-const char *ci_title;
-const char *ci_keywords;
-Eina_Bool   ci_icons;
-Eina_Bool   ci_popupnew;
-Eina_Bool   ci_popupkeywords;
-Eina_Bool   ci_checkkeywords;
-Eina_Bool   ci_indicator;
-double   	ci_refresh;
-double   	ci_fontsize;
-double   	ci_x_value;
-double   	ci_y_value;
-int         ci_r;
-int         ci_g;
-int         ci_b;
-int         ci_a;
+extern const char *ci_url;
+extern const char *ci_icon;
+extern const char *saved_title;
+extern const char *ci_title;
+extern const char *ci_keywords;
+extern Eina_Bool   ci_icons;
+extern Eina_Bool   ci_popupnew;
+extern Eina_Bool   ci_popupkeywords;
+extern Eina_Bool   ci_checkkeywords;
+extern Eina_Bool   ci_indicator;
+extern double   	ci_refresh;
+extern double   	ci_fontsize;
+extern double   	ci_x_value;
+extern double   	ci_y_value;
+extern int         ci_r;
+extern int         ci_g;
+extern int         ci_b;
+extern int         ci_a;
 
-Eina_List *configlist;
-Eina_List *feed_data_list;
-Eina_List *keywords_data_list;
-Eina_List *feed_data_list_tmp;
+extern Eina_List *configlist;
+extern Eina_List *feed_data_list;
+extern Eina_List *keywords_data_list;
+extern Eina_List *feed_data_list_tmp;
 
 
 typedef struct {

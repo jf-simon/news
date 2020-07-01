@@ -11,6 +11,39 @@ const char* lastcheck;
 int firststart = 0;
 int gadget = 0;
 int no_internet = 0;
+int id_num;
+const char *ci_url;
+const char *ci_icon;
+const char *saved_title;
+const char *ci_title;
+const char *ci_keywords;
+Eina_Bool   ci_icons;
+Eina_Bool   ci_popupnew;
+Eina_Bool   ci_popupkeywords;
+Eina_Bool   ci_checkkeywords;
+Eina_Bool   ci_indicator;
+double   	ci_refresh;
+double   	ci_fontsize;
+double   	ci_x_value;
+double   	ci_y_value;
+int         ci_r;
+int         ci_g;
+int         ci_b;
+int         ci_a;
+
+const char *feedname;
+
+Eina_List *configlist;
+Eina_List *feed_data_list;
+Eina_List *keywords_data_list;
+Eina_List *feed_data_list_tmp;
+
+Evas_Object *win;
+Evas_Object *ly;
+Evas_Object *tb;
+Evas_Object *popup;
+Evas_Object *popup_settings;
+
 Eina_List *feed_data_list_tmp = NULL;
 
 typedef struct {
